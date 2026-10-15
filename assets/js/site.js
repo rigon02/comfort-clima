@@ -6,6 +6,18 @@ var BIZ={email:'info@comfort-clima.com',phone:'+383 48 77 22 88'};
 var $=function(s,c){return (c||document).querySelector(s)};
 var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
 var RM=matchMedia('(prefers-reduced-motion: reduce)');
+/* the page language: English pages (site/en) get English messages and number formats */
+var EN=(document.documentElement.lang||'').toLowerCase().slice(0,2)==='en';
+var TX=EN?{pause:'Pause animation',resume:'Resume animation',menuOpen:'Open menu',menuClose:'Close menu',
+    twoUnits:'Two units or multi-split',need:'Calculated need: ',rec:'Recommended size: ',over7:'over 7 kW (two units or multi-split)',
+    room:'Room',sun:'sun',ins:'insulation',suggested:'The calculator suggested',interest:'I am interested in: ',
+    showing:function(n){return 'Showing '+n+(n===1?' model':' models')},
+    subject:'Quote request',lName:'Name',lPhone:'Phone',lCo:'Company',lCity:'City',lType:'Client type',lNeed:'What I need'}
+  :{pause:'Ndalo animacionin',resume:'Vazhdo animacionin',menuOpen:'Hap menunë',menuClose:'Mbyll menunë',
+    twoUnits:'Dy njësi ose multi-split',need:'Nevoja e llogaritur: ',rec:'Masa e rekomanduar: ',over7:'mbi 7 kW (dy njësi ose multi-split)',
+    room:'Dhoma',sun:'diell',ins:'izolim',suggested:'Kalkulatori sugjeroi',interest:'Më intereson: ',
+    showing:function(n){return 'Po shfaqen '+n+(n===1?' model':' modele')},
+    subject:'Kërkesë për ofertë',lName:'Emri',lPhone:'Telefoni',lCo:'Kompania',lCity:'Qyteti',lType:'Lloji i klientit',lNeed:'Çfarë më duhet'};
 var NS='http://www.w3.org/2000/svg';
 var root=document.documentElement;
 
@@ -236,7 +248,7 @@ if(hero0&&$('.liquid',hero0)){
   document.addEventListener('visibilitychange',hSync);
   if(hBtn)hBtn.addEventListener('click',function(){
     hPaused=!hPaused;
-    var l=hPaused?'Vazhdo animacionin':'Ndalo animacionin';
+    var l=hPaused?TX.resume:TX.pause;
     hBtn.setAttribute('aria-pressed',String(hPaused));hBtn.setAttribute('aria-label',l);hBtn.title=l;
     hero0.classList.toggle('is-paused',hPaused);
     hSync();
@@ -267,7 +279,7 @@ if(pCv){
   }
   if(pBtn)pBtn.addEventListener('click',function(){
     pPaused=!pPaused;
-    var l=pPaused?'Vazhdo animacionin':'Ndalo animacionin';
+    var l=pPaused?TX.resume:TX.pause;
     pBtn.setAttribute('aria-pressed',String(pPaused));pBtn.setAttribute('aria-label',l);pBtn.title=l;
     pHead.classList.toggle('is-paused',pPaused);
     if(pLiq)pSync();
@@ -399,7 +411,7 @@ $$('.prod-menu a').forEach(function(a){a.addEventListener('click',function(){set
 function setMenu(o){
   nav.classList.toggle('open',o);
   menuBtn.setAttribute('aria-expanded',String(o));
-  menuBtn.setAttribute('aria-label',o?'Mbyll menunë':'Hap menunë');
+  menuBtn.setAttribute('aria-label',o?TX.menuClose:TX.menuOpen);
   if(!o)setDrop(null,false);
   navUpdate();
 }
@@ -514,8 +526,8 @@ navMeasure();buildThread();buildStepLine();navUpdate();
 var area=$('#area'),areaOut=$('#areaOut'),kwEl=$('#kw'),btuEl=$('#btu'),needEl=$('#need'),needle=$('.needle'),fill=$('.dial-fill'),statusEl=$('#calcStatus');
 var SIZES=[[2,7000],[2.5,9000],[3.5,12000],[5,18000],[7,24000]],MAXKW=8,calcState={},sT=null;
 function ang(kw){return -120+Math.min(kw,MAXKW)/MAXKW*240}
-function fmt1(v){return v.toFixed(1).replace('.',',')}
-function fmtK(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.')}
+function fmt1(v){var s=v.toFixed(1);return EN?s:s.replace('.',',')}
+function fmtK(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,EN?',':'.')}
 function checked(name){return $('input[name="'+name+'"]:checked')}
 function calc(){
   var a=+area.value,s=checked('sun'),ins=checked('ins');
@@ -523,17 +535,17 @@ function calc(){
   var pick=null;for(var i=0;i<SIZES.length;i++){if(SIZES[i][0]>=need*.95){pick=SIZES[i];break}}
   var kwText,btuText,t;
   if(pick){kwText=fmt1(pick[0]);btuText=fmtK(pick[1])+' BTU';t=pick[0]}
-  else{kwText='7+';btuText='Dy njësi ose multi-split';t=MAXKW}
+  else{kwText='7+';btuText=TX.twoUnits;t=MAXKW}
   areaOut.textContent=a+' m²';
   area.style.setProperty('--p',((a-10)/90*100).toFixed(1)+'%');
-  needEl.textContent='Nevoja e llogaritur: '+fmt1(need)+' kW';
+  needEl.textContent=TX.need+fmt1(need)+' kW';
   kwEl.textContent=kwText;btuEl.textContent=btuText;
   /* the needle follows the exact need as the slider moves; the arc fills to the unit size we recommend */
   needle.style.transform='rotate('+ang(Math.min(need,MAXKW)).toFixed(2)+'deg)';
   fill.style.strokeDashoffset=(100-Math.min(t,MAXKW)/MAXKW*100).toFixed(2);
   calcState={a:a,kw:kwText,btu:btuText,multi:!pick,sun:$('label[for="'+s.id+'"]').textContent.toLowerCase(),ins:$('label[for="'+ins.id+'"]').textContent.toLowerCase()};
   clearTimeout(sT);
-  sT=setTimeout(function(){statusEl.textContent='Masa e rekomanduar: '+kwText+' kW, '+btuText},450);
+  sT=setTimeout(function(){statusEl.textContent=TX.rec+kwText+' kW, '+btuText},450);
 }
 if(area)(function ticks(){
   var g=$('.ticks'),cx=200,cy=200,R=150;
@@ -546,7 +558,7 @@ if(area)(function ticks(){
     l.setAttribute('x2',(cx+r2*sn).toFixed(1));l.setAttribute('y2',(cy-r2*cs).toFixed(1));
     if(maj)l.setAttribute('class','maj');
     g.appendChild(l);
-    var label=kw===8?'8+':kw===0?'0':(maj&&kw!==2)?fmt1(kw).replace(',0',''):null;
+    var label=kw===8?'8+':kw===0?'0':(maj&&kw!==2)?fmt1(kw).replace(/[.,]0$/,''):null;
     if(label){
       var t=document.createElementNS(NS,'text'),rl=R+24;
       t.setAttribute('x',(cx+rl*sn).toFixed(1));t.setAttribute('y',(cy-rl*cs).toFixed(1));
@@ -567,7 +579,7 @@ var calcCta=$('#calcCta');
 if(calcCta&&fNeed)calcCta.addEventListener('click',function(){
   var s=calcState;
   fNeed.value='kondicioner';
-  fMsg.value='Dhoma: '+s.a+' m², diell: '+s.sun+', izolim: '+s.ins+'. Kalkulatori sugjeroi '+(s.multi?'mbi 7 kW (dy njësi ose multi-split)':s.kw+' kW ('+s.btu+')')+'.';
+  fMsg.value=TX.room+': '+s.a+' m², '+TX.sun+': '+s.sun+', '+TX.ins+': '+s.ins+'. '+TX.suggested+' '+(s.multi?TX.over7:s.kw+' kW ('+s.btu+')')+'.';
   showForm();focusFormSoon();
 });
 /* any "ask for an offer" link prefills the form: who is asking (data-type), what for (data-need), which model (data-product) */
@@ -576,7 +588,7 @@ if(fType&&fNeed)$$('[data-type],[data-need],[data-product]').forEach(function(a)
   if(t)fType.value=t;
   if(nd)fNeed.value=nd;else if(t==='Projekt')fNeed.value='projekt';else if(p)fNeed.value='kondicioner';
   if(fNeed.selectedIndex<0)fNeed.selectedIndex=0;
-  if(p)fMsg.value='Më intereson: '+p+'.';
+  if(p)fMsg.value=TX.interest+p+'.';
   showForm();focusFormSoon();
 })});
 
@@ -597,7 +609,7 @@ $$('.catalog').forEach(function(cat){
         }
       }else it.hidden=true;
     });
-    if(animate&&status)status.textContent='Po shfaqen '+n+(n===1?' model':' modele');
+    if(animate&&status)status.textContent=TX.showing(n);
   }
   btns.forEach(function(b){b.addEventListener('click',function(){apply(b.getAttribute('data-f'),true)})});
   items.forEach(function(it){it.addEventListener('animationend',function(){it.classList.remove('pop')})});
@@ -682,7 +694,7 @@ function runCounter(){
   if(counted)return;counted=true;
   var el=$('#heatNum');
   var t0=performance.now(),dur=1700,last='';
-  el.textContent='1,0';
+  el.textContent=fmt1(1);
   (function f(now){
     var k=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-k,3);
     var s=k<1?fmt1(1+3*e):'4';
@@ -705,8 +717,8 @@ form.addEventListener('submit',function(e){
   if(!name){fName.focus();return}
   if(!phone){fPhone.focus();return}
   var optText=function(sel){var o=sel.options[sel.selectedIndex];return o?o.text:'-'};
-  var subject='Kërkesë për ofertë · '+fType.value+' · '+name;
-  var body=['Emri: '+name,'Telefoni: '+phone,'Kompania: '+((fCo&&fCo.value.trim())||'-'),'Qyteti: '+(fCity.value.trim()||'-'),'Lloji i klientit: '+optText(fType),'Çfarë më duhet: '+optText(fNeed),'',fMsg.value.trim()].join('\n');
+  var subject=TX.subject+' · '+optText(fType)+' · '+name;
+  var body=[TX.lName+': '+name,TX.lPhone+': '+phone,TX.lCo+': '+((fCo&&fCo.value.trim())||'-'),TX.lCity+': '+(fCity.value.trim()||'-'),TX.lType+': '+optText(fType),TX.lNeed+': '+optText(fNeed),'',fMsg.value.trim()].join('\n');
   var href='mailto:'+BIZ.email+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
   mailAgain.setAttribute('href',href);
   window.location.href=href;
