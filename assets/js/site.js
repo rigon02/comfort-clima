@@ -368,8 +368,10 @@ if(bsTrack){
   bsVp.addEventListener('pointerup',bsEnd);
   bsVp.addEventListener('pointercancel',bsEnd);
   bsVp.addEventListener('lostpointercapture',function(e){if(bsDrag&&bsDrag.on)bsEnd(e)});
-  addEventListener('resize',bsMeasure);
-  bsMeasure();
+  /* phones fire resize when the address bar slides while scrolling; only a new width needs a re-measure */
+  var bsW=-1;
+  addEventListener('resize',function(){if(bsVp.clientWidth!==bsW){bsW=bsVp.clientWidth;bsMeasure()}});
+  bsW=bsVp.clientWidth;bsMeasure();
 }
 
 /* reveals */
@@ -391,11 +393,14 @@ document.addEventListener('visibilitychange',function(){document.body.classList.
 
 /* nav */
 /* the nav stays invisible over the dark top of the page and turns into a white sheet once the page is light */
-var nav=$('.nav'),menuBtn=$('.menu-btn'),navSolid=null,darkTop=$('.hero, .page-head'),navLim=24;
+var nav=$('.nav'),menuBtn=$('.menu-btn'),navSolid=null,navScrolled=null,darkTop=$('.hero, .page-head'),navLim=24;
 function navMeasure(){navLim=darkTop?Math.max(24,darkTop.offsetTop+darkTop.offsetHeight-nav.offsetHeight-1):24}
 function navUpdate(){
   var s=scrollY>navLim||nav.classList.contains('open')||nav.classList.contains('drop-open');
   if(s!==navSolid){navSolid=s;nav.classList.toggle('solid',s)}
+  /* off the very top but still over the dark part: the bar darkens so the text below never shows through it */
+  var sc=scrollY>8;
+  if(sc!==navScrolled){navScrolled=sc;nav.classList.toggle('scrolled',sc)}
 }
 /* "Produktet" and "Markat" in the top bar each drop a panel (on phones they open inside the menu); one open at a time */
 var dropBtns=$$('.nav-drop');
@@ -410,6 +415,7 @@ dropBtns.forEach(function(b){
 $$('.prod-menu a').forEach(function(a){a.addEventListener('click',function(){setDrop(null,false)})});
 function setMenu(o){
   nav.classList.toggle('open',o);
+  root.classList.toggle('menu-lock',o);   /* the page under the open menu stays put (touch screens) */
   menuBtn.setAttribute('aria-expanded',String(o));
   menuBtn.setAttribute('aria-label',o?TX.menuClose:TX.menuOpen);
   if(!o)setDrop(null,false);
