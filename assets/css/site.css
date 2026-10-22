@@ -823,11 +823,12 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 /* product cards with a page of their own: the name's link covers the card, the quote button and colour dots stay on top */
 .plink{color:inherit;text-decoration:none}
 .plink::after{content:"";position:absolute;inset:0;z-index:1}
-.pcard .pcta{position:relative;z-index:2}
+.pcard .pcta,.mcard .mcta{position:relative;z-index:2}
 .pcard .swatches{z-index:3}
 .plink:focus-visible{outline:none}
 .plink:focus-visible::after{outline:2px solid var(--ink);outline-offset:6px}
-@media (hover:hover){.pcard:has(.plink):hover .h3{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}}
+@media (hover:hover){.pcard:has(.plink):hover .h3,.mcard:has(.plink):hover .mname{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}}
+.pspecs:empty{display:none}
 
 /* product page */
 .pd{padding-top:clamp(56px,7vw,96px)}
