@@ -155,17 +155,16 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .nav.open .menu-btn i:nth-child(1){transform:translateY(3px) rotate(45deg)}
 .nav.open .menu-btn i:nth-child(2){transform:translateY(-3px) rotate(-45deg)}
 
-/* the liquid light: one iridescent canvas behind the dark top of each page */
+/* the top of every page: a gradient between the logo's two blues, with the dotted ribbons (site.js, Waves) drawn on
+   a canvas over it; without WebGL the gradient alone */
 .liquid{position:absolute;inset:0;z-index:-3;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.6s var(--ease)}
 .liquid.on{opacity:1}
-.hero,.page-head{background:var(--night)}
-.no-js .hero,.no-js .page-head,.hero.no-gl,.page-head.no-gl{background:radial-gradient(60% 70% at 78% 28%,rgba(19,73,141,.75),rgba(19,73,141,0) 70%),radial-gradient(55% 60% at 52% 86%,rgba(11,130,187,.45),rgba(11,130,187,0) 70%),var(--night)}
-.hero.no-gl::before,.page-head.no-gl::before{content:"";position:absolute;inset:0;z-index:-3;background:radial-gradient(60% 70% at 78% 28%,rgba(55,171,224,.5),rgba(55,171,224,0) 70%),radial-gradient(55% 60% at 52% 86%,rgba(19,73,141,.6),rgba(19,73,141,0) 70%);opacity:var(--hw,0)}
+.hero,.page-head{background:linear-gradient(32deg,#13498D 18%,#37ABE0 100%)}
 .no-gl .liquid{display:none}
 
 /* hero */
 .hero{position:relative;isolation:isolate;min-height:max(700px,100vh);min-height:max(700px,100svh);display:flex;flex-direction:column;justify-content:flex-end;padding:120px 0 clamp(28px,4.5vh,52px);overflow:hidden;color:#fff}
-.hero::after{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.5),rgba(0,0,0,0) 50%),linear-gradient(to right,rgba(0,0,0,.32),rgba(0,0,0,0) 60%)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(to bottom,rgba(19,73,141,.4),rgba(19,73,141,0) 16%),linear-gradient(to top,rgba(19,73,141,.62),rgba(19,73,141,0) 55%),linear-gradient(to right,rgba(19,73,141,.55),rgba(19,73,141,0) 62%)}
 /* the product on the right: the outdoor unit floating in the liquid light, graded to the scene
    and lit on its edges by the colours flowing around it (the script samples the liquid into --lk-*) */
 .hero{--mw:min(44vw,700px);--pw:min(48vw,780px);--lk-l:40,110,190;--lk-t:70,160,220;--lk-b:20,50,110}
@@ -179,8 +178,8 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .prod-slide.no-tr{transition:none}
 /* sizes true to life, all standing on the same ground line at the bottom right of the box (where every photo clips its unit):
    the Dogu unit is the largest and runs further off the edge, then the monobloc, then the Airstage unit a little smaller */
-.prod-float > .prod-air{inset:auto 0 0 auto;width:72%;height:auto;aspect-ratio:926/909}
-.prod-float > .prod-mono{inset:auto 0 0 auto;width:88%;height:auto;aspect-ratio:1006/863}
+.prod-float > .prod-air{inset:auto 0 0 auto;width:72%;height:auto;aspect-ratio:926/941}
+.prod-float > .prod-mono{inset:auto 0 0 auto;width:88%;height:auto;aspect-ratio:1006/915}
 /* the Dogu unit hangs from a ceiling: it floats a little higher and reaches in under the headline,
    with its whole damper end in view; its left end is darkened so the white text on top stays readable */
 .prod-float > .prod-dogu{inset:16% -2% auto auto;width:140%;height:auto;aspect-ratio:1206/554}
@@ -555,10 +554,11 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .band-cta{display:flex;flex-wrap:wrap;gap:10px}
 .cat-count{font:500 .7rem/1 var(--f);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);padding:8px 12px;border-radius:var(--pill);border:1px solid var(--line)}
 
-/* sub-pages: a dark liquid header, breadcrumbs, airflow decoration */
+/* sub-pages: the blue header with the dotted ribbons, breadcrumbs; the drawn airflow lines only where the ribbons can't run */
 .page-head{position:relative;isolation:isolate;overflow:hidden;color:#fff;padding:clamp(150px,17vw,220px) 0 clamp(64px,8vw,112px)}
-.page-head::after{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.5),rgba(0,0,0,0) 60%),linear-gradient(to right,rgba(0,0,0,.42),rgba(0,0,0,0) 65%)}
+.page-head::after{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(to bottom,rgba(19,73,141,.4),rgba(19,73,141,0) 22%),linear-gradient(to top,rgba(19,73,141,.5),rgba(19,73,141,0) 60%),linear-gradient(to right,rgba(19,73,141,.5),rgba(19,73,141,0) 65%)}
 .page-art{position:absolute;z-index:-1;top:0;right:0;width:min(58vw,820px);height:100%;-webkit-mask-image:linear-gradient(to left,#000 35%,transparent 95%);mask-image:linear-gradient(to left,#000 35%,transparent 95%)}
+.liquid.on ~ .page-art{display:none}
 .page-art svg{width:100%;height:100%}
 .page-art .air-base use{stroke:#fff;opacity:.22}
 .page-art .air-flow use{stroke:#fff;opacity:.9}

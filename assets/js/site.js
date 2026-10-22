@@ -42,87 +42,96 @@ $$('.nav-links > li > a').forEach(function(a){
   a.appendChild(s);
 });
 
-/* the liquid light behind the dark top of each page: a slow domain-warped flow in one gradient of the logo's blues,
-   deep navy through the logo's dark blue (#13498D) and the blue where the two rings overlap (#0B82BB) to its light blue (#37ABE0).
-   The "warmth" cycle now only leans the flow towards the lighter blues. Drawn small and scaled up. */
-function Liquid(cv,fx,fy){
+/* the background at the top of every page: ribbons of white dots that twist and flow like air, drawn over a
+   CSS gradient between the logo's two blues (#13498D to #37ABE0). Each ribbon is a grid of points; the side of a
+   ribbon that faces you gets bigger, brighter dots, and where a ribbon turns edge-on the dots crowd into a bright line.
+   head: the shorter header of the other pages, where the text sits on the left */
+var WBG=[[19,73,141],[55,171,224]];
+function Waves(cv,head){
   var gl=null;
-  try{gl=cv.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false,powerPreference:'low-power'})}catch(e){}
+  try{gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'})}catch(e){}
   if(!gl)return null;
-  var VS='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
-  var FS='precision highp float;uniform vec2 R;uniform float T;uniform float W;uniform vec2 F;'+
-    'float h(vec2 p){p=fract(p*vec2(234.34,435.345));p+=dot(p,p+34.23);return fract(p.x*p.y);}'+
-    'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}'+
-    'float b(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<4;i++){v+=a*n(p);p=m*p;a*=.5;}return v;}'+
-    'vec3 ir(float x){x=clamp(x,0.,1.);vec3 a=vec3(.047,.141,.29),c=vec3(.075,.286,.553),d=vec3(.043,.51,.733),e=vec3(.216,.671,.878);'+
-    'return x<.34?mix(a,c,x/.34):(x<.67?mix(c,d,(x-.34)/.33):mix(d,e,(x-.67)/.33));}'+
-    'void main(){vec2 u=gl_FragCoord.xy/R;vec2 p=(gl_FragCoord.xy-.5*R)/R.y*1.5;float t=T*.05;'+
-    'vec2 q=vec2(b(p+vec2(0.,t)),b(p+vec2(5.2,1.3)-vec2(t*.8,0.)));'+
-    'vec2 r=vec2(b(p+2.6*q+vec2(1.7,9.2)+t*.6),b(p+2.6*q+vec2(8.3,2.8)-t*.5));'+
-    'float f=b(p+3.*r);'+
-    'float pool=smoothstep(1.35,.0,length((u-F)*vec2(R.x/R.y,1.)));'+
-    'float l=smoothstep(.14,.74,f);'+
-    'float s=smoothstep(.0,.82,(r.x-.26)*2.1+.6*(q.y-.42)+.45*(f-.5));'+
-    'float x=mix(.2,.42,W)+.62*s;'+
-    'vec3 base=vec3(.006,.016,.038);'+
-    'vec3 col=ir(x)*(.1+1.1*l*(.5+.65*pool));'+
-    'col=mix(base,col,smoothstep(.02,.3,l));'+
-    'col+=vec3(.82,.92,1.)*pow(smoothstep(.58,.9,f),3.)*.22*pool;'+
-    'col*=.88;'+
-    'col+=(h(gl_FragCoord.xy+fract(T))-.5)*.035;'+
-    'gl_FragColor=vec4(col,1.);}';
+  /* where the flow runs, in clip space: across from X0 to X1, the centre line starting at YA and turning by YB from S0 on,
+     ribbons WS as wide. Homepage: above the headline and behind the product (phones: the top half, above the product).
+     Other pages: along the top above the breadcrumbs, then down the right side, clear of the text (phones: along the top). */
+  var small=matchMedia('(max-width:760px)').matches;
+  var L=head?(small?[-1.2,1.2,.8,-.05,.7,.15]:[-1.2,1.3,.9,-1.75,.8,.5]):(small?[-1.2,1.2,.7,-.12,1,.15]:[-1.2,1.2,.72,-.7,1,.15]);
+  var VS='attribute vec3 a;uniform float T;uniform float PS;uniform vec4 H;varying float vA;'+
+    'const float X0='+L[0].toFixed(2)+',X1='+L[1].toFixed(2)+',YA='+L[2].toFixed(2)+',YB='+L[3].toFixed(2)+',WS='+L[4].toFixed(2)+',S0='+L[5].toFixed(2)+';'+
+    'void main(){float u=a.x,v=a.y,k=a.z,ph=k*2.1,t=T;'+
+    'float x=mix(X0,X1,u);'+
+    'float yc=YA+YB*smoothstep(S0,1.,u)+.13*sin(u*4.2+t*.42+ph)+.06*sin(u*9.5-t*.58+ph*1.7);'+
+    'float th=u*5.2+t*.45+ph*1.3+.7*sin(u*2.6-t*.33+k);'+
+    'float w=WS*(.26+.09*sin(u*3.4+t*.29+k*1.9))*mix(.62,1.,smoothstep(.05,.55,u));'+
+    'float s=sin(th),n=.5+.5*v*s,pz=1./(1.-v*w*s*1.3);'+
+    'vec2 P=vec2(x+.06*v*cos(th+1.),yc+v*w*cos(th)*pz);'+
+    'gl_Position=vec4(P,0.,1.);'+
+    'gl_PointSize=PS*(.75+1.55*n*n);'+
+    'float e=smoothstep(0.,.1,u)*smoothstep(1.,.9,u)*mix(.35,1.,smoothstep(.94,.74,P.y));'+   /* softer behind the menu bar */
+    /* none behind the product (H: its centre and half size), so its cut-off edges and grille gaps show clean blue, not dots */
+    'vec2 hq=abs(P-H.xy)/max(H.zw,vec2(.001));float hd=pow(pow(hq.x,4.)+pow(hq.y,4.),.25);'+
+    'e*=mix(1.,smoothstep(.72,1.12,hd),step(.001,H.z));'+
+    'vA=(.26+.74*n*n)*e;}';
+  var FS='precision mediump float;varying float vA;'+
+    'void main(){float d=length(gl_PointCoord-.5);float a=smoothstep(.5,.16,d)*vA;gl_FragColor=vec4(vec3(.93,.97,1.)*a,a);}';
   function sh(type,src){var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);return gl.getShaderParameter(s,gl.COMPILE_STATUS)?s:null}
   var vs=sh(gl.VERTEX_SHADER,VS),fs=sh(gl.FRAGMENT_SHADER,FS);
   if(!vs||!fs)return null;
   var pr=gl.createProgram();gl.attachShader(pr,vs);gl.attachShader(pr,fs);gl.linkProgram(pr);
   if(!gl.getProgramParameter(pr,gl.LINK_STATUS))return null;
   gl.useProgram(pr);
-  gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());
-  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
-  var loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
-  var uR=gl.getUniformLocation(pr,'R'),uT=gl.getUniformLocation(pr,'T'),uW=gl.getUniformLocation(pr,'W');
-  gl.uniform2f(gl.getUniformLocation(pr,'F'),fx,fy);
-  var w=0,h=0,dirty=true,lost=false,shown=false;
+  /* three ribbons; fewer dots on small screens */
+  var NU=small?170:280,NV=small?22:34,K=3,pts=new Float32Array(NU*NV*K*3),i=0;
+  for(var k=0;k<K;k++)for(var iu=0;iu<NU;iu++)for(var iv=0;iv<NV;iv++){pts[i++]=iu/(NU-1);pts[i++]=iv/(NV-1)*2-1;pts[i++]=k}
+  gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,pts,gl.STATIC_DRAW);
+  var loc=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,3,gl.FLOAT,false,0,0);
+  var uT=gl.getUniformLocation(pr,'T'),uPS=gl.getUniformLocation(pr,'PS'),uH=gl.getUniformLocation(pr,'H'),hole=[0,0,0,0];
+  gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE);gl.clearColor(0,0,0,0);
+  var w=0,h=0,dpr=1,dirty=true,lost=false,shown=false,count=NU*NV*K;
   if('ResizeObserver' in window)new ResizeObserver(function(){dirty=true}).observe(cv);
   else addEventListener('resize',function(){dirty=true});
   cv.addEventListener('webglcontextlost',function(e){e.preventDefault();lost=true;cv.parentNode.classList.add('no-gl')});
-  return {draw:function(t,warm){
+  return {draw:function(t){
     if(lost)return;
     if(dirty){
-      dirty=false;
-      var cw=cv.clientWidth||1,ch=cv.clientHeight||1,s=Math.min(.6,760/cw);
-      var nw=Math.max(2,Math.round(cw*s)),nh=Math.max(2,Math.round(ch*s));
+      dirty=false;dpr=Math.min(1.75,window.devicePixelRatio||1);
+      var nw=Math.max(2,Math.round((cv.clientWidth||1)*dpr)),nh=Math.max(2,Math.round((cv.clientHeight||1)*dpr));
       if(nw!==w||nh!==h){w=cv.width=nw;h=cv.height=nh;gl.viewport(0,0,w,h)}
     }
-    gl.uniform2f(uR,w,h);gl.uniform1f(uT,t);gl.uniform1f(uW,warm);
-    gl.drawArrays(gl.TRIANGLES,0,3);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(uT,t);gl.uniform1f(uPS,(small?1.9:2.5)*dpr);gl.uniform4f(uH,hole[0],hole[1],hole[2],hole[3]);
+    gl.drawArrays(gl.POINTS,0,count);
     if(!shown){shown=true;cv.classList.add('on')}
   },
-  /* the colours just drawn at a few points (0..1 across, 0..1 down): lets the product pick up the light around it */
+  /* the area kept clear of dots, as a box in the canvas's CSS pixels: [left, top, width, height] */
+  hole:function(b){
+    var cw=cv.clientWidth||1,ch=cv.clientHeight||1;
+    hole=[(b[0]+b[2]/2)/cw*2-1,1-(b[1]+b[3]/2)/ch*2,b[2]/cw,b[3]/ch];
+  },
+  /* the background colour at a few points (0..1 across, 0..1 down), for the light on the product's edges */
   read:function(pts){
-    if(lost||!w)return null;
-    var out=[],px=new Uint8Array(4);
-    for(var i=0;i<pts.length;i++){
-      gl.readPixels(Math.round(pts[i][0]*(w-1)),Math.round((1-pts[i][1])*(h-1)),1,1,gl.RGBA,gl.UNSIGNED_BYTE,px);
-      out.push([px[0],px[1],px[2]]);
+    var out=[];
+    for(var j=0;j<pts.length;j++){
+      var f=Math.max(0,Math.min(1,(pts[j][0]+(1-pts[j][1]))/2));
+      out.push([0,1,2].map(function(c){return (WBG[0][c]+(WBG[1][c]-WBG[0][c])*f)*.55}));
     }
     return out;
   }};
 }
 
-/* hero: the liquid light behind the text, and on the right three products taking turns, floating
+/* hero: the dotted ribbons behind the text, and on the right three products taking turns, floating
    (Fujitsu Airstage outdoor unit, Fujitsu monobloc heat pump, Dogu ventilation unit).
    The Airstage photo is the grille and casing (with see-through gaps where the fan shows); its fan turns on a canvas underneath.
    The other two are shown as photographed. All pick up the colours of the liquid around them as light on their edges. */
 var hero0=$('.hero');
 if(hero0&&$('.liquid',hero0)){
-  var hBtn=$('.hero-pause',hero0),hCv=$('.liquid',hero0),hLiq=Liquid(hCv,.42,.72);
-  var hT=2,hL=14,hF=0,hLast=0,hRaf=null,hVisible=true,hPaused=false,hCache={},hFrame=0;
+  var hBtn=$('.hero-pause',hero0),hCv=$('.liquid',hero0),hLiq=Waves(hCv);
+  var hL=14,hF=0,hLast=0,hRaf=null,hVisible=true,hPaused=false,hCache={},hFrame=0;
   if(!hLiq)hero0.classList.add('no-gl');
   var prod=$('.prod-float',hero0),prodShadow=$('.prod-shadow',hero0),prodBox=$('.hero-product',hero0);
   /* the fan opening in each photo with a spinning fan: its centre and the matrix that turns a circle into the tilted ellipse, in photo pixels */
   var FANS=[
-    {cx:277.1,cy:467.9,m:[243.3,-34.1,-34.1,304.71],rf:.86,photoW:926}    /* Airstage outdoor unit; the monobloc (slide 2) has none */
+    {cx:277.1,cy:499.9,m:[243.3,-34.1,-34.1,304.71],rf:.86,photoW:926}    /* Airstage outdoor unit (the photo has 32 px rebuilt above the top); the monobloc (slide 2) has none */
   ];
   var FAN={speed:210,blur:3.4};
   var slides=$$('.prod-slide',hero0),slideOn=0,slideT=0,SLIDE_HOLD=5,slideOffTimer=null;
@@ -195,6 +204,7 @@ if(hero0&&$('.liquid',hero0)){
     clearTimeout(slideOffTimer);slideOffTimer=setTimeout(function(){cur.classList.remove('is-off')},1800);
     slideOn=(slideOn+1)%slides.length;
     if(prodBox)prodBox.setAttribute('data-slide',slideOn);
+    hMeasure();
   }
   /* light from the background: sample the liquid beside, above and below the unit, ease toward it */
   var LK=[[.5,.5],[.8,.06],[.82,.94]],lk=[[40,110,190],[70,160,220],[20,50,110]],LKV=['--lk-l','--lk-t','--lk-b'];
@@ -216,25 +226,22 @@ if(hero0&&$('.liquid',hero0)){
     prod.style.transform='translate3d(0,'+y.toFixed(2)+'px,0) rotate('+r.toFixed(3)+'deg)';
     if(prodShadow){var u=(y+13)/26;prodShadow.style.transform='scale('+(1.04-.1*(1-u)).toFixed(3)+')';prodShadow.style.opacity=(.5+.35*u).toFixed(3)}
   }
-  var easeIO=function(k){return k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2};
-  /* a 30 second loop of the liquid's warmth: hold cool 5s, warm up 10s, hold warm 5s, cool down 10s */
-  function hWarm(t){
-    t=t%30;
-    if(t<5)return 0;
-    t-=5;if(t<10)return easeIO(t/10);
-    t-=10;if(t<5)return 1;
-    t-=5;return 1-easeIO(t/10);
-  }
+  /* the dotted ribbons stay clear of the product on show (its layout box, measured on resize and at each switch);
+     the clear area eases across to the next product */
+  var hHole=null,hTarget=null;
+  function hBox(el){var x=0,y=0,e=el;while(e&&e!==hero0){x+=e.offsetLeft;y+=e.offsetTop;e=e.offsetParent}return [x,y,el.offsetWidth,el.offsetHeight]}
+  function hMeasure(){if(slides[slideOn])hTarget=hBox(slides[slideOn])}
   function hRender(){
-    var wk=hWarm(hT);
-    if(hLiq){hLiq.draw(hL,wk);if(hFrame++%6===0)hLight()}
-    else{var hw=wk.toFixed(2);if(hCache.hw!==hw){hCache.hw=hw;hero0.style.setProperty('--hw',hw)}}
+    if(hLiq){
+      if(hTarget){if(!hHole)hHole=hTarget.slice();else for(var i=0;i<4;i++)hHole[i]+=(hTarget[i]-hHole[i])*.05;hLiq.hole(hHole)}
+      hLiq.draw(hL);if(hFrame++%6===0)hLight();
+    }
     fDraw();hFloat();
   }
   function hTick(now){
     var dt=Math.min(.1,(now-(hLast||now))/1000);hLast=now;
     var sp=RM.matches?.6:1;   /* calmer for visitors who prefer less motion, never frozen; the pause button stops it */
-    hT+=dt;hL+=dt*sp;hF+=dt*sp;fA=(fA+dt*sp*FAN.speed)%360;
+    hL+=dt*sp;hF+=dt*sp;fA=(fA+dt*sp*FAN.speed)%360;
     slideT+=dt;if(slideT>=SLIDE_HOLD){slideT=0;hSwitch()}
     hRender();
     hRaf=requestAnimationFrame(hTick);
@@ -253,19 +260,20 @@ if(hero0&&$('.liquid',hero0)){
     hero0.classList.toggle('is-paused',hPaused);
     hSync();
   });
+  hMeasure();addEventListener('resize',function(){hMeasure();hHole=null});
   hRender();hSync();
 }
 
-/* sub-pages: the same liquid behind the page header, at a fixed warmth per page, with its own pause */
+/* sub-pages: the same dotted ribbons behind the page header, with its own pause */
 var pHead=$('.page-head'),pCv=pHead?$('.liquid',pHead):null;
 if(pCv){
-  var pWarm=+(pHead.getAttribute('data-warm')||0),pLiq=Liquid(pCv,.8,.66),pBtn=$('.hero-pause',pHead);
+  var pLiq=Waves(pCv,true),pBtn=$('.hero-pause',pHead);
   var pT=9,pLast=0,pRaf=null,pVis=true,pPaused=false;
-  if(!pLiq){pHead.classList.add('no-gl');pHead.style.setProperty('--hw',pWarm)}
+  if(!pLiq)pHead.classList.add('no-gl');
   else{
     var pTick=function(now){
       var dt=Math.min(.1,(now-(pLast||now))/1000);pLast=now;
-      pT+=dt*(RM.matches?.6:1);pLiq.draw(pT,pWarm);
+      pT+=dt*(RM.matches?.6:1);pLiq.draw(pT);
       pRaf=requestAnimationFrame(pTick);
     };
     var pSync=function(){
@@ -275,7 +283,7 @@ if(pCv){
     };
     new IntersectionObserver(function(es){pVis=es[0].isIntersecting;pSync()}).observe(pHead);
     document.addEventListener('visibilitychange',pSync);
-    pLiq.draw(pT,pWarm);pSync();
+    pLiq.draw(pT);pSync();
   }
   if(pBtn)pBtn.addEventListener('click',function(){
     pPaused=!pPaused;
