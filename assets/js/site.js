@@ -9,16 +9,13 @@ var RM=matchMedia('(prefers-reduced-motion: reduce)');
 /* the page language: English pages (site/en) get English messages and number formats */
 var EN=(document.documentElement.lang||'').toLowerCase().slice(0,2)==='en';
 var TX=EN?{pause:'Pause animation',resume:'Resume animation',menuOpen:'Open menu',menuClose:'Close menu',
-    twoUnits:'Two units or multi-split',need:'Calculated need: ',rec:'Recommended size: ',over7:'over 7 kW (two units or multi-split)',
-    room:'Room',sun:'sun',ins:'insulation',suggested:'The calculator suggested',interest:'I am interested in: ',
+    interest:'I am interested in: ',
     showing:function(n){return 'Showing '+n+(n===1?' model':' models')},
     subject:'Quote request',lName:'Name',lPhone:'Phone',lCo:'Company',lCity:'City',lType:'Client type',lNeed:'What I need'}
   :{pause:'Ndalo animacionin',resume:'Vazhdo animacionin',menuOpen:'Hap menunë',menuClose:'Mbyll menunë',
-    twoUnits:'Dy njësi ose multi-split',need:'Nevoja e llogaritur: ',rec:'Masa e rekomanduar: ',over7:'mbi 7 kW (dy njësi ose multi-split)',
-    room:'Dhoma',sun:'diell',ins:'izolim',suggested:'Kalkulatori sugjeroi',interest:'Më intereson: ',
+    interest:'Më intereson: ',
     showing:function(n){return 'Po shfaqen '+n+(n===1?' model':' modele')},
     subject:'Kërkesë për ofertë',lName:'Emri',lPhone:'Telefoni',lCo:'Kompania',lCity:'Qyteti',lType:'Lloji i klientit',lNeed:'Çfarë më duhet'};
-var NS='http://www.w3.org/2000/svg';
 var root=document.documentElement;
 
 /* page headline: split into words for the drift-down entrance */
@@ -536,66 +533,12 @@ addEventListener('load',rebuild);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(rebuild);
 navMeasure();buildThread();buildStepLine();navUpdate();
 
-/* the room calculator, the one interactive moment */
-var area=$('#area'),areaOut=$('#areaOut'),kwEl=$('#kw'),btuEl=$('#btu'),needEl=$('#need'),needle=$('.needle'),fill=$('.dial-fill'),statusEl=$('#calcStatus');
-var SIZES=[[2,7000],[2.5,9000],[3.5,12000],[5,18000],[7,24000]],MAXKW=8,calcState={},sT=null;
-function ang(kw){return -120+Math.min(kw,MAXKW)/MAXKW*240}
+/* one decimal, with a comma on Albanian pages */
 function fmt1(v){var s=v.toFixed(1);return EN?s:s.replace('.',',')}
-function fmtK(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,EN?',':'.')}
-function checked(name){return $('input[name="'+name+'"]:checked')}
-function calc(){
-  var a=+area.value,s=checked('sun'),ins=checked('ins');
-  var need=a*.1*(+s.value)*(+ins.value);
-  var pick=null;for(var i=0;i<SIZES.length;i++){if(SIZES[i][0]>=need*.95){pick=SIZES[i];break}}
-  var kwText,btuText,t;
-  if(pick){kwText=fmt1(pick[0]);btuText=fmtK(pick[1])+' BTU';t=pick[0]}
-  else{kwText='7+';btuText=TX.twoUnits;t=MAXKW}
-  areaOut.textContent=a+' m²';
-  area.style.setProperty('--p',((a-10)/90*100).toFixed(1)+'%');
-  needEl.textContent=TX.need+fmt1(need)+' kW';
-  kwEl.textContent=kwText;btuEl.textContent=btuText;
-  /* the needle follows the exact need as the slider moves; the arc fills to the unit size we recommend */
-  needle.style.transform='rotate('+ang(Math.min(need,MAXKW)).toFixed(2)+'deg)';
-  fill.style.strokeDashoffset=(100-Math.min(t,MAXKW)/MAXKW*100).toFixed(2);
-  calcState={a:a,kw:kwText,btu:btuText,multi:!pick,sun:$('label[for="'+s.id+'"]').textContent.toLowerCase(),ins:$('label[for="'+ins.id+'"]').textContent.toLowerCase()};
-  clearTimeout(sT);
-  sT=setTimeout(function(){statusEl.textContent=TX.rec+kwText+' kW, '+btuText},450);
-}
-if(area)(function ticks(){
-  var g=$('.ticks'),cx=200,cy=200,R=150;
-  for(var k=0;k<=16;k++){
-    var kw=k/2,maj=[2,2.5,3.5,5,7].indexOf(kw)>-1,end=kw===0||kw===8;
-    var a=ang(kw)*Math.PI/180,sn=Math.sin(a),cs=Math.cos(a);
-    var r1=R-15,r2=R-((maj||end)?31:23);
-    var l=document.createElementNS(NS,'line');
-    l.setAttribute('x1',(cx+r1*sn).toFixed(1));l.setAttribute('y1',(cy-r1*cs).toFixed(1));
-    l.setAttribute('x2',(cx+r2*sn).toFixed(1));l.setAttribute('y2',(cy-r2*cs).toFixed(1));
-    if(maj)l.setAttribute('class','maj');
-    g.appendChild(l);
-    var label=kw===8?'8+':kw===0?'0':(maj&&kw!==2)?fmt1(kw).replace(/[.,]0$/,''):null;
-    if(label){
-      var t=document.createElementNS(NS,'text'),rl=R+24;
-      t.setAttribute('x',(cx+rl*sn).toFixed(1));t.setAttribute('y',(cy-rl*cs).toFixed(1));
-      t.textContent=label;g.appendChild(t);
-    }
-  }
-})();
-if(area){
-  area.addEventListener('input',calc);
-  $$('.seg input').forEach(function(r){r.addEventListener('change',calc)});
-  calc();
-}
 
-/* form prefill from the calculator and the audience tabs */
+/* form prefill from the audience tabs (the home calculator has its own request form, assets/js/kalkulatori.js) */
 var fName=$('#f-name'),fPhone=$('#f-phone'),fCo=$('#f-company'),fCity=$('#f-city'),fType=$('#f-type'),fNeed=$('#f-need'),fMsg=$('#f-msg');
 function focusFormSoon(){setTimeout(function(){try{fName.focus({preventScroll:true})}catch(e){}},RM.matches?0:750)}
-var calcCta=$('#calcCta');
-if(calcCta&&fNeed)calcCta.addEventListener('click',function(){
-  var s=calcState;
-  fNeed.value='kondicioner';
-  fMsg.value=TX.room+': '+s.a+' m², '+TX.sun+': '+s.sun+', '+TX.ins+': '+s.ins+'. '+TX.suggested+' '+(s.multi?TX.over7:s.kw+' kW ('+s.btu+')')+'.';
-  showForm();focusFormSoon();
-});
 /* any "ask for an offer" link prefills the form: who is asking (data-type), what for (data-need), which model (data-product) */
 if(fType&&fNeed)$$('[data-type],[data-need],[data-product]').forEach(function(a){a.addEventListener('click',function(){
   var t=a.getAttribute('data-type'),nd=a.getAttribute('data-need'),p=a.getAttribute('data-product');

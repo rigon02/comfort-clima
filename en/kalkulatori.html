@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>document.documentElement.className='js'</script>
-<title>Calculator · How much capacity does your room need? · Comfort Clima</title>
-<meta name="description" content="Work out the air conditioner capacity for your room from its area, sun and insulation. Then request a quote for the right model.">
+<title>Calculator · Which system suits your home? · Comfort Clima</title>
+<meta name="description" content="Answer a few questions about your home and get a preliminary estimate: the kind of heating and cooling system, a rough capacity and products from our range.">
 <meta name="theme-color" content="#030a18">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_GB">
 <meta property="og:title" content="Calculator · Comfort Clima">
-<meta property="og:description" content="How much capacity does your room need? A first estimate from area, sun and insulation.">
+<meta property="og:description" content="Which system suits your home? A preliminary estimate for heating and cooling, with products from our range.">
 <meta property="og:url" content="https://comfort-clima.com/en/kalkulatori.html">
 <meta property="og:image" content="https://comfort-clima.com/assets/og-image-en.jpg?v=4">
 <meta property="og:image:width" content="1200">
@@ -21,11 +21,12 @@
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,500&display=swap">
 <link rel="stylesheet" href="../assets/css/site.css">
+<script src="../assets/js/kalkulatori.js" defer></script>
 <link rel="alternate" hreflang="sq" href="https://comfort-clima.com/kalkulatori.html">
 <link rel="alternate" hreflang="en" href="https://comfort-clima.com/en/kalkulatori.html">
 <link rel="alternate" hreflang="x-default" href="https://comfort-clima.com/kalkulatori.html">
 </head>
-<body id="top">
+<body id="top" class="calc-page">
 <a class="skip" href="#main">Skip to content</a>
 
 <!-- the build fills in the header, the contact block and the footer from gen/partials-en -->
@@ -43,7 +44,7 @@
             </div>
             <ul class="pm-grid">
               <li class="pm-col">
-                <a class="pm-fam" href="kondicionere.html"><span class="pm-n">01 · Fujitsu · Haier</span><span class="pm-title">Air conditioners</span></a>
+                <a class="pm-fam" href="kondicionere.html"><span class="pm-n">01 · Fujitsu · Haier · HEC</span><span class="pm-title">Air conditioners</span></a>
                 <ul class="pm-sub"><li><a href="kondicionere-split.html">Split</a></li><li><a href="multi-split.html">Multi-split</a></li></ul>
               </li>
               <li class="pm-col">
@@ -101,6 +102,7 @@
               <li class="pm-col"><a class="bm-item" href="oerre.html"><span class="bm-logo" style="--lh:22px"><img src="../assets/brands/oerre.svg" width="369" height="107" alt="O.erre"></span><span class="bm-cat">Single-room heat recovery</span></a></li>
               <li class="pm-col"><a class="bm-item" href="tiki.html"><span class="bm-logo" style="--lh:30px"><img src="../assets/brands/tiki.svg" width="134" height="70" alt="Tiki"></span><span class="bm-cat">Tanks · Domestic hot water tanks</span></a></li>
               <li class="pm-col"><a class="bm-item" href="cvsair.html"><span class="bm-logo" style="--lh:21px"><img src="../assets/brands/cvsair.png" width="894" height="288" alt="Cvsair"></span><span class="bm-cat">Fans · Jet fans</span></a></li>
+              <li class="pm-col"><a class="bm-item" href="hec.html"><span class="bm-logo" style="--lh:19px"><img src="../assets/brands/hec.svg" width="150" height="41" alt="HEC"></span><span class="bm-cat">Air conditioners</span></a></li>
             </ul>
           </div>
         </div>
@@ -139,67 +141,47 @@
     <div class="wrap">
       <nav aria-label="Breadcrumb" class="fade" style="--d:0s"><ol class="crumbs"><li><a href="index.html">Home</a></li><li><span aria-current="page">Calculator</span></li></ol></nav>
       <p class="kicker fade" style="--d:.05s">Calculator</p>
-      <h1 class="h1">How much capacity does your room need?</h1>
-      <p class="lede fade" style="--d:.6s">A unit that is too small runs without a break. One that is too big switches on and off all the time and wastes electricity. Describe the room and see the right size.</p>
+      <h1 class="h1">Which system suits your home?</h1>
+      <p class="lede fade" style="--d:.6s">Answer a few simple questions about your home and see which systems fit, with a rough capacity and the products of ours worth a look. It is a preliminary estimate, not a design.</p>
     </div>
   </section>
 
   <section id="kalkulatori" class="page-body calc" data-live>
     <div class="wrap">
-      <div class="instrument" data-reveal>
-        <div class="dial-side r" style="--i:0">
-          <svg class="dial" viewBox="0 0 400 300" aria-hidden="true" focusable="false">
-            <defs><linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#38AADF"/><stop offset="1" stop-color="#154B8B"/></linearGradient></defs>
-            <path class="dial-track" d="M70.1 275A150 150 0 1 1 329.9 275"/>
-            <path class="dial-fill" d="M70.1 275A150 150 0 1 1 329.9 275" pathLength="100" style="stroke-dashoffset:68.75"/>
-            <g class="ticks"></g>
-            <g class="needle" style="transform:rotate(-45deg)">
-              <path d="M200 214V70" stroke="#0D1B2A" stroke-width="3.2" stroke-linecap="round"/>
-              <circle cx="200" cy="70" r="4" fill="#38AADF"/>
-              <circle cx="200" cy="200" r="11" fill="#0D1B2A"/>
-              <circle cx="200" cy="200" r="4" fill="#EDF2F5"/>
-            </g>
-          </svg>
-          <div class="readout">
-            <p class="ro-label">The size we recommend</p>
-            <p class="ro-value"><span id="kw">2.5</span><small>kW</small></p>
-            <p class="ro-btu" id="btu">9,000 BTU</p>
+      <noscript><p class="calc-nojs">The calculator runs on JavaScript, which seems to be switched off in your browser. Call us on <a href="tel:+38348772288">+383 48 77 22 88</a> or write to <a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a> and we will help you choose.</p></noscript>
+      <div class="calc-box" id="calc" data-reveal>
+        <ol class="calc-prog r" style="--i:0" id="calcProg" aria-label="Calculator steps"></ol>
+        <div class="calc-main r" style="--i:1">
+          <div class="calc-start" id="calcStart">
+            <p class="kicker">Before you start</p>
+            <h2 class="calc-h">Five short steps, then your estimate.</h2>
+            <p class="calc-lead">About 3 minutes. Where you do not know an answer, pick “Not sure”: the estimate allows for it.</p>
+            <ul class="calc-what">
+              <li>Location and climate</li>
+              <li>Your home and its area</li>
+              <li>The building: age, insulation and windows</li>
+              <li>The heating and cooling you have today</li>
+              <li>What matters most to you</li>
+            </ul>
+            <p class="calc-priv">You do not need to give a name, phone or email to see the estimate. Your answers are not sent anywhere: they stay on this page unless you decide to write to us.</p>
+            <button class="btn btn-primary" id="calcGo" type="button">Start <span class="arr" aria-hidden="true">→</span></button>
           </div>
-          <p class="sr" id="calcStatus" aria-live="polite"></p>
-        </div>
-        <div class="controls-side r" style="--i:1">
-          <div class="field">
-            <div class="field-top"><label for="area">Room area</label><output id="areaOut" for="area">25 m²</output></div>
-            <input type="range" id="area" min="10" max="100" step="1" value="25">
-            <div class="range-scale" aria-hidden="true"><span>10 m²</span><span>100 m²</span></div>
-          </div>
-          <fieldset class="seg">
-            <legend>How much sun does the room get?</legend>
-            <div class="seg-row">
-              <input type="radio" name="sun" id="sun1" value="0.9"><label for="sun1">Little</label>
-              <input type="radio" name="sun" id="sun2" value="1" checked><label for="sun2">Average</label>
-              <input type="radio" name="sun" id="sun3" value="1.15"><label for="sun3">A lot</label>
+          <form id="calcForm" novalidate hidden>
+            <div class="calc-err" id="calcErr" role="alert" tabindex="-1" hidden></div>
+            <div id="calcSteps"></div>
+            <div class="calc-nav" id="calcNav">
+              <button class="btn btn-ghost btn-sm" id="calcBack" type="button"><span class="arr-b" aria-hidden="true">←</span> Back</button>
+              <button class="btn btn-primary" id="calcNext" type="submit">Continue <span class="arr" aria-hidden="true">→</span></button>
             </div>
-          </fieldset>
-          <fieldset class="seg">
-            <legend>How is the insulation?</legend>
-            <div class="seg-row">
-              <input type="radio" name="ins" id="ins1" value="0.85"><label for="ins1">Good</label>
-              <input type="radio" name="ins" id="ins2" value="1" checked><label for="ins2">Average</label>
-              <input type="radio" name="ins" id="ins3" value="1.2"><label for="ins3">Poor</label>
-            </div>
-          </fieldset>
-          <div class="calc-foot">
-            <p class="calc-need" id="need">Calculated need: 2.5 kW</p>
-            <p class="calc-note">This is a first estimate. We give you the exact size after we see the room, free of charge.</p>
-            <a class="btn btn-primary" id="calcCta" href="#kontakt">Request a quote for this capacity <span class="arr" aria-hidden="true">→</span></a>
-          </div>
+          </form>
+          <div class="calc-result" id="calcResult" hidden></div>
+          <p class="sr" id="calcLive" aria-live="polite"></p>
         </div>
       </div>
       <div class="atw-how calc-how" data-reveal>
-        <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Area</h2><p>We start from about 100 watts per square metre, what a room of normal height usually needs.</p></div>
-        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Sun</h2><p>A room with a lot of sun needs more capacity, a room in the shade needs less.</p></div>
-        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Insulation</h2><p>Well insulated walls and windows lower the need, poor insulation raises it. Then we choose the standard size that covers it.</p></div>
+        <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Building and area</h2><p>We start from the area you want to heat or cool. For heating we use rule-of-thumb figures from about 35 to 55 W/m² for new, well insulated homes, up to about 105 to 140 W/m² for old homes without insulation.</p></div>
+        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Sun and climate</h2><p>For cooling we start from about 60 to 125 W/m² for one room, a little less for a whole home, and adjust for sun, glass, high ceilings, the climate and the number of people. Every “Not sure” widens the range.</p></div>
+        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">System and products</h2><p>We choose the kind of system from what you have (radiators, underfloor, ducts) and what you want. The products are from our range. Only a room-by-room calculation gives the final size.</p></div>
       </div>
 
       <div class="help-band" data-reveal>
@@ -316,7 +298,7 @@
     </nav>
     <nav aria-label="Brands">
       <p class="foot-h">Brands</p>
-      <ul><li><a href="fujitsu.html">Fujitsu</a></li><li><a href="haier.html">Haier</a></li><li><a href="dogu.html">Dogu</a></li><li><a href="aertesi.html">Aertesi</a></li><li><a href="oerre.html">O.erre</a></li><li><a href="tiki.html">Tiki</a></li><li><a href="cvsair.html">Cvsair</a></li></ul>
+      <ul><li><a href="fujitsu.html">Fujitsu</a></li><li><a href="haier.html">Haier</a></li><li><a href="dogu.html">Dogu</a></li><li><a href="aertesi.html">Aertesi</a></li><li><a href="oerre.html">O.erre</a></li><li><a href="tiki.html">Tiki</a></li><li><a href="cvsair.html">Cvsair</a></li><li><a href="hec.html">HEC</a></li></ul>
     </nav>
     <nav aria-label="Site links">
       <p class="foot-h">Site</p>
@@ -329,7 +311,7 @@
   </div>
   <div class="wrap foot-bottom">
     <p>© 2026 Comfort Clima</p>
-    <p>Fujitsu, Haier, Dogu, Aertesi, O.erre, Tiki and Cvsair are trademarks of their respective owners.</p>
+    <p>Fujitsu, Haier, Dogu, Aertesi, O.erre, Tiki, Cvsair and HEC are trademarks of their respective owners.</p>
   </div>
 </footer>
 
