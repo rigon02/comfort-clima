@@ -159,10 +159,20 @@
             </div>
             <div class="f">
               <label for="c-temp">Design temperature (°C)</label>
-              <input id="c-temp" type="number" min="-30" max="0" step="0.1" value="-15" aria-describedby="e-temp h-temp">
+              <input id="c-temp" type="number" min="-30" max="0" step="0.1" value="-9.5" aria-describedby="e-temp h-temp">
               <p class="err" id="e-temp" hidden>From −30 to 0°C.</p>
             </div>
-            <p class="q-help f-wide" id="h-temp">The coldest outdoor temperature the system is sized for. If you are not sure, leave it at −15°C.</p>
+            <div class="calc-zones f-wide" id="h-temp">
+              <p class="q-help">The cold outdoor temperature the system is sized for. Choose your region, or type another value.</p>
+              <ul class="zone-list">
+                <li><button class="zone-t" type="button" data-t="-10" aria-pressed="false"><span>Anamorava region</span><span class="zone-v">−10.0°C</span></button></li>
+                <li><button class="zone-t" type="button" data-t="-9.5" aria-pressed="true"><span>Kosovo Plain</span><span class="zone-v">−9.5°C</span></button></li>
+                <li><button class="zone-t" type="button" data-t="-8.4" aria-pressed="false"><span>Dukagjin Plain</span><span class="zone-v">−8.4°C</span></button></li>
+                <li><button class="zone-t" type="button" data-t="-7.2" aria-pressed="false"><span>Prizren area</span><span class="zone-v">−7.2°C</span></button></li>
+              </ul>
+              <p class="q-help">These are values from ASHRAE: for 99% of the hours in a year, the outdoor temperature is warmer than this temperature. It may be colder for only about 88 hours a year.</p>
+              <p class="q-help">Source: <a href="https://ashrae-meteo.info/v3.0/" target="_blank" rel="noopener">ASHRAE 2025</a>. Mountain areas are colder: ask us.</p>
+            </div>
             <div class="f f-wide">
               <label for="c-ins">Insulation level</label>
               <select id="c-ins">
@@ -217,26 +227,11 @@
               </div>
               <p class="q-help">Underfloor heating runs at lower temperatures and is more efficient. With radiators we allow 15% more power.</p>
             </fieldset>
-            <div class="f f-wide">
-              <label for="c-ceil">Ceiling height (m)</label>
-              <input id="c-ceil" type="number" min="2" max="6" step="0.1" value="2.7" aria-describedby="e-ceil h-ceil">
-              <p class="err" id="e-ceil" hidden>From 2 to 6 m.</p>
-              <p class="q-help" id="h-ceil">Above 2.7 m we add 10% for every 0.5 m.</p>
-            </div>
-            <fieldset class="cq q-choice">
-              <legend>Safety margin</legend>
-              <div class="chips">
-                <div class="chip"><input type="radio" name="safe" id="c-safe-0" value="0" checked><label for="c-safe-0">No margin</label></div>
-                <div class="chip"><input type="radio" name="safe" id="c-safe-10" value="10"><label for="c-safe-10">+10%</label></div>
-                <div class="chip"><input type="radio" name="safe" id="c-safe-20" value="20"><label for="c-safe-20">+20%</label></div>
-              </div>
-              <p class="q-help">Choose it if you are not sure of the data, especially in a renovation.</p>
-            </fieldset>
-            <fieldset class="cq q-choice">
+            <fieldset class="cq q-choice" id="coolQ">
               <legend>Do you also need cooling?</legend>
               <div class="chips">
                 <div class="chip"><input type="radio" name="cool" id="c-cool-no" value="no" checked><label for="c-cool-no">No</label></div>
-                <div class="chip"><input type="radio" name="cool" id="c-cool-yes" value="yes"><label for="c-cool-yes">Yes, with fan coils</label></div>
+                <div class="chip"><input type="radio" name="cool" id="c-cool-yes" value="yes"><label for="c-cool-yes">Yes</label></div>
               </div>
             </fieldset>
             <div class="f f-wide">
@@ -254,20 +249,6 @@
                 <p class="err" id="e-people" hidden>From 1 to 10 people.</p>
                 <p class="q-help" id="h-people">About 45 L of tank per person.</p>
               </div>
-              <fieldset class="cq q-choice">
-                <legend>How often is hot water used at the same time?</legend>
-                <div class="chips">
-                  <div class="chip"><input type="radio" name="use" id="c-use-normal" value="normal" checked><label for="c-use-normal">Normally</label></div>
-                  <div class="chip"><input type="radio" name="use" id="c-use-often" value="often"><label for="c-use-often">Often (+30%)</label></div>
-                </div>
-              </fieldset>
-              <fieldset class="cq q-choice">
-                <legend>Bathtub or just a shower?</legend>
-                <div class="chips">
-                  <div class="chip"><input type="radio" name="bath" id="c-bath-no" value="no" checked><label for="c-bath-no">Shower only</label></div>
-                  <div class="chip"><input type="radio" name="bath" id="c-bath-yes" value="yes"><label for="c-bath-yes">Also a bathtub</label></div>
-                </div>
-              </fieldset>
             </div>
             <div class="calc-actions f-wide">
               <button class="btn btn-ghost btn-sm" id="calcShare" type="button"><span class="cs-t">Share configuration</span></button>
@@ -281,8 +262,8 @@
       </div>
       <div class="atw-how calc-how" data-reveal>
         <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Heat loss</h2><p>The area is multiplied by the loss per m² for the insulation and the design temperature: for example 55 W/m² for medium insulation at −15°C. Between temperatures the value is worked out in a straight line.</p></div>
-        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Corrections</h2><p>Radiators add 15% power, a ceiling above 2.7 m adds 10% for every 0.5 m, and you can choose a 10 or 20% safety margin. The tank is sized at about 45 L per person.</p></div>
-        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Models from our range</h2><p>We show the models that cover the need without going over double, the closest first, then the higher SCOP. The final size comes from a room-by-room calculation.</p></div>
+        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Radiators and hot water</h2><p>With radiators we allow 15% more power, because they run on hotter water. The domestic hot water tank is sized at about 45 L per person, and the buffer tank by the heat pump's capacity.</p></div>
+        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Models from our range</h2><p>We show the models that cover the need without going over double, with the tanks that suit them. The final size comes from a room-by-room calculation.</p></div>
       </div>
 
       <div class="help-band" data-reveal>

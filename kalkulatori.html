@@ -157,10 +157,20 @@
             </div>
             <div class="f">
               <label for="c-temp">Temperatura projektuese (°C)</label>
-              <input id="c-temp" type="number" min="-30" max="0" step="0.1" value="-15" aria-describedby="e-temp h-temp">
+              <input id="c-temp" type="number" min="-30" max="0" step="0.1" value="-9.5" aria-describedby="e-temp h-temp">
               <p class="err" id="e-temp" hidden>Nga −30 deri 0°C.</p>
             </div>
-            <p class="q-help f-wide" id="h-temp">Temperatura më e ftohtë jashtë për të cilën llogaritet sistemi. Nëse nuk e dini, lëreni −15°C.</p>
+            <div class="calc-zones f-wide" id="h-temp">
+              <p class="q-help">Temperatura e ftohtë jashtë për të cilën llogaritet sistemi. Zgjidhni regjionin tuaj, ose shkruani një vlerë tjetër.</p>
+              <ul class="zone-list">
+                <li><button class="zone-t" type="button" data-t="-10" aria-pressed="false"><span>Regjioni i Anamoravës</span><span class="zone-v">−10,0°C</span></button></li>
+                <li><button class="zone-t" type="button" data-t="-9.5" aria-pressed="true"><span>Rrafshi i Kosovës</span><span class="zone-v">−9,5°C</span></button></li>
+                <li><button class="zone-t" type="button" data-t="-8.4" aria-pressed="false"><span>Rrafshi i Dukagjinit</span><span class="zone-v">−8,4°C</span></button></li>
+                <li><button class="zone-t" type="button" data-t="-7.2" aria-pressed="false"><span>Ana e Prizrenit</span><span class="zone-v">−7,2°C</span></button></li>
+              </ul>
+              <p class="q-help">Këto janë vlera nga ASHRAE: 99% të orëve të vitit, temperatura e jashtme është më ngrohtë se kjo temperaturë. Më ftohtë mund të jetë vetëm rreth 88 orë në vit.</p>
+              <p class="q-help">Burimi: <a href="https://ashrae-meteo.info/v3.0/" target="_blank" rel="noopener">ASHRAE 2025</a>. Në zona malore është më ftohtë: na pyetni.</p>
+            </div>
             <div class="f f-wide">
               <label for="c-ins">Niveli i izolimit</label>
               <select id="c-ins">
@@ -215,26 +225,11 @@
               </div>
               <p class="q-help">Dyshemeja punon me temperatura më të ulëta dhe është më efikase. Me radiatorë llogarisim 15% më shumë fuqi.</p>
             </fieldset>
-            <div class="f f-wide">
-              <label for="c-ceil">Lartësia e tavanit (m)</label>
-              <input id="c-ceil" type="number" min="2" max="6" step="0.1" value="2.7" aria-describedby="e-ceil h-ceil">
-              <p class="err" id="e-ceil" hidden>Nga 2 deri 6 m.</p>
-              <p class="q-help" id="h-ceil">Mbi 2,7 m shtojmë 10% për çdo 0,5 m.</p>
-            </div>
-            <fieldset class="cq q-choice">
-              <legend>Rezervë sigurie</legend>
-              <div class="chips">
-                <div class="chip"><input type="radio" name="safe" id="c-safe-0" value="0" checked><label for="c-safe-0">Pa rezervë</label></div>
-                <div class="chip"><input type="radio" name="safe" id="c-safe-10" value="10"><label for="c-safe-10">+10%</label></div>
-                <div class="chip"><input type="radio" name="safe" id="c-safe-20" value="20"><label for="c-safe-20">+20%</label></div>
-              </div>
-              <p class="q-help">Zgjidheni kur nuk jeni të sigurt për të dhënat, sidomos te rinovimet.</p>
-            </fieldset>
-            <fieldset class="cq q-choice">
+            <fieldset class="cq q-choice" id="coolQ">
               <legend>A ju duhet edhe ftohje?</legend>
               <div class="chips">
                 <div class="chip"><input type="radio" name="cool" id="c-cool-no" value="no" checked><label for="c-cool-no">Jo</label></div>
-                <div class="chip"><input type="radio" name="cool" id="c-cool-yes" value="yes"><label for="c-cool-yes">Po, me fan coil</label></div>
+                <div class="chip"><input type="radio" name="cool" id="c-cool-yes" value="yes"><label for="c-cool-yes">Po</label></div>
               </div>
             </fieldset>
             <div class="f f-wide">
@@ -252,20 +247,6 @@
                 <p class="err" id="e-people" hidden>Nga 1 deri 10 persona.</p>
                 <p class="q-help" id="h-people">Rreth 45 L bojler për person.</p>
               </div>
-              <fieldset class="cq q-choice">
-                <legend>Sa shpesh përdoret uji i ngrohtë njëkohësisht?</legend>
-                <div class="chips">
-                  <div class="chip"><input type="radio" name="use" id="c-use-normal" value="normal" checked><label for="c-use-normal">Normalisht</label></div>
-                  <div class="chip"><input type="radio" name="use" id="c-use-often" value="often"><label for="c-use-often">Shpesh (+30%)</label></div>
-                </div>
-              </fieldset>
-              <fieldset class="cq q-choice">
-                <legend>Vaskë apo vetëm dush?</legend>
-                <div class="chips">
-                  <div class="chip"><input type="radio" name="bath" id="c-bath-no" value="no" checked><label for="c-bath-no">Vetëm dush</label></div>
-                  <div class="chip"><input type="radio" name="bath" id="c-bath-yes" value="yes"><label for="c-bath-yes">Edhe vaskë</label></div>
-                </div>
-              </fieldset>
             </div>
             <div class="calc-actions f-wide">
               <button class="btn btn-ghost btn-sm" id="calcShare" type="button"><span class="cs-t">Ndaj konfigurimin</span></button>
@@ -279,8 +260,8 @@
       </div>
       <div class="atw-how calc-how" data-reveal>
         <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Humbja e nxehtësisë</h2><p>Sipërfaqja shumëzohet me humbjen për m² sipas izolimit dhe temperaturës projektuese: për shembull 55 W/m² për izolim mesatar në −15°C. Ndërmjet temperaturave vlera llogaritet në mënyrë lineare.</p></div>
-        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Korrigjimet</h2><p>Radiatorët shtojnë 15% fuqi, tavani mbi 2,7 m shton 10% për çdo 0,5 m, dhe mund të zgjidhni 10 ose 20% rezervë. Bojleri llogaritet rreth 45 L për person.</p></div>
-        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Modelet nga gama jonë</h2><p>Shfaqim modelet që e mbulojnë nevojën pa e kaluar dyfish, më i afërti i pari, pastaj SCOP-i më i lartë. Masën përfundimtare e jep llogaritja dhomë për dhomë.</p></div>
+        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Radiatorët dhe uji i ngrohtë</h2><p>Me radiatorë llogarisim 15% më shumë fuqi, sepse punojnë me ujë më të nxehtë. Bojleri llogaritet rreth 45 L për person, dhe akumuluesi sipas fuqisë së pompës.</p></div>
+        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Modelet nga gama jonë</h2><p>Shfaqim modelet që e mbulojnë nevojën pa e kaluar dyfish, me bojlerin dhe akumuluesin që u përshtaten. Masën përfundimtare e jep llogaritja dhomë për dhomë.</p></div>
       </div>
 
       <div class="help-band" data-reveal>

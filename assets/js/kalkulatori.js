@@ -1,7 +1,8 @@
 /* Heat pump calculator. The form is in the page (kalkulatori.html, en/kalkulatori.html); this file does the sums, updates
    the result as you type and lists models from our own product pages. Nothing is sent anywhere.
-   Method: HVAC Education Hub, the heat pump cheat sheet (heat loss table, corrections, tank sizes, pipe table) and the
-   calculator at kalkulator-dizalice-topline.com (interpolation, +15% for radiators, 45 L per person, product matching). */
+   Sources: heat loss per m², tank sizes and the insulation questions from HVAC Education Hub's heat pump cheat sheet; interpolation,
+   +15% for radiators, 45 L per person and product matching from the calculator at kalkulator-dizalice-topline.com (Marin Bašić);
+   design temperatures from ASHRAE Climatic Design Conditions 2025. Fujitsu first and the buffer tank sizes are the client's rules. */
 (function(){
 'use strict';
 var form=document.getElementById('calcForm'),out=document.getElementById('calcOut'),live=document.getElementById('calcLive');
@@ -44,8 +45,18 @@ var PUMPS=[].concat(
 );
 /* the domestic hot water tanks on our pages that take a heat pump's coil */
 var TANKS=[{id:'tiki-space-200-s2',n:'Tiki Space 200-S2.0',l:180},{id:'tiki-space-300-s4',n:'Tiki Space 300-S4.0',l:249}];
-/* [kW, L/min, copper outer Ø, wall, Al-PEx outer Ø, wall, Pa/m] */
-var PIPES=[[1,2.9,12,1,25,2.5,70],[2,5.8,15,1,25,2.5,110],[4,11.5,18,1,25,2.5,180],[6,17.3,22,1,32,3,190],[8,23,22,1,32,3,260],[10,28.8,28,1.5,40,3.5,200],[12,34.6,28,1.5,40,3.5,290],[16,46.1,35,1.5,50,4,240]];
+/* buffer tanks; the litres are the real volumes on their pages */
+var BUFFERS=[{id:'tiki-buffer-50',n:'Tiki Buffer 50',l:50.9},{id:'tiki-buffer-100',n:'Tiki Buffer 100',l:102},{id:'tiki-buffer-200',n:'Tiki Buffer 200',l:200},{id:'tiki-buffer-300',n:'Tiki Buffer 300',l:285}];
+/* the client's rule, by the pump's capacity: 5-8 kW 50 L, 8-10 kW 100 L, over 10 kW 200 L, over 15 kW 200 L or 300 L above 350 m²;
+   two pumps together always 300 L. Above 32 kW none at all: at that size it is a technical matter for the project. No rule below 5 kW.
+   Fujitsu's 10 kW High Power is rated 10.08 kW, so it still counts as 10 kW. */
+function bufferFor(cap,n,area){
+  if(cap>32||cap<5)return null;
+  if(n===2)return BUFFERS[3];
+  if(cap<=8)return BUFFERS[0];
+  if(cap<=10.1)return BUFFERS[1];
+  return cap>15&&area>350?BUFFERS[3]:BUFFERS[2];
+}
 
 /* ---------- texts ---------- */
 var T={
@@ -54,46 +65,41 @@ var T={
   need:["Fuqia e nevojshme","Required power"],
   vol:["Vëllimi i bojlerit","Tank volume"],
   how:function(w,t,a,b){return EN?w+' W/m² at '+t+'°C × '+a+' m²'+' = '+b+' kW.':w+' W/m² në '+t+'°C × '+a+' m²'+' = '+b+' kW.'},
-  howCeil:function(h,p){return EN?' Ceiling '+h+' m: +'+p+'% included.':' Tavani '+h+' m: +'+p+'% të përfshira.'},
   howRad:[" Radiatorë: +15%."," Radiators: +15%."],
-  howSafe:function(s){return EN?' Safety margin: +'+s+'%.':' Rezervë: +'+s+'%.'},
   list:function(n){return EN?'Recommended heat pumps ('+n+')':'Pompat termike që ju rekomandojmë ('+n+')'},
-  best:["Përputhja më e mirë","Best match"],
+  best:["Rekomandimi ynë","Our recommendation"],
   heat:["Ngrohje","Heating"],cool:["Ftohje","Cooling"],
   why:["Pse e rekomandojmë:","Why we recommend it:"],
   whyHeat:function(h,n){return EN?'Heating capacity ('+h+' kW) covers the need ('+n+' kW)':'Fuqia e ngrohjes ('+h+' kW) e mbulon nevojën ('+n+' kW)'},
+  whyPair:function(h,c,n){return EN?'Two '+h+' kW heat pumps give '+c+' kW and cover the need ('+n+' kW)':'Dy pompa nga '+h+' kW japin '+c+' kW dhe e mbulojnë nevojën ('+n+' kW)'},
+  whyIntPair:function(l){return EN?'A built-in '+l+' L tank in each heat pump':'Bojler i integruar '+l+' L te secila pompë'},
+  pair:["Për këtë fuqi mund të përdoren edhe dy pompa termike bashkë.","For this power, two heat pumps can also work together."],
   whyScop:[function(s){return EN?'SCOP '+s+' for underfloor heating (35°C water)':'SCOP '+s+' për ngrohje në dysheme (ujë 35°C)'},function(s){return EN?'SCOP '+s+' with radiators (55°C water)':'SCOP '+s+' me radiatorë (ujë 55°C)'}],
   whyInt:function(l,p){return EN?'Built-in '+l+' L tank, enough for about '+p+' people':'Bojler i integruar '+l+' L, mjafton për rreth '+p+' persona'},
   whyIntNo:["Bojler i integruar; vëllimin e konfirmojmë në ofertë","Built-in tank; we confirm its volume in the quote"],
   whyExt:function(l,p){return EN?'External '+l+' L tank, enough for about '+p+' people':'Bojler i jashtëm '+l+' L, mjafton për rreth '+p+' persona'},
   plus:function(n,l){return EN?'+ '+n+', '+l+' L domestic hot water tank':'+ '+n+', bojler '+l+' L'},
-  low:function(k,n){return EN?'At −7°C outside it gives '+k+' kW, less than the '+n+' kW you need. It may need a backup heater; we check this in the quote.':'Në −7°C jashtë jep '+k+' kW, më pak se '+n+' kW që ju duhen. Mund të kërkojë ngrohës shtesë; e kontrollojmë në ofertë.'},
+  plusBuf:function(n,l){return EN?'+ '+n+', '+l+' L buffer tank':'+ '+n+', akumulues '+l+' L'},
+  low:function(k,n,two){return EN?'At −7°C outside '+(two?'they give ':'it gives ')+k+' kW, less than the '+n+' kW you need. '+(two?'They':'It')+' may need a backup heater; we check this in the quote.':'Në −7°C jashtë '+(two?'japin ':'jep ')+k+' kW, më pak se '+n+' kW që ju duhen. Mund të kërkojë ngrohës shtesë; e kontrollojmë në ofertë.'},
   over:["Shumë më i madh se nevoja: mund të ndizet e fiket shpesh. Flisni me ne para se ta zgjidhni.","Much larger than the need: it may switch on and off often. Talk to us before choosing it."],
   view:["Shiko produktin","View product"],
   quote:["Kërko ofertë","Request a quote"],
   ask:function(a,n){return EN?'a heat pump of about '+n+' kW for '+a+' m²':'pompë termike rreth '+n+' kW për '+a+' m²'},
-  askPump:function(name,h,tank,n){return name+', '+h+' kW'+tank+(EN?' (calculated need: '+n+' kW)':' (nevoja e llogaritur: '+n+' kW)')},
+  askPump:function(name,h,extras,n){return name+', '+h+' kW'+extras+(EN?' (calculated need: '+n+' kW)':' (nevoja e llogaritur: '+n+' kW)')},
   askAll:["Kërko ofertë për këtë llogaritje","Request a quote for this calculation"],
-  noExt:function(max,v){return EN?'The largest tank on our pages is '+max+' L and you need about '+v+' L. The models below are shown without a tank: write to us and we find one together.':'Bojleri më i madh në faqet tona është '+max+' L, ndërsa ju duhen rreth '+v+' L. Modelet më poshtë janë pa bojler: na shkruani dhe e gjejmë bashkë.'},
-  bath:["Me vaskë, uji i ngrohtë llogaritet më vete: mund të duhet njësi më e madhe ose sistem i veçantë. E shohim bashkë në ofertë.","With a bathtub, hot water is worked out separately: you may need a larger unit or a separate system. We look at it together in the quote."],
-  fan:function(){var h='<a class="text-link" href="fan-coil.html">'+(EN?'Aertesi fan coils':'fan coil Aertesi')+'</a>';return EN?'For cooling, these heat pumps connect to '+h+' in the rooms.':'Për ftohje, këto pompa lidhen me '+h+' nëpër dhoma.'},
-  noInt:function(v){return EN?'Our models with a built-in tank have about 190 L and you need about '+v+' L. Choose an external tank.':'Modelet tona me bojler të integruar kanë rreth 190 L, ndërsa ju duhen rreth '+v+' L. Zgjidhni bojler të jashtëm.'},
+  bigExt:function(max,v){return EN?'You need about '+v+' L and our largest tank is '+max+' L, so we propose that one. For more, write to us.':'Ju duhen rreth '+v+' L, ndërsa bojleri ynë më i madh është '+max+' L, prandaj po e propozojmë atë. Për më shumë, na shkruani.'},
+  bigInt:function(v){return EN?'You need about '+v+' L and our largest built-in tanks have about 190 L, so we propose those. An external tank goes up to 249 L.':'Ju duhen rreth '+v+' L, ndërsa bojlerët tanë të integruar më të mëdhenj kanë rreth 190 L, prandaj po i propozojmë ata. Bojleri i jashtëm shkon deri 249 L.'},
+  fan:function(){var h='<a class="text-link" href="fan-coil.html">'+(EN?'our fan coils from Aertesi':'fan coil-et tonë nga Aertesi')+'</a>';return (EN?'See ':'Shihni ')+h+'.'},
   noTemp:["Asnjë model nuk punon deri në këtë temperaturë. Na shkruani dhe e shohim bashkë.","No model works down to this temperature. Write to us and we look at it together."],
   tooBig:function(m){var h='<a class="text-link" href="chillers.html">'+(EN?'the chillers':'chillerët')+'</a>';return EN?'This is more than the models that match your choices can give (up to '+m+' kW). Write to us, or see '+h+'.':'Kjo fuqi kalon modelet që përputhen me zgjedhjet tuaja (deri '+m+' kW). Na shkruani, ose shihni '+h+'.'},
   tooSmall:function(m){var h='<a class="text-link" href="kondicionere-split.html">'+(EN?'split air conditioners':'kondicionerët split')+'</a>';return EN?'This is less than half of our smallest matching model ('+m+' kW), which would be too large. Write to us, or see '+h+'.':'Kjo fuqi është më pak se gjysma e modelit tonë më të vogël që përputhet ('+m+' kW), i cili do të ishte shumë i madh. Na shkruani, ose shihni '+h+'.'},
   noneFit:["Asnjë model nuk përputhet me këto zgjedhje. Provoni t'i ndryshoni, ose na shkruani.","No model matches these choices. Try changing them, or write to us."],
   bad:["Plotësoni fushat e shënuara me të kuqe për të parë rezultatin.","Fill in the fields marked in red to see the result."],
-  disc:["Është vlerësim për një shtëpi mesatare. Forma e shtëpisë, cilësia e ndërtimit, dritaret dhe orientimi mund ta ndryshojnë shumë rezultatin; masën e saktë e jep llogaritja e humbjeve dhomë për dhomë. Fuqitë e modeleve janë me ujë 35°C dhe 7°C jashtë, si në tabelat e produkteve: në të ftohtë japin më pak, prandaj i kontrollojmë në ofertë. SCOP-i i modeleve Fujitsu është llogaritur nga ηs në tabelat e produkteve.","This is an estimate for an average house. The shape of the house, the build quality, the windows and the orientation can change the result a lot; the exact size comes from a room-by-room heat loss calculation. Model capacities are with 35°C water and 7°C outside, as in the product tables: they give less in the cold, so we check them in the quote. SCOP for the Fujitsu models is worked out from ηs in the product tables."],
-  src:['Metoda: <a class="text-link" href="https://www.hvaceduhub.com/resources" target="_blank" rel="noopener">HVAC Education Hub</a>.','Method: <a class="text-link" href="https://www.hvaceduhub.com/resources" target="_blank" rel="noopener">HVAC Education Hub</a>.'],
-  inst:["Për instaluesin: tubat dhe radiatorët","For the installer: pipes and radiators"],
-  pFlow:["Rrjedha e ujit","Water flow"],pCu:["Tub bakri","Copper pipe"],pPex:["Tub Al-PEx","Al-PEx pipe"],pDrop:["Rënia e presionit","Pressure drop"],pEx:["Shembull, linjë 10 m","Example, 10 m line"],
-  pFor:function(k){return EN?'Sized for '+k+' kW.':'Për '+k+' kW.'},
-  pNote:function(pa,k){return EN?'10 m × '+pa+' Pa/m × 2 (there and back) × 1.3 (elbows and T-pieces) = '+k+' kPa. The whole system should stay under 30 to 40 kPa for a standard circulation pump. Use at least Al-PEx Ø25 mm.':'10 m × '+pa+' Pa/m × 2 (vajtje-ardhje) × 1,3 (bërryla dhe T) = '+k+' kPa. I gjithë sistemi duhet të mbetet nën 30 deri 40 kPa për një pompë qarkullimi standarde. Përdorni së paku Al-PEx Ø25 mm.'},
-  pOver:["Mbi 16 kW tubat llogariten veç, sipas projektit.","Above 16 kW the pipes are sized separately, for the project."],
-  rad:function(w){return EN?'Existing radiators (90/70°C) give about 2.8 times less at 45/40°C: power at 45/40°C ≈ power at 90/70°C ÷ 2.8. This house needs about '+w+' W per m².':'Radiatorët ekzistues (90/70°C) japin rreth 2,8 herë më pak në 45/40°C: fuqia në 45/40°C ≈ fuqia në 90/70°C ÷ 2,8. Kjo shtëpi ka nevojë për rreth '+w+' W për m².'},
+  disc:["Është vlerësim për një shtëpi mesatare. Forma e shtëpisë, cilësia e ndërtimit, dritaret dhe orientimi mund ta ndryshojnë shumë rezultatin; masën e saktë e jep llogaritja e humbjeve dhomë për dhomë sipas EN 12831-1. Fuqitë e modeleve janë me ujë 35°C dhe 7°C jashtë, si në tabelat e produkteve: në të ftohtë japin më pak, prandaj i kontrollojmë në ofertë. SCOP-i i modeleve Fujitsu është llogaritur nga ηs në tabelat e produkteve.","This is an estimate for an average house. The shape of the house, the build quality, the windows and the orientation can change the result a lot; the exact size comes from a room-by-room heat loss calculation to EN 12831-1. Model capacities are with 35°C water and 7°C outside, as in the product tables: they give less in the cold, so we check them in the quote. SCOP for the Fujitsu models is worked out from ηs in the product tables."],
+  src:['Vlerat orientuese për m²: <a class="text-link" href="https://www.hvaceduhub.com/resources" target="_blank" rel="noopener">HVAC Education Hub</a>.','Guide values per m²: <a class="text-link" href="https://www.hvaceduhub.com/resources" target="_blank" rel="noopener">HVAC Education Hub</a>.'],
   livNeed:function(n,c){return EN?'Required power '+n+' kW. '+c+' models.':'Fuqia e nevojshme '+n+' kW. '+c+' modele.'},
   assess:function(n){return EN?'From your answers: '+n+'.':'Sipas përgjigjeve: '+n+'.'},
-  winWarn:["Dritaret janë më të dobëta se muret, prandaj humbjet mund të jenë më të larta. Mund të shtoni rezervë sigurie.","The windows are weaker than the walls, so the losses may be higher. You can add a safety margin."],
+  winWarn:["Dritaret janë më të dobëta se muret, prandaj humbjet mund të jenë më të larta. Mund të zgjidhni një nivel izolimi më të ulët.","The windows are weaker than the walls, so the losses may be higher. You can choose one insulation level lower."],
   copied:["Linku u kopjua!","Link copied!"]
 };
 
@@ -105,41 +111,60 @@ function lossAt(row,t){
   for(var i=0;i<3;i++)if(t>=TEMPS[i]&&t<=TEMPS[i+1])return row[i]+(t-TEMPS[i])/(TEMPS[i+1]-TEMPS[i])*(row[i+1]-row[i]);
   return row[0];
 }
-/* 45 L per person, held inside the guide's range for that household size; frequent simultaneous use adds 30% */
-function tankLitres(n,frequent){
+/* 45 L per person, held inside the guide's range for that household size */
+function tankLitres(n){
   var r=n<=2?[120,150]:n<=4?[150,200]:n<=6?[200,300]:[300,Infinity];
-  return Math.round(Math.min(r[1],Math.max(r[0],n*45))*(frequent?1.3:1));
+  return Math.min(r[1],Math.max(r[0],n*45));
 }
 function compute(a){
   var w=lossAt(LOSS[a.ins],a.t),
-      ceil=a.h>2.7?.1*(a.h-2.7)/.5:0,
-      base=w*a.area/1000*(1+ceil),
-      need=base*(a.emit==='rad'?1.15:1)*(1+a.safe/100);
-  return {w:w,ceil:ceil,base:Math.round(base*100)/100,need:Math.round(need*100)/100,vol:a.tank==='none'?0:tankLitres(a.n,a.use==='often')};
+      base=w*a.area/1000,
+      need=base*(a.emit==='rad'?1.15:1);
+  return {w:w,base:Math.round(base*100)/100,need:Math.round(need*100)/100,vol:a.tank==='none'?0:tankLitres(a.n)};
 }
+function isFujitsu(it){return it.p.id.indexOf('fujitsu')===0}
+function isCommercial(p){return p.id==='haier-commercial-heat-pump-r290'}
+function maxHeat(list){return Math.max.apply(null,list.map(function(p){return p.h}).concat(0))}
 /* same match as the reference calculator: enough capacity, less than double, closest first, then the higher SCOP.
-   Added: a model whose published -7°C output falls short of the need (when the design temperature is that cold) goes after those that cover it. */
+   Added: a model whose published -7°C output falls short of the need (when the design temperature is that cold) goes after those that cover it.
+   The client's rules: Fujitsu first, except that above 20 kW a Haier commercial model that suits the need (not 1.5 times it) goes before it.
+   Places stay for the other Haier models when they fit, so Fujitsu does not hide them.
+   Each group (Fujitsu, Haier home, Haier commercial) offers two of the same model together once its own largest model is too small, so
+   15 kW shows both 2 × Fujitsu and Haier 16 kW. A need above our largest tank still gets that tank (the page says so). */
 function pick(a,R){
   var k=a.emit==='rad'?1:0,need=R.need;
   var pool=PUMPS.filter(function(p){return a.t>=p.tMin&&(a.tank==='int'?p.tank>0:p.tank===0)&&(a.cool!=='yes'||p.c>0)});
-  var list=pool.filter(function(p){return p.h>=need&&p.h<need*2&&(a.tank!=='int'||p.tank>=R.vol)}).map(function(p){
-    return {p:p,low:(a.t<=-7&&p.h7&&p.h7<need)?p.h7:0};
+  function isFj(p){return p.id.indexOf('fujitsu')===0}
+  function sameGroup(p){return function(q){return isCommercial(p)?isCommercial(q):isFj(p)?isFj(q):!isFj(q)&&!isCommercial(q)}}
+  var list=[];
+  function add(p,n){
+    var cap=p.h*n;
+    if(cap>=need&&cap<need*2)list.push({p:p,n:n,cap:cap,low:(a.t<=-7&&p.h7&&p.h7*n<need)?p.h7*n:0});
+  }
+  pool.forEach(function(p){
+    add(p,1);
+    if(need>maxHeat(pool.filter(sameGroup(p))))add(p,2);
   });
   list.sort(function(x,y){
     if(!!x.low!==!!y.low)return x.low?1:-1;
-    var dx=Math.abs(x.p.h-need),dy=Math.abs(y.p.h-need);
+    var dx=Math.abs(x.cap-need),dy=Math.abs(y.cap-need);
     if(Math.abs(dx-dy)>1e-9)return dx-dy;
     return y.p.scop[k]-x.p.scop[k];
   });
+  function suits(it){return it.n===1&&it.cap<need*1.5}
+  var first=need>20?list.filter(function(it){return isCommercial(it.p)&&suits(it)}).slice(0,2):[];
+  var left=list.filter(function(it){return first.indexOf(it)<0});
+  var fj=left.filter(isFujitsu),home=left.filter(function(it){return !isFujitsu(it)&&!isCommercial(it.p)}),com=left.filter(function(it){return isCommercial(it.p)});
+  /* places kept after Fujitsu: one for Haier home, and one for a commercial model that suits the need if none leads the list */
+  var keepCom=!first.length&&com.some(suits)?1:0,room=5-first.length,fjTake=fj.slice(0,room-keepCom-(home.length?1:0));
   var tank=null;
-  if(a.tank==='ext')for(var i=0;i<TANKS.length;i++)if(TANKS[i].l>=R.vol){tank=TANKS[i];break}
-  return {list:list.slice(0,5),pool:pool,tank:tank};
+  if(a.tank==='ext'){tank=TANKS[TANKS.length-1];for(var i=0;i<TANKS.length;i++)if(TANKS[i].l>=R.vol){tank=TANKS[i];break}}
+  return {list:first.concat(fjTake,home.slice(0,room-fjTake.length-keepCom),com).slice(0,5),pool:pool,tank:tank};
 }
 function emptyText(a,R,P){
-  if(a.tank==='int'&&R.vol>190)return T.noInt(num(R.vol));
   if(!P.pool.length)return L(T.noTemp);
-  var hs=P.pool.map(function(p){return p.h}),max=Math.max.apply(null,hs),min=Math.min.apply(null,hs);
-  if(R.need>max)return T.tooBig(num(max));
+  var max=maxHeat(P.pool),min=Math.min.apply(null,P.pool.map(function(p){return p.h}));
+  if(R.need>max*2)return T.tooBig(num(max*2));
   if(R.need*2<=min)return T.tooSmall(num(min));
   return L(T.noneFit);
 }
@@ -147,78 +172,73 @@ function emptyText(a,R,P){
 /* ---------- reading the form ---------- */
 function radio(n){var c=form.querySelector('input[name="'+n+'"]:checked');return c?c.value:''}
 function read(){
-  return {area:parseFloat($id('c-area').value),ins:$id('c-ins').value,t:parseFloat($id('c-temp').value),emit:radio('emit'),h:parseFloat($id('c-ceil').value),safe:parseInt(radio('safe'),10)||0,cool:radio('cool'),tank:$id('c-tank').value,n:parseInt($id('c-people').value,10),use:radio('use'),bath:radio('bath')};
+  return {area:parseFloat($id('c-area').value),ins:$id('c-ins').value,t:parseFloat($id('c-temp').value),emit:radio('emit'),cool:radio('emit')==='rad'?'no':radio('cool'),tank:$id('c-tank').value,n:parseInt($id('c-people').value,10)};
 }
 function inRange(v,lo,hi){return typeof v==='number'&&!isNaN(v)&&v>=lo&&v<=hi}
 function mark(id,ok){var i=$id('c-'+id),e=$id('e-'+id);if(ok)i.removeAttribute('aria-invalid');else i.setAttribute('aria-invalid','true');e.hidden=ok;return ok}
 function validate(a){
   var ok=mark('area',inRange(a.area,20,500));
   ok=mark('temp',inRange(a.t,-30,0))&&ok;
-  ok=mark('ceil',inRange(a.h,2,6))&&ok;
   ok=mark('people',a.tank==='none'||inRange(a.n,1,10))&&ok;
   return ok;
 }
 
 /* ---------- the result ---------- */
 function prodHtml(it,i,a,R,P){
-  var p=it.p,k=a.emit==='rad'?1:0,need=num(R.need),h=num(p.h),name=L(p.name),page=p.id+'.html',t=P.tank,why=[T.whyHeat(h,need),T.whyScop[k](num(p.scop[k]))];
-  if(a.tank==='int')why.push(p.conf?T.whyInt(p.tank,Math.round(p.tank/45)):L(T.whyIntNo));
+  var p=it.p,two=it.n===2,k=a.emit==='rad'?1:0,need=num(R.need),h=num(p.h),cap=num(it.cap),name=(two?'2 × ':'')+L(p.name),page=p.id+'.html',t=P.tank,b=bufferFor(it.cap,it.n,a.area),
+      why=[two?T.whyPair(h,cap,need):T.whyHeat(h,need),T.whyScop[k](num(p.scop[k]))];
+  if(a.tank==='int')why.push(!p.conf?L(T.whyIntNo):two?T.whyIntPair(p.tank):T.whyInt(p.tank,Math.round(p.tank/45)));
   if(t)why.push(T.whyExt(t.l,Math.round(t.l/45)));
-  var title=T.askPump(name,h,t?' + '+t.n:'',need),specs='<div><dt>'+L(T.heat)+'</dt><dd>'+h+' kW</dd></div>';
-  if(p.c)specs+='<div><dt>'+L(T.cool)+'</dt><dd>'+num(p.c)+' kW</dd></div>';
+  var title=T.askPump(name,h,(t?' + '+t.n:'')+(b?' + '+b.n:''),need),specs='<div><dt>'+L(T.heat)+'</dt><dd>'+cap+' kW</dd></div>';
+  if(p.c)specs+='<div><dt>'+L(T.cool)+'</dt><dd>'+num(p.c*it.n)+' kW</dd></div>';
   specs+='<div><dt>SCOP</dt><dd>'+num(p.scop[k])+'</dd></div>';
   return '<li class="rp"><a class="rp-img" href="'+page+'" tabindex="-1" aria-hidden="true"><img src="'+ROOT+'assets/products/'+p.img+'" width="840" height="560" loading="lazy" alt=""></a><div class="rp-body">'+
-    '<p class="rp-top"><span class="pkick">'+p.kind+'</span>'+(i===0&&!it.low?'<span class="rp-best">'+L(T.best)+'</span>':'')+'</p>'+
+    '<p class="rp-top"><span class="pkick">'+p.kind+'</span>'+(i===0&&!it.low&&it.cap<R.need*1.5?'<span class="rp-best">'+L(T.best)+'</span>':'')+'</p>'+
     '<h4 class="rp-name"><a href="'+page+'">'+esc(name)+', '+h+' kW</a></h4>'+
     (t?'<p class="rp-tank"><a href="'+t.id+'.html">'+esc(T.plus(t.n,t.l))+'</a></p>':'')+
+    (b?'<p class="rp-tank"><a href="'+b.id+'.html">'+esc(T.plusBuf(b.n,num(b.l)))+'</a></p>':'')+
     '<dl class="pspecs">'+specs+'</dl>'+
     '<p class="rp-whyh">'+L(T.why)+'</p><ul class="rp-why"><li>'+why.map(esc).join('</li><li>')+'</li></ul>'+
-    (it.low?'<p class="rp-warn">'+esc(T.low(num(it.low),need))+'</p>':'')+
-    (p.h>=R.need*1.5?'<p class="rp-warn">'+esc(L(T.over))+'</p>':'')+
+    (it.low?'<p class="rp-warn">'+esc(T.low(num(it.low),need,two))+'</p>':'')+
+    (it.cap>=R.need*1.5?'<p class="rp-warn">'+esc(L(T.over))+'</p>':'')+
     '<div class="rp-cta"><a class="btn btn-ghost btn-sm" href="#kontakt" data-product="'+esc(title)+'" data-need="pompe">'+L(T.quote)+' <span class="arr" aria-hidden="true">→</span></a><a class="text-link" href="'+page+'">'+L(T.view)+'</a></div>'+
     '</div></li>';
 }
-function installerHtml(a,R,open){
-  var row=null,h='<details class="res-more" id="calcInst"'+(open?' open':'')+'><summary>'+L(T.inst)+'</summary><div class="res-inst">';
-  for(var i=0;i<PIPES.length;i++)if(PIPES[i][0]>=R.need){row=PIPES[i];break}
-  if(row){
-    var dia=function(o,w){return 'Ø'+num(o)+' × '+num(w)+' mm'},ex=10*row[6]*2*1.3/1000;
-    h+='<p class="res-ifor">'+T.pFor(num(row[0]))+'</p><dl class="res-ans">'+
-      '<div><dt>'+L(T.pFlow)+'</dt><dd>'+num(row[1])+' L/min</dd></div>'+
-      '<div><dt>'+L(T.pCu)+'</dt><dd>'+dia(row[2],row[3])+'</dd></div>'+
-      '<div><dt>'+L(T.pPex)+'</dt><dd>'+dia(row[4],row[5])+'</dd></div>'+
-      '<div><dt>'+L(T.pDrop)+'</dt><dd>'+row[6]+' Pa/m</dd></div>'+
-      '<div><dt>'+L(T.pEx)+'</dt><dd>'+num(ex)+' kPa</dd></div></dl><p class="res-inote">'+esc(T.pNote(row[6],num(ex)))+'</p>';
-  }else h+='<p class="res-inote">'+L(T.pOver)+'</p>';
-  if(a.emit==='rad')h+='<p class="res-inote">'+esc(T.rad(Math.round(R.need*1000/a.area)))+'</p>';
-  return h+'</div></details>';
-}
+/* the suggested temperature that matches the field shows as chosen */
+var zones=[].slice.call(form.querySelectorAll('.zone-t'));
+function syncZones(t){zones.forEach(function(b){b.setAttribute('aria-pressed',String(parseFloat(b.getAttribute('data-t'))===t))})}
+zones.forEach(function(b){b.addEventListener('click',function(){
+  var i=$id('c-temp');i.value=b.getAttribute('data-t');i.dispatchEvent(new Event('input',{bubbles:true}));
+})});
 var lastHtml='';
 function render(){
   var a=read();
   $id('tankMore').hidden=a.tank==='none';
+  /* radiators cannot cool, so with them the cooling question goes away */
+  $id('coolQ').hidden=a.emit==='rad';
+  syncZones(a.t);
   var html,msg;
   if(!validate(a)){html='<p class="res-alert">'+L(T.bad)+'</p>';msg=L(T.bad)}
   else{
-    var R=compute(a),P=pick(a,R),instEl=$id('calcInst'),how=T.how(num(Math.round(R.w*10)/10),deg(a.t),num(a.area),num(Math.round(R.w*a.area/10)/100));
-    if(R.ceil>0)how+=T.howCeil(num(a.h),num(Math.round(R.ceil*1000)/10));
+    var R=compute(a),P=pick(a,R),how=T.how(num(Math.round(R.w*10)/10),deg(a.t),num(a.area),num(R.base));
     if(a.emit==='rad')how+=L(T.howRad);
-    if(a.safe)how+=T.howSafe(a.safe);
     html='<h2 class="res-title">'+L(T.res)+'</h2><div class="res-nums">'+
       '<div class="res-num"><p class="res-nl">'+L(T.base)+'</p><p class="res-kw">'+num(R.base)+'<small>kW</small></p></div>'+
       '<div class="res-num"><p class="res-nl">'+L(T.need)+'</p><p class="res-kw">'+num(R.need)+'<small>kW</small></p></div>'+
       (R.vol?'<div class="res-num"><p class="res-nl">'+L(T.vol)+'</p><p class="res-kw">'+R.vol+'<small>L</small></p></div>':'')+
       '</div><p class="res-how">'+esc(how)+'</p>';
     var notes='';
-    if(a.tank==='ext'&&!P.tank)notes+='<p class="res-alert">'+esc(T.noExt(TANKS[TANKS.length-1].l,R.vol))+'</p>';
-    if(a.tank!=='none'&&a.bath==='yes')notes+='<p class="res-alert">'+esc(L(T.bath))+'</p>';
+    if(a.tank==='ext'&&R.vol>P.tank.l)notes+='<p class="res-alert">'+esc(T.bigExt(P.tank.l,R.vol))+'</p>';
+    var twoInList=P.list.some(function(it){return it.n===2});
+    if(a.tank==='int'&&R.vol>(twoInList?380:190))notes+='<p class="res-alert">'+esc(T.bigInt(R.vol))+'</p>';
+    if(twoInList)notes+='<p class="res-alert">'+esc(L(T.pair))+'</p>';
+    if(a.cool==='yes')notes+='<p class="res-alert">'+T.fan()+'</p>';
     html+=notes+'<h3 class="res-lt">'+T.list(P.list.length)+'</h3>';
     if(P.list.length){
       html+='<ul class="rp-list">'+P.list.map(function(it,i){return prodHtml(it,i,a,R,P)}).join('')+'</ul>';
-      if(a.cool==='yes')html+='<p class="res-alert">'+T.fan()+'</p>';
     }else html+='<p class="res-alert">'+emptyText(a,R,P)+'</p>';
     html+='<a class="btn btn-primary res-ask" href="#kontakt" data-product="'+esc(T.ask(num(a.area),num(R.need)))+'" data-need="pompe">'+L(T.askAll)+' <span class="arr" aria-hidden="true">→</span></a>'+
-      installerHtml(a,R,instEl&&instEl.open)+'<p class="res-disc">'+esc(L(T.disc))+' '+L(T.src)+'</p>';
+      '<p class="res-disc">'+esc(L(T.disc))+' '+L(T.src)+'</p>';
     msg=T.livNeed(num(R.need),P.list.length);
   }
   if(html!==lastHtml){out.innerHTML=html;lastHtml=html}
@@ -242,7 +262,7 @@ function assess(){
 
 /* ---------- share: the answers sit after # in the address ---------- */
 function shareUrl(){
-  var a=read(),p={a:$id('c-area').value,i:a.ins,t:$id('c-temp').value,e:a.emit,h:$id('c-ceil').value,s:a.safe,c:a.cool,w:a.tank,n:$id('c-people').value,u:a.use,b:a.bath};
+  var a=read(),p={a:$id('c-area').value,i:a.ins,t:$id('c-temp').value,e:a.emit,c:a.cool,w:a.tank,n:$id('c-people').value};
   return location.href.split('#')[0]+'#'+Object.keys(p).map(function(k){return k+'='+encodeURIComponent(p[k])}).join('&');
 }
 function setRadio(n,v){var c=form.querySelector('input[name="'+n+'"][value="'+String(v).replace(/[^\w-]/g,'')+'"]');if(c)c.checked=true}
@@ -253,15 +273,11 @@ function fromHash(){
   var p={};h.split('&').forEach(function(x){var i=x.indexOf('=');if(i>0)p[x.slice(0,i)]=decodeURIComponent(x.slice(i+1))});
   if(p.a!=null)$id('c-area').value=p.a;
   if(p.t!=null)$id('c-temp').value=p.t;
-  if(p.h!=null)$id('c-ceil').value=p.h;
   if(p.n!=null)$id('c-people').value=p.n;
   if(p.i)setSelect('c-ins',p.i);
   if(p.w)setSelect('c-tank',p.w);
   if(p.e)setRadio('emit',p.e);
-  if(p.s!=null)setRadio('safe',p.s);
   if(p.c)setRadio('cool',p.c);
-  if(p.u)setRadio('use',p.u);
-  if(p.b)setRadio('bath',p.b);
   schedule();
 }
 var share=$id('calcShare'),shareLbl=share.querySelector('.cs-t'),shareIdle=shareLbl.textContent,shareTimer=0;
