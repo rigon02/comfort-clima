@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>document.documentElement.className='js'</script>
-<title>Calculator · Which system suits your home? · Comfort Clima</title>
-<meta name="description" content="Answer a few questions about your home and get a preliminary estimate: the kind of heating and cooling system, a rough capacity and products from our range.">
+<title>Heat pump calculator · Comfort Clima</title>
+<meta name="description" content="Work out how much heat pump capacity you need from the area, insulation, design temperature and heating system, and see the matching models from our range.">
 <meta name="theme-color" content="#030a18">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_GB">
-<meta property="og:title" content="Calculator · Comfort Clima">
-<meta property="og:description" content="Which system suits your home? A preliminary estimate for heating and cooling, with products from our range.">
+<meta property="og:title" content="Heat pump calculator · Comfort Clima">
+<meta property="og:description" content="What size heat pump do you need? A first estimate, with models from our range.">
 <meta property="og:url" content="https://comfort-clima.com/en/kalkulatori.html">
 <meta property="og:image" content="https://comfort-clima.com/assets/og-image-en.jpg?v=4">
 <meta property="og:image:width" content="1200">
@@ -140,48 +140,149 @@
     </div>
     <div class="wrap">
       <nav aria-label="Breadcrumb" class="fade" style="--d:0s"><ol class="crumbs"><li><a href="index.html">Home</a></li><li><span aria-current="page">Calculator</span></li></ol></nav>
-      <p class="kicker fade" style="--d:.05s">Calculator</p>
-      <h1 class="h1">Which system suits your home?</h1>
-      <p class="lede fade" style="--d:.6s">Answer a few simple questions about your home and see which systems fit, with a rough capacity and the products of ours worth a look. It is a preliminary estimate, not a design.</p>
+      <p class="kicker fade" style="--d:.05s">Heat pump calculator</p>
+      <h1 class="h1">What size heat pump do you need?</h1>
+      <p class="lede fade" style="--d:.6s">Enter the area, the insulation and the design temperature, and see the power you need and the models from our range that fit. It is a first estimate, not a design.</p>
     </div>
   </section>
 
   <section id="kalkulatori" class="page-body calc" data-live>
     <div class="wrap">
-      <noscript><p class="calc-nojs">The calculator runs on JavaScript, which seems to be switched off in your browser. Call us on <a href="tel:+38348772288">+383 48 77 22 88</a> or write to <a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a> and we will help you choose.</p></noscript>
+      <noscript><p class="calc-nojs">The calculator needs JavaScript, which seems to be off in your browser. Call us on <a href="tel:+38348772288">+383 48 77 22 88</a> or write to <a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a> and we will help you choose.</p></noscript>
       <div class="calc-box" id="calc" data-reveal>
-        <ol class="calc-prog r" style="--i:0" id="calcProg" aria-label="Calculator steps"></ol>
-        <div class="calc-main r" style="--i:1">
-          <div class="calc-start" id="calcStart">
-            <p class="kicker">Before you start</p>
-            <h2 class="calc-h">Five short steps, then your estimate.</h2>
-            <p class="calc-lead">About 3 minutes. Where you do not know an answer, pick “Not sure”: the estimate allows for it.</p>
-            <ul class="calc-what">
-              <li>Location and climate</li>
-              <li>Your home and its area</li>
-              <li>The building: age, insulation and windows</li>
-              <li>The heating and cooling you have today</li>
-              <li>What matters most to you</li>
-            </ul>
-            <p class="calc-priv">You do not need to give a name, phone or email to see the estimate. Your answers are not sent anywhere: they stay on this page unless you decide to write to us.</p>
-            <button class="btn btn-primary" id="calcGo" type="button">Start <span class="arr" aria-hidden="true">→</span></button>
-          </div>
-          <form id="calcForm" novalidate hidden>
-            <div class="calc-err" id="calcErr" role="alert" tabindex="-1" hidden></div>
-            <div id="calcSteps"></div>
-            <div class="calc-nav" id="calcNav">
-              <button class="btn btn-ghost btn-sm" id="calcBack" type="button"><span class="arr-b" aria-hidden="true">←</span> Back</button>
-              <button class="btn btn-primary" id="calcNext" type="submit">Continue <span class="arr" aria-hidden="true">→</span></button>
+        <form class="calc-form r" style="--i:0" id="calcForm" novalidate aria-label="Details of the house">
+          <div class="calc-grid">
+            <div class="f">
+              <label for="c-area">House area (m²)</label>
+              <input id="c-area" type="number" min="20" max="500" step="1" value="100" inputmode="numeric" aria-describedby="e-area">
+              <p class="err" id="e-area" hidden>From 20 to 500 m².</p>
             </div>
-          </form>
-          <div class="calc-result" id="calcResult" hidden></div>
-          <p class="sr" id="calcLive" aria-live="polite"></p>
-        </div>
+            <div class="f">
+              <label for="c-temp">Design temperature (°C)</label>
+              <input id="c-temp" type="number" min="-30" max="0" step="0.1" value="-15" aria-describedby="e-temp h-temp">
+              <p class="err" id="e-temp" hidden>From −30 to 0°C.</p>
+            </div>
+            <p class="q-help f-wide" id="h-temp">The coldest outdoor temperature the system is sized for. If you are not sure, leave it at −15°C.</p>
+            <div class="f f-wide">
+              <label for="c-ins">Insulation level</label>
+              <select id="c-ins">
+                <option value="none">No insulation (uninsulated walls)</option>
+                <option value="poor">Poor insulation (old building, about 5 cm EPS)</option>
+                <option value="mid" selected>Medium insulation (about 10 cm EPS)</option>
+                <option value="good">Good insulation (15 cm EPS or more)</option>
+                <option value="passive">Passive house (about 25 cm insulation)</option>
+              </select>
+              <details class="q-tip">
+                <summary>Not sure about the insulation?</summary>
+                <div class="calc-grid calc-ins">
+                  <div class="f">
+                    <label for="c-year">When was it built?</label>
+                    <select id="c-year">
+                      <option value="">Choose</option>
+                      <option value="none">Before 1980</option>
+                      <option value="poor">1980 to 2005</option>
+                      <option value="mid">2006 to 2015</option>
+                      <option value="good">After 2015</option>
+                    </select>
+                  </div>
+                  <div class="f">
+                    <label for="c-facade">Did you add a facade later?</label>
+                    <select id="c-facade">
+                      <option value="">Choose</option>
+                      <option value="no">No</option>
+                      <option value="poor">Yes, 5 to 8 cm</option>
+                      <option value="mid">Yes, 10 to 12 cm</option>
+                      <option value="good">Yes, 15 cm or more</option>
+                    </select>
+                  </div>
+                  <div class="f f-wide">
+                    <label for="c-win">What windows do you have?</label>
+                    <select id="c-win">
+                      <option value="">Choose</option>
+                      <option value="0">Single glazed</option>
+                      <option value="1">Double glazed, old</option>
+                      <option value="2">PVC double glazed</option>
+                      <option value="3">PVC triple glazed</option>
+                    </select>
+                  </div>
+                </div>
+                <p class="q-help" id="insOut" aria-live="polite" hidden></p>
+              </details>
+            </div>
+            <fieldset class="cq q-choice">
+              <legend>Heating system</legend>
+              <div class="chips">
+                <div class="chip"><input type="radio" name="emit" id="c-emit-floor" value="floor" checked><label for="c-emit-floor">Underfloor heating</label></div>
+                <div class="chip"><input type="radio" name="emit" id="c-emit-rad" value="rad"><label for="c-emit-rad">Radiators</label></div>
+              </div>
+              <p class="q-help">Underfloor heating runs at lower temperatures and is more efficient. With radiators we allow 15% more power.</p>
+            </fieldset>
+            <div class="f f-wide">
+              <label for="c-ceil">Ceiling height (m)</label>
+              <input id="c-ceil" type="number" min="2" max="6" step="0.1" value="2.7" aria-describedby="e-ceil h-ceil">
+              <p class="err" id="e-ceil" hidden>From 2 to 6 m.</p>
+              <p class="q-help" id="h-ceil">Above 2.7 m we add 10% for every 0.5 m.</p>
+            </div>
+            <fieldset class="cq q-choice">
+              <legend>Safety margin</legend>
+              <div class="chips">
+                <div class="chip"><input type="radio" name="safe" id="c-safe-0" value="0" checked><label for="c-safe-0">No margin</label></div>
+                <div class="chip"><input type="radio" name="safe" id="c-safe-10" value="10"><label for="c-safe-10">+10%</label></div>
+                <div class="chip"><input type="radio" name="safe" id="c-safe-20" value="20"><label for="c-safe-20">+20%</label></div>
+              </div>
+              <p class="q-help">Choose it if you are not sure of the data, especially in a renovation.</p>
+            </fieldset>
+            <fieldset class="cq q-choice">
+              <legend>Do you also need cooling?</legend>
+              <div class="chips">
+                <div class="chip"><input type="radio" name="cool" id="c-cool-no" value="no" checked><label for="c-cool-no">No</label></div>
+                <div class="chip"><input type="radio" name="cool" id="c-cool-yes" value="yes"><label for="c-cool-yes">Yes, with fan coils</label></div>
+              </div>
+            </fieldset>
+            <div class="f f-wide">
+              <label for="c-tank">Domestic hot water <span class="opt">(optional)</span></label>
+              <select id="c-tank">
+                <option value="none" selected>No tank</option>
+                <option value="int">With a built-in tank</option>
+                <option value="ext">With an external tank</option>
+              </select>
+            </div>
+            <div class="calc-grid calc-more f-wide" id="tankMore" hidden>
+              <div class="f f-wide">
+                <label for="c-people">Number of people</label>
+                <input id="c-people" type="number" min="1" max="10" step="1" value="4" inputmode="numeric" aria-describedby="e-people h-people">
+                <p class="err" id="e-people" hidden>From 1 to 10 people.</p>
+                <p class="q-help" id="h-people">About 45 L of tank per person.</p>
+              </div>
+              <fieldset class="cq q-choice">
+                <legend>How often is hot water used at the same time?</legend>
+                <div class="chips">
+                  <div class="chip"><input type="radio" name="use" id="c-use-normal" value="normal" checked><label for="c-use-normal">Normally</label></div>
+                  <div class="chip"><input type="radio" name="use" id="c-use-often" value="often"><label for="c-use-often">Often (+30%)</label></div>
+                </div>
+              </fieldset>
+              <fieldset class="cq q-choice">
+                <legend>Bathtub or just a shower?</legend>
+                <div class="chips">
+                  <div class="chip"><input type="radio" name="bath" id="c-bath-no" value="no" checked><label for="c-bath-no">Shower only</label></div>
+                  <div class="chip"><input type="radio" name="bath" id="c-bath-yes" value="yes"><label for="c-bath-yes">Also a bathtub</label></div>
+                </div>
+              </fieldset>
+            </div>
+            <div class="calc-actions f-wide">
+              <button class="btn btn-ghost btn-sm" id="calcShare" type="button"><span class="cs-t">Share configuration</span></button>
+              <a class="btn btn-primary btn-sm calc-see" href="#calcOut">See the result <span aria-hidden="true">↓</span></a>
+              <input class="res-url" id="calcShareUrl" type="url" readonly hidden aria-label="Link to share">
+            </div>
+          </div>
+        </form>
+        <div class="calc-out r" style="--i:1" id="calcOut" tabindex="-1"></div>
+        <p class="sr" id="calcLive" aria-live="polite"></p>
       </div>
       <div class="atw-how calc-how" data-reveal>
-        <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Building and area</h2><p>We start from the area you want to heat or cool. For heating we use rule-of-thumb figures from about 35 to 55 W/m² for new, well insulated homes, up to about 105 to 140 W/m² for old homes without insulation.</p></div>
-        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Sun and climate</h2><p>For cooling we start from about 60 to 125 W/m² for one room, a little less for a whole home, and adjust for sun, glass, high ceilings, the climate and the number of people. Every “Not sure” widens the range.</p></div>
-        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">System and products</h2><p>We choose the kind of system from what you have (radiators, underfloor, ducts) and what you want. The products are from our range. Only a room-by-room calculation gives the final size.</p></div>
+        <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Heat loss</h2><p>The area is multiplied by the loss per m² for the insulation and the design temperature: for example 55 W/m² for medium insulation at −15°C. Between temperatures the value is worked out in a straight line.</p></div>
+        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Corrections</h2><p>Radiators add 15% power, a ceiling above 2.7 m adds 10% for every 0.5 m, and you can choose a 10 or 20% safety margin. The tank is sized at about 45 L per person.</p></div>
+        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Models from our range</h2><p>We show the models that cover the need without going over double, the closest first, then the higher SCOP. The final size comes from a room-by-room calculation.</p></div>
       </div>
 
       <div class="help-band" data-reveal>

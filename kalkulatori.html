@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script>document.documentElement.className='js'</script>
-<title>Kalkulatori · Cili sistem i shkon shtëpisë suaj? · Comfort Clima</title>
-<meta name="description" content="Përgjigjuni disa pyetjeve për shtëpinë dhe merrni një vlerësim paraprak: llojin e sistemit të ngrohjes dhe ftohjes, një fuqi të përafërt dhe produkte nga gama jonë.">
+<title>Kalkulatori i pompës termike · Comfort Clima</title>
+<meta name="description" content="Llogaritni sa fuqi pompe termike ju duhet nga sipërfaqja, izolimi, temperatura projektuese dhe sistemi i ngrohjes, dhe shihni modelet nga gama jonë.">
 <meta name="theme-color" content="#030a18">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Kalkulatori · Comfort Clima">
-<meta property="og:description" content="Cili sistem i shkon shtëpisë suaj? Vlerësim paraprak për ngrohjen dhe ftohjen, me produkte nga gama jonë.">
+<meta property="og:title" content="Kalkulatori i pompës termike · Comfort Clima">
+<meta property="og:description" content="Sa fuqi pompe termike ju duhet? Vlerësim paraprak me modele nga gama jonë.">
 <meta property="og:url" content="https://comfort-clima.com/kalkulatori.html">
 <meta property="og:image" content="https://comfort-clima.com/assets/og-image.jpg?v=4">
 <meta property="og:image:width" content="1200">
@@ -138,9 +138,9 @@
     </div>
     <div class="wrap">
       <nav aria-label="Gjurma" class="fade" style="--d:0s"><ol class="crumbs"><li><a href="index.html">Kreu</a></li><li><span aria-current="page">Kalkulatori</span></li></ol></nav>
-      <p class="kicker fade" style="--d:.05s">Kalkulatori</p>
-      <h1 class="h1">Cili sistem i shkon shtëpisë suaj?</h1>
-      <p class="lede fade" style="--d:.6s">Përgjigjuni disa pyetjeve të thjeshta për shtëpinë dhe shihni cilat sisteme i përshtaten, me një fuqi të përafërt dhe produktet tona që vlen t'i shihni. Është vlerësim paraprak, jo projektim.</p>
+      <p class="kicker fade" style="--d:.05s">Kalkulatori i pompës termike</p>
+      <h1 class="h1">Sa fuqi pompe termike ju duhet?</h1>
+      <p class="lede fade" style="--d:.6s">Jepni sipërfaqen, izolimin dhe temperaturën projektuese, dhe shihni fuqinë e nevojshme dhe modelet nga gama jonë që i përshtaten. Është vlerësim paraprak, jo projektim.</p>
     </div>
   </section>
 
@@ -148,38 +148,139 @@
     <div class="wrap">
       <noscript><p class="calc-nojs">Kalkulatori punon me JavaScript, që duket i fikur në shfletuesin tuaj. Na telefononi në <a href="tel:+38348772288">+383 48 77 22 88</a> ose na shkruani në <a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a> dhe ju ndihmojmë me zgjedhjen.</p></noscript>
       <div class="calc-box" id="calc" data-reveal>
-        <ol class="calc-prog r" style="--i:0" id="calcProg" aria-label="Hapat e kalkulatorit"></ol>
-        <div class="calc-main r" style="--i:1">
-          <div class="calc-start" id="calcStart">
-            <p class="kicker">Para se të nisni</p>
-            <h2 class="calc-h">Pesë hapa të shkurtër, pastaj vlerësimi.</h2>
-            <p class="calc-lead">Rreth 3 minuta. Ku nuk e dini përgjigjen, zgjidhni “Nuk e di”: vlerësimi e merr parasysh.</p>
-            <ul class="calc-what">
-              <li>Vendndodhja dhe klima</li>
-              <li>Shtëpia dhe sipërfaqja</li>
-              <li>Ndërtesa: viti, izolimi dhe dritaret</li>
-              <li>Ngrohja dhe ftohja që keni sot</li>
-              <li>Çfarë ka më shumë rëndësi për ju</li>
-            </ul>
-            <p class="calc-priv">Për të parë vlerësimin nuk ju kërkojmë emër, telefon apo email. Përgjigjet nuk dërgohen askund: mbeten në këtë faqe, derisa të vendosni vetë të na shkruani.</p>
-            <button class="btn btn-primary" id="calcGo" type="button">Nisni <span class="arr" aria-hidden="true">→</span></button>
-          </div>
-          <form id="calcForm" novalidate hidden>
-            <div class="calc-err" id="calcErr" role="alert" tabindex="-1" hidden></div>
-            <div id="calcSteps"></div>
-            <div class="calc-nav" id="calcNav">
-              <button class="btn btn-ghost btn-sm" id="calcBack" type="button"><span class="arr-b" aria-hidden="true">←</span> Prapa</button>
-              <button class="btn btn-primary" id="calcNext" type="submit">Vazhdo <span class="arr" aria-hidden="true">→</span></button>
+        <form class="calc-form r" style="--i:0" id="calcForm" novalidate aria-label="Të dhënat e shtëpisë">
+          <div class="calc-grid">
+            <div class="f">
+              <label for="c-area">Sipërfaqja e shtëpisë (m²)</label>
+              <input id="c-area" type="number" min="20" max="500" step="1" value="100" inputmode="numeric" aria-describedby="e-area">
+              <p class="err" id="e-area" hidden>Nga 20 deri 500 m².</p>
             </div>
-          </form>
-          <div class="calc-result" id="calcResult" hidden></div>
-          <p class="sr" id="calcLive" aria-live="polite"></p>
-        </div>
+            <div class="f">
+              <label for="c-temp">Temperatura projektuese (°C)</label>
+              <input id="c-temp" type="number" min="-30" max="0" step="0.1" value="-15" aria-describedby="e-temp h-temp">
+              <p class="err" id="e-temp" hidden>Nga −30 deri 0°C.</p>
+            </div>
+            <p class="q-help f-wide" id="h-temp">Temperatura më e ftohtë jashtë për të cilën llogaritet sistemi. Nëse nuk e dini, lëreni −15°C.</p>
+            <div class="f f-wide">
+              <label for="c-ins">Niveli i izolimit</label>
+              <select id="c-ins">
+                <option value="none">Pa izolim (mure pa izolim)</option>
+                <option value="poor">Izolim i dobët (ndërtesë e vjetër, rreth 5 cm stiropor)</option>
+                <option value="mid" selected>Izolim mesatar (rreth 10 cm stiropor)</option>
+                <option value="good">Izolim i mirë (15 cm stiropor ose më shumë)</option>
+                <option value="passive">Shtëpi pasive (rreth 25 cm izolim)</option>
+              </select>
+              <details class="q-tip">
+                <summary>Nuk e dini izolimin?</summary>
+                <div class="calc-grid calc-ins">
+                  <div class="f">
+                    <label for="c-year">Kur është ndërtuar?</label>
+                    <select id="c-year">
+                      <option value="">Zgjidhni</option>
+                      <option value="none">Para 1980</option>
+                      <option value="poor">1980 deri 2005</option>
+                      <option value="mid">2006 deri 2015</option>
+                      <option value="good">Pas 2015</option>
+                    </select>
+                  </div>
+                  <div class="f">
+                    <label for="c-facade">A keni shtuar fasadë më vonë?</label>
+                    <select id="c-facade">
+                      <option value="">Zgjidhni</option>
+                      <option value="no">Jo</option>
+                      <option value="poor">Po, 5 deri 8 cm</option>
+                      <option value="mid">Po, 10 deri 12 cm</option>
+                      <option value="good">Po, 15 cm ose më shumë</option>
+                    </select>
+                  </div>
+                  <div class="f f-wide">
+                    <label for="c-win">Çfarë dritaresh keni?</label>
+                    <select id="c-win">
+                      <option value="">Zgjidhni</option>
+                      <option value="0">Me një xham</option>
+                      <option value="1">Me dy xhama, të vjetra</option>
+                      <option value="2">PVC me dy xhama</option>
+                      <option value="3">PVC me tre xhama</option>
+                    </select>
+                  </div>
+                </div>
+                <p class="q-help" id="insOut" aria-live="polite" hidden></p>
+              </details>
+            </div>
+            <fieldset class="cq q-choice">
+              <legend>Sistemi i ngrohjes</legend>
+              <div class="chips">
+                <div class="chip"><input type="radio" name="emit" id="c-emit-floor" value="floor" checked><label for="c-emit-floor">Ngrohje në dysheme</label></div>
+                <div class="chip"><input type="radio" name="emit" id="c-emit-rad" value="rad"><label for="c-emit-rad">Radiatorë</label></div>
+              </div>
+              <p class="q-help">Dyshemeja punon me temperatura më të ulëta dhe është më efikase. Me radiatorë llogarisim 15% më shumë fuqi.</p>
+            </fieldset>
+            <div class="f f-wide">
+              <label for="c-ceil">Lartësia e tavanit (m)</label>
+              <input id="c-ceil" type="number" min="2" max="6" step="0.1" value="2.7" aria-describedby="e-ceil h-ceil">
+              <p class="err" id="e-ceil" hidden>Nga 2 deri 6 m.</p>
+              <p class="q-help" id="h-ceil">Mbi 2,7 m shtojmë 10% për çdo 0,5 m.</p>
+            </div>
+            <fieldset class="cq q-choice">
+              <legend>Rezervë sigurie</legend>
+              <div class="chips">
+                <div class="chip"><input type="radio" name="safe" id="c-safe-0" value="0" checked><label for="c-safe-0">Pa rezervë</label></div>
+                <div class="chip"><input type="radio" name="safe" id="c-safe-10" value="10"><label for="c-safe-10">+10%</label></div>
+                <div class="chip"><input type="radio" name="safe" id="c-safe-20" value="20"><label for="c-safe-20">+20%</label></div>
+              </div>
+              <p class="q-help">Zgjidheni kur nuk jeni të sigurt për të dhënat, sidomos te rinovimet.</p>
+            </fieldset>
+            <fieldset class="cq q-choice">
+              <legend>A ju duhet edhe ftohje?</legend>
+              <div class="chips">
+                <div class="chip"><input type="radio" name="cool" id="c-cool-no" value="no" checked><label for="c-cool-no">Jo</label></div>
+                <div class="chip"><input type="radio" name="cool" id="c-cool-yes" value="yes"><label for="c-cool-yes">Po, me fan coil</label></div>
+              </div>
+            </fieldset>
+            <div class="f f-wide">
+              <label for="c-tank">Uji i ngrohtë sanitar <span class="opt">(jo i detyrueshëm)</span></label>
+              <select id="c-tank">
+                <option value="none" selected>Pa bojler</option>
+                <option value="int">Me bojler të integruar</option>
+                <option value="ext">Me bojler të jashtëm</option>
+              </select>
+            </div>
+            <div class="calc-grid calc-more f-wide" id="tankMore" hidden>
+              <div class="f f-wide">
+                <label for="c-people">Numri i personave</label>
+                <input id="c-people" type="number" min="1" max="10" step="1" value="4" inputmode="numeric" aria-describedby="e-people h-people">
+                <p class="err" id="e-people" hidden>Nga 1 deri 10 persona.</p>
+                <p class="q-help" id="h-people">Rreth 45 L bojler për person.</p>
+              </div>
+              <fieldset class="cq q-choice">
+                <legend>Sa shpesh përdoret uji i ngrohtë njëkohësisht?</legend>
+                <div class="chips">
+                  <div class="chip"><input type="radio" name="use" id="c-use-normal" value="normal" checked><label for="c-use-normal">Normalisht</label></div>
+                  <div class="chip"><input type="radio" name="use" id="c-use-often" value="often"><label for="c-use-often">Shpesh (+30%)</label></div>
+                </div>
+              </fieldset>
+              <fieldset class="cq q-choice">
+                <legend>Vaskë apo vetëm dush?</legend>
+                <div class="chips">
+                  <div class="chip"><input type="radio" name="bath" id="c-bath-no" value="no" checked><label for="c-bath-no">Vetëm dush</label></div>
+                  <div class="chip"><input type="radio" name="bath" id="c-bath-yes" value="yes"><label for="c-bath-yes">Edhe vaskë</label></div>
+                </div>
+              </fieldset>
+            </div>
+            <div class="calc-actions f-wide">
+              <button class="btn btn-ghost btn-sm" id="calcShare" type="button"><span class="cs-t">Ndaj konfigurimin</span></button>
+              <a class="btn btn-primary btn-sm calc-see" href="#calcOut">Shiko rezultatin <span aria-hidden="true">↓</span></a>
+              <input class="res-url" id="calcShareUrl" type="url" readonly hidden aria-label="Linku për ta ndarë">
+            </div>
+          </div>
+        </form>
+        <div class="calc-out r" style="--i:1" id="calcOut" tabindex="-1"></div>
+        <p class="sr" id="calcLive" aria-live="polite"></p>
       </div>
       <div class="atw-how calc-how" data-reveal>
-        <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Ndërtesa dhe sipërfaqja</h2><p>Nisemi nga sipërfaqja që do të ngrohni ose ftohni. Për ngrohjen përdorim vlera orientuese nga rreth 35 deri 55 W/m² për shtëpi të reja të izoluara mirë, deri rreth 105 deri 140 W/m² për shtëpi të vjetra pa izolim.</p></div>
-        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Dielli dhe klima</h2><p>Për ftohjen nisemi nga rreth 60 deri 125 W/m² për një dhomë, pak më pak për gjithë shtëpinë, dhe e rregullojmë për diellin, xhamat, tavanet e larta, klimën dhe numrin e personave. Çdo “Nuk e di” e zgjeron intervalin.</p></div>
-        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Sistemi dhe produktet</h2><p>Llojin e sistemit e zgjedhim nga ajo që keni (radiatorë, dysheme, kanale) dhe nga ajo që doni. Produktet janë nga gama jonë. Masën përfundimtare e jep vetëm një llogaritje dhomë për dhomë.</p></div>
+        <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Humbja e nxehtësisë</h2><p>Sipërfaqja shumëzohet me humbjen për m² sipas izolimit dhe temperaturës projektuese: për shembull 55 W/m² për izolim mesatar në −15°C. Ndërmjet temperaturave vlera llogaritet në mënyrë lineare.</p></div>
+        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Korrigjimet</h2><p>Radiatorët shtojnë 15% fuqi, tavani mbi 2,7 m shton 10% për çdo 0,5 m, dhe mund të zgjidhni 10 ose 20% rezervë. Bojleri llogaritet rreth 45 L për person.</p></div>
+        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Modelet nga gama jonë</h2><p>Shfaqim modelet që e mbulojnë nevojën pa e kaluar dyfish, më i afërti i pari, pastaj SCOP-i më i lartë. Masën përfundimtare e jep llogaritja dhomë për dhomë.</p></div>
       </div>
 
       <div class="help-band" data-reveal>

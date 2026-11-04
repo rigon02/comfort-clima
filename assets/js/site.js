@@ -536,18 +536,114 @@ navMeasure();buildThread();buildStepLine();navUpdate();
 /* one decimal, with a comma on Albanian pages */
 function fmt1(v){var s=v.toFixed(1);return EN?s:s.replace('.',',')}
 
-/* form prefill from the audience tabs (the home calculator has its own request form, assets/js/kalkulatori.js) */
+/* dropdowns: the browser's own list cannot be animated, so each select gets a button and a list that opens like the menus.
+   The select stays in the form, hidden, and keeps the value; touch screens keep their native picker.
+   Code that sets a select's value fires "change" on it so the button follows. */
+var csClose=null;
+function enhanceSelect(sel){
+  var id=sel.id,wrap=document.createElement('div'),btn=document.createElement('button'),val=document.createElement('span'),chev=document.createElement('i'),list=document.createElement('ul');
+  var opts=[],active=-1,typed='',typedAt=0;
+  wrap.className='cs';
+  btn.type='button';btn.className='cs-btn';btn.id=id+'-btn';
+  btn.setAttribute('role','combobox');btn.setAttribute('aria-haspopup','listbox');btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-controls',id+'-list');
+  val.className='cs-val';chev.className='cs-chev';chev.setAttribute('aria-hidden','true');
+  btn.appendChild(val);btn.appendChild(chev);
+  list.className='cs-list';list.id=id+'-list';list.setAttribute('role','listbox');
+  Array.prototype.forEach.call(sel.options,function(o,i){
+    var li=document.createElement('li');
+    li.className='cs-opt';li.id=id+'-o'+i;li.setAttribute('role','option');li.textContent=o.text;li.style.setProperty('--n',Math.min(i,8));
+    list.appendChild(li);opts.push(li);
+  });
+  var lab=$('label[for="'+id+'"]');
+  if(lab){lab.id=lab.id||id+'-lab';lab.htmlFor=btn.id;list.setAttribute('aria-labelledby',lab.id)}
+  sel.parentNode.insertBefore(wrap,sel);
+  wrap.appendChild(sel);wrap.appendChild(btn);wrap.appendChild(list);
+  sel.hidden=true;
+  function sync(){
+    var i=sel.selectedIndex;
+    val.textContent=i>=0?sel.options[i].text:'';
+    opts.forEach(function(li,j){li.setAttribute('aria-selected',String(j===i))});
+  }
+  function setActive(i){
+    if(opts[active])opts[active].classList.remove('is-active');
+    active=i;
+    var li=opts[i];if(!li)return;
+    li.classList.add('is-active');btn.setAttribute('aria-activedescendant',li.id);
+    if(li.offsetTop<list.scrollTop)list.scrollTop=li.offsetTop;
+    else if(li.offsetTop+li.offsetHeight>list.scrollTop+list.clientHeight)list.scrollTop=li.offsetTop+li.offsetHeight-list.clientHeight;
+  }
+  function isOpen(){return wrap.classList.contains('open')}
+  function close(){wrap.classList.remove('open');btn.setAttribute('aria-expanded','false');btn.removeAttribute('aria-activedescendant');if(csClose===close)csClose=null}
+  function open(){
+    if(csClose)csClose();
+    /* opens upwards only when it does not fit below and there is more room above */
+    var r=btn.getBoundingClientRect(),below=innerHeight-r.bottom,above=r.top-(nav?nav.offsetHeight:0);
+    wrap.classList.toggle('up',below<list.offsetHeight+16&&above>below);
+    wrap.classList.add('open');btn.setAttribute('aria-expanded','true');
+    setActive(Math.max(0,sel.selectedIndex));
+    csClose=close;
+  }
+  function choose(i){
+    if(i>=0&&sel.selectedIndex!==i){sel.selectedIndex=i;sel.dispatchEvent(new Event('change',{bubbles:true}))}
+  }
+  /* typing a letter jumps to the option that starts with it */
+  function type(ch){
+    var now=Date.now();
+    typed=now-typedAt>600?ch:typed+ch;typedAt=now;
+    var q=typed.toLowerCase();
+    for(var k=0;k<opts.length;k++){
+      var j=(active+(q.length===1?1:0)+k)%opts.length;
+      if(opts[j].textContent.toLowerCase().indexOf(q)===0){setActive(j);return}
+    }
+  }
+  btn.addEventListener('click',function(){if(isOpen())close();else open()});
+  btn.addEventListener('blur',close);
+  btn.addEventListener('keydown',function(e){
+    var k=e.key,typing=Date.now()-typedAt<600;
+    if(e.ctrlKey||e.metaKey)return;
+    if(!isOpen()){
+      if(k==='ArrowDown'||k==='ArrowUp'||k==='Enter'||k===' '){e.preventDefault();open()}
+      else if(k.length===1&&!e.altKey){open();type(k)}
+      return;
+    }
+    if(k==='ArrowDown'){e.preventDefault();setActive(Math.min(opts.length-1,active+1))}
+    else if(k==='ArrowUp'){e.preventDefault();setActive(Math.max(0,active-1))}
+    else if(k==='Home'){e.preventDefault();setActive(0)}
+    else if(k==='End'){e.preventDefault();setActive(opts.length-1)}
+    else if(k==='Enter'||(k===' '&&!typing)){e.preventDefault();choose(active);close()}
+    else if(k==='Escape'){e.preventDefault();close()}
+    else if(k==='Tab'){choose(active);close()}
+    else if(k.length===1&&!e.altKey){e.preventDefault();type(k)}
+  });
+  /* Firefox clicks a button on space's keyup even after keydown was handled */
+  btn.addEventListener('keyup',function(e){if(e.key===' ')e.preventDefault()});
+  /* pressing on the list must not take the focus off the button, or it would close before the click lands */
+  list.addEventListener('mousedown',function(e){e.preventDefault()});
+  list.addEventListener('mousemove',function(e){var i=opts.indexOf(e.target);if(i>=0&&i!==active)setActive(i)});
+  list.addEventListener('click',function(e){var i=opts.indexOf(e.target);if(i>=0){choose(i);close();btn.focus()}});
+  sel.addEventListener('change',sync);
+  addEventListener('pageshow',sync);
+  sync();
+}
+if(!matchMedia('(pointer:coarse)').matches)$$('.f select').forEach(enhanceSelect);
+document.addEventListener('pointerdown',function(e){if(csClose&&!e.target.closest('.cs.open'))csClose()});
+
+/* form prefill from the audience tabs */
 var fName=$('#f-name'),fPhone=$('#f-phone'),fCo=$('#f-company'),fCity=$('#f-city'),fType=$('#f-type'),fNeed=$('#f-need'),fMsg=$('#f-msg');
 function focusFormSoon(){setTimeout(function(){try{fName.focus({preventScroll:true})}catch(e){}},RM.matches?0:750)}
-/* any "ask for an offer" link prefills the form: who is asking (data-type), what for (data-need), which model (data-product) */
-if(fType&&fNeed)$$('[data-type],[data-need],[data-product]').forEach(function(a){a.addEventListener('click',function(){
+/* any "ask for an offer" link prefills the form: who is asking (data-type), what for (data-need), which model (data-product);
+   listened for on the document so the links the calculator draws later work too */
+if(fType&&fNeed)document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('[data-type],[data-need],[data-product]');
+  if(!a)return;
   var t=a.getAttribute('data-type'),nd=a.getAttribute('data-need'),p=a.getAttribute('data-product');
   if(t)fType.value=t;
   if(nd)fNeed.value=nd;else if(t==='Projekt')fNeed.value='projekt';else if(p)fNeed.value='kondicioner';
   if(fNeed.selectedIndex<0)fNeed.selectedIndex=0;
+  [fType,fNeed].forEach(function(s){s.dispatchEvent(new Event('change'))});
   if(p)fMsg.value=TX.interest+p+'.';
   showForm();focusFormSoon();
-})});
+});
 
 /* product catalogues (one per brand): each has its own type filters */
 $$('.catalog').forEach(function(cat){
