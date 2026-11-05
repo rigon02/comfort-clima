@@ -509,13 +509,11 @@ pdfBtn.addEventListener('click',function(){
    The client's email address is required here and written into the text. */
 function rowText(r){return r[0]+(/\?$/.test(r[0])?' ':': ')+r[1]}
 $id('calcMail').addEventListener('click',function(e){
-  var note=$id('calcMailNote'),q=requestData(true);
-  note.hidden=true;
+  var q=requestData(true);
   if(!q){e.preventDefault();return}
   var body=[rowText([fieldLabel('c-cname'),q.name]),rowText([fieldLabel('c-cphone'),q.phone])]
     .concat(q.mail?[rowText([fieldLabel('c-cmail'),q.mail])]:[],['',L(T.pdfObj)],pdfAnswers(q.a).map(rowText),['',L(T.pdfChosen)],q.it?[chosenName(q.it)].concat(chosenExtras(q.a,q.P,q.it)):[L(T.mailNoPick)],[T.pdfNeed(num(q.R.need))]);
   this.href='mailto:info@comfort-clima.com?subject='+encodeURIComponent(L(T.pdfTitle)+' · '+q.name)+'&body='+encodeURIComponent(body.join('\r\n'));
-  note.hidden=false;
 });
 
 form.addEventListener('submit',function(e){e.preventDefault()});
