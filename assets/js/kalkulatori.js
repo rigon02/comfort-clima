@@ -83,10 +83,6 @@ var T={
   low:function(k,n,two){return EN?'At −7°C outside '+(two?'they give ':'it gives ')+k+' kW, less than the '+n+' kW you need. '+(two?'They':'It')+' may need a backup heater; we check this in the quote.':'Në −7°C jashtë '+(two?'japin ':'jep ')+k+' kW, më pak se '+n+' kW që ju duhen. Mund të kërkojë ngrohës shtesë; e kontrollojmë në ofertë.'},
   over:["Shumë më i madh se nevoja: mund të ndizet e fiket shpesh. Flisni me ne para se ta zgjidhni.","Much larger than the need: it may switch on and off often. Talk to us before choosing it."],
   view:["Shiko produktin","View product"],
-  quote:["Kërko ofertë","Request a quote"],
-  ask:function(a,n){return EN?'a heat pump of about '+n+' kW for '+a+' m²':'pompë termike rreth '+n+' kW për '+a+' m²'},
-  askPump:function(name,h,extras,n){return name+', '+h+' kW'+extras+(EN?' (calculated need: '+n+' kW)':' (nevoja e llogaritur: '+n+' kW)')},
-  askAll:["Kërko ofertë për këtë llogaritje","Request a quote for this calculation"],
   bigExt:function(max,v){return EN?'You need about '+v+' L and our largest tank is '+max+' L, so we propose that one. For more, write to us.':'Ju duhen rreth '+v+' L, ndërsa bojleri ynë më i madh është '+max+' L, prandaj po e propozojmë atë. Për më shumë, na shkruani.'},
   bigInt:function(v){return EN?'You need about '+v+' L and our largest built-in tanks have about 190 L, so we propose those. An external tank goes up to 249 L.':'Ju duhen rreth '+v+' L, ndërsa bojlerët tanë të integruar më të mëdhenj kanë rreth 190 L, prandaj po i propozojmë ata. Bojleri i jashtëm shkon deri 249 L.'},
   fan:function(){var h='<a class="text-link" href="fan-coil.html">'+(EN?'our fan coils from Aertesi':'fan coil-et tonë nga Aertesi')+'</a>';return (EN?'See ':'Shihni ')+h+'.'},
@@ -100,7 +96,7 @@ var T={
   livNeed:function(n,c){return EN?'Required power '+n+' kW. '+c+' models.':'Fuqia e nevojshme '+n+' kW. '+c+' modele.'},
   assess:function(n){return EN?'From your answers: '+n+'.':'Sipas përgjigjeve: '+n+'.'},
   winWarn:["Dritaret janë më të dobëta se muret, prandaj humbjet mund të jenë më të larta. Mund të zgjidhni një nivel izolimi më të ulët.","The windows are weaker than the walls, so the losses may be higher. You can choose one insulation level lower."],
-  pickHelp:["Zgjidhni njërin nga modelet: klikoni mbi të dhe ai shënohet. Kështu në PDF shohim për cilin produkt e doni ofertën.","Choose one of the models: click it and it is marked. That way the PDF shows us which product you want a quote for."],
+  pickHelp:["Zgjidhni njërin nga modelet: klikoni mbi të dhe ai shënohet. Kështu në kërkesën tuaj shohim për cilin produkt e doni ofertën.","Choose one of the models: click it and it is marked. That way your request shows us which product you want a quote for."],
   pick:["Zgjidhe këtë model","Choose this model"],
   picked:["Zgjedhur","Chosen"],
   pdfTitle:["Kërkesë për ofertë","Quote request"],
@@ -113,7 +109,7 @@ var T={
   mailNeed:["Për ta dërguar me email, shkruani emailin tuaj të saktë.","To send by email, enter your correct email address."],
   mailBad:["Shkruani një email të saktë, ose lëreni bosh.","Enter a valid email, or leave it empty."],
   pdfNeed:function(n){return EN?'Required power from the calculator: '+n+' kW':'Fuqia e nevojshme sipas kalkulatorit: '+n+' kW'},
-  pdfNote:["Vlerësim paraprak nga kalkulatori në comfort-clima.com. Masën përfundimtare e jep llogaritja dhomë për dhomë.","A first estimate from the calculator at comfort-clima.com. The final size comes from a room-by-room calculation."],
+  pdfNote:["Kjo llogaritje është e përafërt. Për informata më të sakta dhe një përgjigje të sigurt, duhet të lajmëroni profesionistët e ekipit tonë.","This calculation is approximate. For more accurate information and a definite answer, contact the professionals on our team."],
   pdfDate:["Data","Date"],
   pdfFile:["comfort-clima-kerkese-per-oferte.pdf","comfort-clima-quote-request.pdf"],
   pdfAddr:["Rruga Ukë Mavriqi, 23, Shkabaj, Prishtinë 10000, Republika e Kosovës","Rruga Ukë Mavriqi 23, Shkabaj, Prishtina 10000, Republic of Kosovo"]
@@ -205,7 +201,7 @@ function prodHtml(it,i,a,R,P){
       why=[two?T.whyPair(h,cap,need):T.whyHeat(h,need),T.whyScop[k](num(p.scop[k]))];
   if(a.tank==='int')why.push(!p.conf?L(T.whyIntNo):two?T.whyIntPair(p.tank):T.whyInt(p.tank,Math.round(p.tank/45)));
   if(t)why.push(T.whyExt(t.l,Math.round(t.l/45)));
-  var title=T.askPump(name,h,(t?' + '+t.n:'')+(b?' + '+b.n:''),need),specs='<div><dt>'+L(T.heat)+'</dt><dd>'+cap+' kW</dd></div>';
+  var specs='<div><dt>'+L(T.heat)+'</dt><dd>'+cap+' kW</dd></div>';
   if(p.c)specs+='<div><dt>'+L(T.cool)+'</dt><dd>'+num(p.c*it.n)+' kW</dd></div>';
   specs+='<div><dt>SCOP</dt><dd>'+num(p.scop[k])+'</dd></div>';
   return '<li class="rp" data-key="'+esc(keyOf(it))+'"><a class="rp-img" href="'+page+'" tabindex="-1" aria-hidden="true"><img src="'+ROOT+'assets/products/'+p.img+'" width="840" height="560" loading="lazy" alt=""></a><div class="rp-body">'+
@@ -217,7 +213,7 @@ function prodHtml(it,i,a,R,P){
     '<p class="rp-whyh">'+L(T.why)+'</p><ul class="rp-why"><li>'+why.map(esc).join('</li><li>')+'</li></ul>'+
     (it.low?'<p class="rp-warn">'+esc(T.low(num(it.low),need,two))+'</p>':'')+
     (it.cap>=R.need*1.5?'<p class="rp-warn">'+esc(L(T.over))+'</p>':'')+
-    '<div class="rp-cta"><a class="btn btn-ghost btn-sm" href="#kontakt" data-product="'+esc(title)+'" data-need="pompe">'+L(T.quote)+' <span class="arr" aria-hidden="true">→</span></a><a class="text-link" href="'+page+'">'+L(T.view)+'</a></div>'+
+    '<div class="rp-cta"><a class="text-link" href="'+page+'">'+L(T.view)+'</a></div>'+
     '</div></li>';
 }
 /* the suggested temperature that matches the field shows as chosen */
@@ -226,7 +222,7 @@ function syncZones(t){zones.forEach(function(b){b.setAttribute('aria-pressed',St
 zones.forEach(function(b){b.addEventListener('click',function(){
   var i=$id('c-temp');i.value=b.getAttribute('data-t');i.dispatchEvent(new Event('input',{bubbles:true}));
 })});
-/* the model the visitor chooses: one at a time, kept while it stays in the list; it goes into the PDF and into the quote request */
+/* the model the visitor chooses: one at a time, kept while it stays in the list; it goes into the PDF and the email */
 var chosen='';
 function keyOf(it){return it.p.id+'|'+it.p.h+'|'+it.n}
 function showChosen(valid){
@@ -239,11 +235,6 @@ function showChosen(valid){
     if(on)found=li;
   });
   if(valid&&chosen&&!found)chosen='';
-  var ask=out.querySelector('.res-ask');
-  if(ask){
-    if(!ask.hasAttribute('data-base'))ask.setAttribute('data-base',ask.getAttribute('data-product'));
-    ask.setAttribute('data-product',found?found.querySelector('[data-product]').getAttribute('data-product'):ask.getAttribute('data-base'));
-  }
 }
 var lastHtml='';
 function render(){
@@ -272,8 +263,7 @@ function render(){
     if(P.list.length){
       html+='<p class="res-pick-help">'+esc(L(T.pickHelp))+'</p><ul class="rp-list">'+P.list.map(function(it,i){return prodHtml(it,i,a,R,P)}).join('')+'</ul>';
     }else html+='<p class="res-alert">'+emptyText(a,R,P)+'</p>';
-    html+='<a class="btn btn-primary res-ask" href="#kontakt" data-product="'+esc(T.ask(num(a.area),num(R.need)))+'" data-need="pompe">'+L(T.askAll)+' <span class="arr" aria-hidden="true">→</span></a>'+
-      '<p class="res-disc">'+esc(L(T.disc))+' '+L(T.src)+'</p>';
+    html+='<p class="res-disc">'+esc(L(T.disc))+' '+L(T.src)+'</p>';
     msg=T.livNeed(num(R.need),P.list.length);
   }
   if(html!==lastHtml){out.innerHTML=html;lastHtml=html}
@@ -413,7 +403,12 @@ function pdfPages(a,R,P,it,logo,photo,name,phone,mail){
   if(it&&photo)y=Math.min(y,photoEnd-8);
   c+=pdfRule(M,M+CW,y,.75);
   y-=18;
-  pdfWrap(L(T.pdfNote),8.5,CW).forEach(function(l){room(14);c+=pdfText(M,y,8.5,'F1',l,.4);y-=12});
+  /* this notice stands out: the client has to know the sum is approximate and who gives the sure answer */
+  var noteLines=pdfWrap(L(T.pdfNote),10.5,CW-30),noteH=noteLines.length*15+18;
+  room(noteH+6);
+  c+='.95 g '+M+' '+(y-noteH).toFixed(2)+' '+CW.toFixed(2)+' '+noteH+' re f\n.075 .286 .553 rg '+M+' '+(y-noteH).toFixed(2)+' 3 '+noteH+' re f\n';
+  noteLines.forEach(function(l,i){c+=pdfText(M+15,y-19-i*15,10.5,'F1',l,.1)});
+  y-=noteH+10;
   pages.push(c+footer());
   return pages;
 }

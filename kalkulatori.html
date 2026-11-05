@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,500&display=swap">
 <link rel="stylesheet" href="assets/css/site.css?v=2">
-<script src="assets/js/kalkulatori.js?v=2" defer></script>
+<script src="assets/js/kalkulatori.js?v=3" defer></script>
 <link rel="alternate" hreflang="sq" href="https://comfort-clima.com/kalkulatori.html">
 <link rel="alternate" hreflang="en" href="https://comfort-clima.com/en/kalkulatori.html">
 <link rel="alternate" hreflang="x-default" href="https://comfort-clima.com/kalkulatori.html">
@@ -109,11 +109,11 @@
       <li><a href="index.html#si-punojme">Si punojmë</a></li>
       <li><a href="index.html#per-ke">Për kë</a></li>
       <li><a href="index.html#pyetje">Pyetje</a></li>
-      <li class="sheet-cta"><a href="#kontakt">Kërko ofertë</a></li>
+      <li class="sheet-cta"><a href="#calcPdfBox">Kërko ofertë</a></li>
     </ul>
     <div class="nav-right">
       <a class="lang-sw" href="en/kalkulatori.html" hreflang="en" lang="en" title="English">EN</a>
-      <a class="btn btn-primary btn-sm nav-cta" href="#kontakt">Kërko ofertë</a>
+      <a class="btn btn-primary btn-sm nav-cta" href="#calcPdfBox">Kërko ofertë</a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Hap menunë"><i></i><i></i></button>
     </div>
   </nav>
@@ -251,6 +251,7 @@
             <div class="calc-pdf f-wide" id="calcPdfBox">
               <h3 class="res-lt">Na e dërgoni kërkesën</h3>
               <p class="calc-pdf-how">Dërgojeni me email. Nuk keni email? Shkarkoni PDF-në dhe na e dërgoni në WhatsApp te <a href="https://wa.me/38348772288" target="_blank" rel="noopener">+383 48 77 22 88</a>, kur të doni. Në të dyja rastet shohim të dhënat e objektit tuaj dhe modelin që keni zgjedhur.</p>
+              <p class="calc-pdf-how">Kjo llogaritje është e përafërt. Për informata më të sakta dhe një përgjigje të sigurt, duhet të lajmëroni profesionistët e ekipit tonë.</p>
               <div class="calc-grid">
                 <div class="f">
                   <label for="c-cname">Emri dhe mbiemri</label>
@@ -297,96 +298,6 @@
       </div>
     </div>
   </section>
-
-  <!-- CONTACT -->
-  <section id="kontakt" class="section contact" data-live>
-    <div class="wrap">
-      <div class="contact-card" data-reveal>
-        <div class="contact-info r" style="--i:0">
-          <svg class="ci-air" viewBox="0 0 380 300" aria-hidden="true" focusable="false"><path class="b" d="M0 300C60 230 150 210 380 110M40 300C100 250 190 240 380 160M80 300C140 270 230 270 380 215"/><path class="f" d="M0 300C60 230 150 210 380 110M40 300C100 250 190 240 380 160M80 300C140 270 230 270 380 215"/></svg>
-          <p class="kicker kicker-light">Kontakt</p>
-          <h2 class="h2">Kërkoni ofertë.</h2>
-          <p class="lede">Instalues, rishitës, projekt apo shtëpi: na tregoni çfarë ju duhet dhe ju kthejmë përgjigje me çmim dhe disponueshmëri.</p>
-          <dl class="ci-list">
-            <div><dt>Na telefononi</dt><dd><a href="tel:+38348772288">+383 48 77 22 88</a></dd></div>
-            <div><dt>Na shkruani</dt><dd><a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a></dd></div>
-            <div><dt>Na gjeni</dt><dd>Rruga Ukë Mavriqi, 23, Shkabaj<br>Prishtinë 10000, Republika e Kosovës</dd></div>
-            <div><dt>Orari</dt><dd>E hënë deri të premte, 08:00 deri 17:00</dd></div>
-          </dl>
-        </div>
-        <div class="form-side r" style="--i:1">
-          <form id="leadForm" novalidate>
-            <h3 class="h3 form-title">Kërkesa juaj</h3>
-            <div class="f-grid">
-              <div class="f">
-                <label for="f-name">Emri dhe mbiemri</label>
-                <input id="f-name" name="fullname" autocomplete="name" required placeholder="Emri juaj" aria-describedby="e-name">
-                <p class="err" id="e-name" hidden>Shkruani emrin.</p>
-              </div>
-              <div class="f">
-                <label for="f-phone">Telefoni</label>
-                <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+383 4X XXX XXX" aria-describedby="e-phone">
-                <p class="err" id="e-phone" hidden>Shkruani numrin e telefonit.</p>
-              </div>
-              <div class="f">
-                <label for="f-company">Kompania <span class="opt">(jo e detyrueshme)</span></label>
-                <input id="f-company" name="company" autocomplete="organization" placeholder="Emri i kompanisë">
-              </div>
-              <div class="f">
-                <label for="f-city">Qyteti</label>
-                <input id="f-city" name="city" autocomplete="address-level2" placeholder="P.sh. Prizren">
-              </div>
-              <div class="f">
-                <label for="f-type">Ju jeni</label>
-                <select id="f-type" name="type">
-                  <option value="Instalues">Instalues</option>
-                  <option value="Rishitës">Rishitës</option>
-                  <option value="Projekt">Projekt, ndërtues</option>
-                  <option value="Biznes">Biznes</option>
-                  <option value="Shtëpi">Klient privat</option>
-                </select>
-              </div>
-              <div class="f">
-                <label for="f-need">Çfarë ju duhet?</label>
-                <select id="f-need" name="need">
-                  <option value="kondicioner">Kondicionerë ajri</option>
-                  <option value="pompe">Pompa termike</option>
-                  <option value="chiller">Chillerë</option>
-                  <option value="fancoil">Fan coil</option>
-                  <option value="vrf">VRF</option>
-                  <option value="rikuperator">Rikuperatorë</option>
-                  <option value="ahu">AHU, trajtim ajri</option>
-                  <option value="ventilator">Ventilatorë</option>
-                  <option value="grila">Grila dhe difuzorë</option>
-                  <option value="rezervuar">Rezervuarë dhe bojlerë</option>
-                  <option value="projekt">Projekt i plotë, disa sisteme</option>
-                  <option value="servis">Servis ose pjesë rezervë</option>
-                  <option value="tjeter">Nuk e di ende</option>
-                </select>
-              </div>
-              <div class="f f-wide">
-                <label for="f-msg">Mesazhi <span class="opt">(jo i detyrueshëm)</span></label>
-                <textarea id="f-msg" name="message" rows="4" placeholder="P.sh. modeli, sasia, ose sa dhoma dhe sa m²."></textarea>
-              </div>
-            </div>
-            <div class="f-submit">
-              <button class="btn btn-primary" type="submit">Dërgo kërkesën <span class="arr" aria-hidden="true">→</span></button>
-              <p class="f-hint">Butoni hap aplikacionin tuaj të emailit me kërkesën të shkruar. Ju vetëm shtypni Dërgo.</p>
-            </div>
-          </form>
-          <div class="form-done" id="formDone" hidden tabindex="-1">
-            <div class="done-ic" aria-hidden="true"><svg viewBox="0 0 28 28" class="ic"><path class="s" d="M5 14.5L11.5 21L23 8.5"/></svg></div>
-            <h3 class="h3">Kërkesa juaj është gati.</h3>
-            <p>Duhet të jetë hapur aplikacioni i emailit me kërkesën tuaj. Shtypni Dërgo atje dhe ne ju kontaktojmë. Nëse nuk u hap asgjë, na telefononi në <a href="tel:+38348772288">+383 48 77 22 88</a>.</p>
-            <div class="row">
-              <a class="btn btn-primary btn-sm" id="mailAgain" href="mailto:info@comfort-clima.com">Hap emailin përsëri</a>
-              <button class="btn btn-ghost btn-sm" id="editForm" type="button">Ndrysho kërkesën</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 </main>
 
 <footer class="footer">
@@ -405,7 +316,7 @@
     </nav>
     <nav aria-label="Lidhjet e faqes">
       <p class="foot-h">Faqja</p>
-      <ul><li><a href="produktet.html">Të gjitha produktet</a></li><li><a href="kalkulatori.html">Kalkulatori</a></li><li><a href="index.html#si-punojme">Si punojmë</a></li><li><a href="index.html#per-ke">Për kë punojmë</a></li><li><a href="index.html#pyetje">Pyetje</a></li><li><a href="#kontakt">Kontakt</a></li></ul>
+      <ul><li><a href="produktet.html">Të gjitha produktet</a></li><li><a href="kalkulatori.html">Kalkulatori</a></li><li><a href="index.html#si-punojme">Si punojmë</a></li><li><a href="index.html#per-ke">Për kë punojmë</a></li><li><a href="index.html#pyetje">Pyetje</a></li><li><a href="index.html#kontakt">Kontakt</a></li></ul>
     </nav>
     <div>
       <p class="foot-h">Kontakti</p>

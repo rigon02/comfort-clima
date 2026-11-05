@@ -673,7 +673,6 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .rp-why{margin:6px 0 0;padding-left:18px;font-size:.88rem;line-height:1.5;color:var(--mute)}
 .rp-warn{margin-top:12px;padding-left:12px;border-left:2px solid #37ABE0;font-size:.88rem;line-height:1.5}
 .rp-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-top:16px}
-.res-ask{margin-top:26px}
 .res-pick-help{margin-top:8px;font-size:.92rem;color:var(--mute);max-width:62ch}
 /* one recommended model can be chosen: it is marked here and named in the PDF */
 .rp{cursor:pointer;transition:background-color .5s var(--ease),box-shadow .5s var(--ease)}
@@ -1103,7 +1102,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 /* the calculator prints only the result */
 @media print{
   .calc-page .skip,.calc-page .nav,.calc-page .page-head,.calc-page .calc-form,.calc-page .calc-how,.calc-page .help-band,.calc-page #kontakt,.calc-page .footer,
-  .calc-page .rp-cta,.calc-page .res-ask,.calc-page .rp-pick,.calc-page .res-pick-help{display:none!important}
+  .calc-page .rp-cta,.calc-page .rp-pick,.calc-page .res-pick-help{display:none!important}
   .calc-page .page-body{padding:0}
   .calc-page .calc-box{display:block;margin:0;border:0}
   .calc-page .calc-out{padding:0}

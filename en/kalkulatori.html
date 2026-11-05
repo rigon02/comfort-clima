@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,500&display=swap">
 <link rel="stylesheet" href="../assets/css/site.css?v=2">
-<script src="../assets/js/kalkulatori.js?v=2" defer></script>
+<script src="../assets/js/kalkulatori.js?v=3" defer></script>
 <link rel="alternate" hreflang="sq" href="https://comfort-clima.com/kalkulatori.html">
 <link rel="alternate" hreflang="en" href="https://comfort-clima.com/en/kalkulatori.html">
 <link rel="alternate" hreflang="x-default" href="https://comfort-clima.com/kalkulatori.html">
@@ -111,11 +111,11 @@
       <li><a href="index.html#si-punojme">How we work</a></li>
       <li><a href="index.html#per-ke">Who we serve</a></li>
       <li><a href="index.html#pyetje">FAQ</a></li>
-      <li class="sheet-cta"><a href="#kontakt">Request a quote</a></li>
+      <li class="sheet-cta"><a href="#calcPdfBox">Request a quote</a></li>
     </ul>
     <div class="nav-right">
       <a class="lang-sw" href="../kalkulatori.html" hreflang="sq" lang="sq" title="Shqip">SQ</a>
-      <a class="btn btn-primary btn-sm nav-cta" href="#kontakt">Request a quote</a>
+      <a class="btn btn-primary btn-sm nav-cta" href="#calcPdfBox">Request a quote</a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu"><i></i><i></i></button>
     </div>
   </nav>
@@ -253,6 +253,7 @@
             <div class="calc-pdf f-wide" id="calcPdfBox">
               <h3 class="res-lt">Send us your request</h3>
               <p class="calc-pdf-how">Send it by email. No email? Download the PDF and send it to us on WhatsApp at <a href="https://wa.me/38348772288" target="_blank" rel="noopener">+383 48 77 22 88</a> whenever you like. Either way we see your building's details and the model you chose.</p>
+              <p class="calc-pdf-how">This calculation is approximate. For more accurate information and a definite answer, contact the professionals on our team.</p>
               <div class="calc-grid">
                 <div class="f">
                   <label for="c-cname">Full name</label>
@@ -299,96 +300,6 @@
       </div>
     </div>
   </section>
-
-  <!-- CONTACT -->
-  <section id="kontakt" class="section contact" data-live>
-    <div class="wrap">
-      <div class="contact-card" data-reveal>
-        <div class="contact-info r" style="--i:0">
-          <svg class="ci-air" viewBox="0 0 380 300" aria-hidden="true" focusable="false"><path class="b" d="M0 300C60 230 150 210 380 110M40 300C100 250 190 240 380 160M80 300C140 270 230 270 380 215"/><path class="f" d="M0 300C60 230 150 210 380 110M40 300C100 250 190 240 380 160M80 300C140 270 230 270 380 215"/></svg>
-          <p class="kicker kicker-light">Contact</p>
-          <h2 class="h2">Request a quote.</h2>
-          <p class="lede">Installer, reseller, project or home: tell us what you need and we will reply with pricing and availability.</p>
-          <dl class="ci-list">
-            <div><dt>Call us</dt><dd><a href="tel:+38348772288">+383 48 77 22 88</a></dd></div>
-            <div><dt>Email us</dt><dd><a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a></dd></div>
-            <div><dt>Find us</dt><dd>Rruga Ukë Mavriqi 23, Shkabaj<br>Prishtina 10000, Republic of Kosovo</dd></div>
-            <div><dt>Hours</dt><dd>Monday to Friday, 08:00 to 17:00</dd></div>
-          </dl>
-        </div>
-        <div class="form-side r" style="--i:1">
-          <form id="leadForm" novalidate>
-            <h3 class="h3 form-title">Your request</h3>
-            <div class="f-grid">
-              <div class="f">
-                <label for="f-name">Full name</label>
-                <input id="f-name" name="fullname" autocomplete="name" required placeholder="Your name" aria-describedby="e-name">
-                <p class="err" id="e-name" hidden>Please enter your name.</p>
-              </div>
-              <div class="f">
-                <label for="f-phone">Phone</label>
-                <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+383 4X XXX XXX" aria-describedby="e-phone">
-                <p class="err" id="e-phone" hidden>Please enter your phone number.</p>
-              </div>
-              <div class="f">
-                <label for="f-company">Company <span class="opt">(optional)</span></label>
-                <input id="f-company" name="company" autocomplete="organization" placeholder="Company name">
-              </div>
-              <div class="f">
-                <label for="f-city">City</label>
-                <input id="f-city" name="city" autocomplete="address-level2" placeholder="e.g. Prizren">
-              </div>
-              <div class="f">
-                <label for="f-type">You are</label>
-                <select id="f-type" name="type">
-                  <option value="Instalues">Installer</option>
-                  <option value="Rishitës">Reseller</option>
-                  <option value="Projekt">Project or builder</option>
-                  <option value="Biznes">Business</option>
-                  <option value="Shtëpi">Private customer</option>
-                </select>
-              </div>
-              <div class="f">
-                <label for="f-need">What do you need?</label>
-                <select id="f-need" name="need">
-                  <option value="kondicioner">Air conditioners</option>
-                  <option value="pompe">Heat pumps</option>
-                  <option value="chiller">Chillers</option>
-                  <option value="fancoil">Fan coils</option>
-                  <option value="vrf">VRF</option>
-                  <option value="rikuperator">Heat recovery units</option>
-                  <option value="ahu">AHU, air handling</option>
-                  <option value="ventilator">Fans</option>
-                  <option value="grila">Grilles and diffusers</option>
-                  <option value="rezervuar">Tanks and domestic hot water tanks</option>
-                  <option value="projekt">Complete project, several systems</option>
-                  <option value="servis">Service or spare parts</option>
-                  <option value="tjeter">Not sure yet</option>
-                </select>
-              </div>
-              <div class="f f-wide">
-                <label for="f-msg">Message <span class="opt">(optional)</span></label>
-                <textarea id="f-msg" name="message" rows="4" placeholder="e.g. model, quantity, or how many rooms and m²."></textarea>
-              </div>
-            </div>
-            <div class="f-submit">
-              <button class="btn btn-primary" type="submit">Send request <span class="arr" aria-hidden="true">→</span></button>
-              <p class="f-hint">The button opens your email app with the request written out. You just press Send.</p>
-            </div>
-          </form>
-          <div class="form-done" id="formDone" hidden tabindex="-1">
-            <div class="done-ic" aria-hidden="true"><svg viewBox="0 0 28 28" class="ic"><path class="s" d="M5 14.5L11.5 21L23 8.5"/></svg></div>
-            <h3 class="h3">Your request is ready.</h3>
-            <p>Your email app should have opened with your request. Press Send there and we will get back to you. If nothing opened, call us on <a href="tel:+38348772288">+383 48 77 22 88</a>.</p>
-            <div class="row">
-              <a class="btn btn-primary btn-sm" id="mailAgain" href="mailto:info@comfort-clima.com">Open email again</a>
-              <button class="btn btn-ghost btn-sm" id="editForm" type="button">Edit request</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 </main>
 
 <footer class="footer">
@@ -407,7 +318,7 @@
     </nav>
     <nav aria-label="Site links">
       <p class="foot-h">Site</p>
-      <ul><li><a href="produktet.html">All products</a></li><li><a href="kalkulatori.html">Calculator</a></li><li><a href="index.html#si-punojme">How we work</a></li><li><a href="index.html#per-ke">Who we serve</a></li><li><a href="index.html#pyetje">FAQ</a></li><li><a href="#kontakt">Contact</a></li></ul>
+      <ul><li><a href="produktet.html">All products</a></li><li><a href="kalkulatori.html">Calculator</a></li><li><a href="index.html#si-punojme">How we work</a></li><li><a href="index.html#per-ke">Who we serve</a></li><li><a href="index.html#pyetje">FAQ</a></li><li><a href="index.html#kontakt">Contact</a></li></ul>
     </nav>
     <div>
       <p class="foot-h">Contact</p>
