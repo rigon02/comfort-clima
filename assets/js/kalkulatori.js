@@ -109,7 +109,7 @@ var T={
   mailNeed:["Për ta dërguar me email, shkruani emailin tuaj të saktë.","To send by email, enter your correct email address."],
   mailBad:["Shkruani një email të saktë, ose lëreni bosh.","Enter a valid email, or leave it empty."],
   pdfNeed:function(n){return EN?'Required power from the calculator: '+n+' kW':'Fuqia e nevojshme sipas kalkulatorit: '+n+' kW'},
-  pdfNote:["Kjo llogaritje është e përafërt. Për informata më të sakta dhe një përgjigje të sigurt, duhet të lajmëroni profesionistët e ekipit tonë.","This calculation is approximate. For more accurate information and a definite answer, contact the professionals on our team."],
+  pdfNote:[["Ky kalkulator ofron një vlerësim të përafërt dhe orientues të kapacitetit të nevojshëm, bazuar në të dhënat klimatike të përdorura, informacionin që keni deklaruar dhe supozimet e metodës së llogaritjes. Rezultati dhe modelet e sugjeruara shërbejnë për përzgjedhje paraprake dhe nuk zëvendësojnë llogaritjen e detajuar të humbjeve termike apo projektin e sistemit. Përzgjedhja përfundimtare duhet të verifikohet nga një profesionist, duke marrë parasysh kushtet reale të objektit, sistemin e ngrohjes dhe performancën e pajisjes në kushtet përkatëse të punës.","Për verifikimin e përzgjedhjes, na kontaktoni ose na vizitoni në showroom."],["This calculator gives an approximate, indicative estimate of the required capacity, based on the climate data used, the information you have provided and the assumptions of the calculation method. The result and the suggested models are for preliminary selection and do not replace a detailed heat loss calculation or a system design. The final selection must be verified by a professional, taking into account the real conditions of the building, the heating system and the performance of the equipment under the relevant operating conditions.","To verify your selection, contact us or visit us at our showroom."]],
   pdfDate:["Data","Date"],
   pdfFile:["comfort-clima-kerkese-per-oferte.pdf","comfort-clima-quote-request.pdf"],
   pdfAddr:["Rruga Ukë Mavriqi, 23, Shkabaj, Prishtinë 10000, Republika e Kosovës","Rruga Ukë Mavriqi 23, Shkabaj, Prishtina 10000, Republic of Kosovo"]
@@ -387,7 +387,7 @@ function pdfPages(a,R,P,it,logo,photo,name,phone,mail){
   if(it&&photo)room(150);
   section(L(T.pdfChosen));
   if(it&&photo){
-    var pw=132,ph=pw*photo.h/photo.w;
+    var pw=114,ph=pw*photo.h/photo.w;
     photoEnd=y+9-ph;
     c+='q '+pw+' 0 0 '+ph.toFixed(2)+' '+M+' '+photoEnd.toFixed(2)+' cm /Im2 Do Q\n';
     X=M+pw+16;W=CW-pw-16;
@@ -402,12 +402,15 @@ function pdfPages(a,R,P,it,logo,photo,name,phone,mail){
   y+=4;
   if(it&&photo)y=Math.min(y,photoEnd-8);
   c+=pdfRule(M,M+CW,y,.75);
-  y-=18;
-  /* this notice stands out: the client has to know the sum is approximate and who gives the sure answer */
-  var noteLines=pdfWrap(L(T.pdfNote),10.5,CW-30),noteH=noteLines.length*15+18;
+  y-=12;
+  /* the client's notice stands out: what the estimate is and who verifies the final selection */
+  var noteLines=[];
+  L(T.pdfNote).forEach(function(par,i){if(i)noteLines.push('');noteLines=noteLines.concat(pdfWrap(par,8.5,CW-30))});
+  var noteH=noteLines.reduce(function(h,l){return h+(l?11.5:5)},18);
   room(noteH+6);
-  c+='.95 g '+M+' '+(y-noteH).toFixed(2)+' '+CW.toFixed(2)+' '+noteH+' re f\n.075 .286 .553 rg '+M+' '+(y-noteH).toFixed(2)+' 3 '+noteH+' re f\n';
-  noteLines.forEach(function(l,i){c+=pdfText(M+15,y-19-i*15,10.5,'F1',l,.1)});
+  var noteY=y-15;
+  c+='.95 g '+M+' '+(y-noteH).toFixed(2)+' '+CW.toFixed(2)+' '+noteH.toFixed(2)+' re f\n.075 .286 .553 rg '+M+' '+(y-noteH).toFixed(2)+' 3 '+noteH.toFixed(2)+' re f\n';
+  noteLines.forEach(function(l){if(l){c+=pdfText(M+15,noteY,8.5,'F1',l,.15);noteY-=11.5}else noteY-=5});
   y-=noteH+10;
   pages.push(c+footer());
   return pages;
