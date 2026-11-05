@@ -645,8 +645,6 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .q-tip summary::-webkit-details-marker{display:none}
 .calc-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding-top:22px;border-top:1px solid var(--line)}
 .calc-see{display:none}
-.res-url{display:block;width:100%;padding:10px 12px;border:1px solid var(--line-2);font-size:.86rem;background:#fff}
-.res-url[hidden]{display:none}
 /* the result */
 .res-title{font-weight:var(--wh);font-size:clamp(2rem,1.4rem + 1.6vw,2.8rem);line-height:1;letter-spacing:-.045em}
 .res-nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:26px;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}

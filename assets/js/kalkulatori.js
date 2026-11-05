@@ -100,7 +100,6 @@ var T={
   livNeed:function(n,c){return EN?'Required power '+n+' kW. '+c+' models.':'Fuqia e nevojshme '+n+' kW. '+c+' modele.'},
   assess:function(n){return EN?'From your answers: '+n+'.':'Sipas përgjigjeve: '+n+'.'},
   winWarn:["Dritaret janë më të dobëta se muret, prandaj humbjet mund të jenë më të larta. Mund të zgjidhni një nivel izolimi më të ulët.","The windows are weaker than the walls, so the losses may be higher. You can choose one insulation level lower."],
-  copied:["Linku u kopjua!","Link copied!"],
   pickHelp:["Zgjidhni njërin nga modelet: klikoni mbi të dhe ai shënohet. Kështu në PDF shohim për cilin produkt e doni ofertën.","Choose one of the models: click it and it is marked. That way the PDF shows us which product you want a quote for."],
   pick:["Zgjidhe këtë model","Choose this model"],
   picked:["Zgjedhur","Chosen"],
@@ -516,41 +515,11 @@ $id('calcMail').addEventListener('click',function(e){
   note.hidden=false;
 });
 
-/* ---------- share: the answers sit after # in the address ---------- */
-function shareUrl(){
-  var a=read(),p={a:$id('c-area').value,i:a.ins,t:$id('c-temp').value,e:a.emit,c:a.cool,w:a.tank,n:$id('c-people').value};
-  return location.href.split('#')[0]+'#'+Object.keys(p).map(function(k){return k+'='+encodeURIComponent(p[k])}).join('&');
-}
-function setRadio(n,v){var c=form.querySelector('input[name="'+n+'"][value="'+String(v).replace(/[^\w-]/g,'')+'"]');if(c)c.checked=true}
-function setSelect(id,v){var s=$id(id);for(var i=0;i<s.options.length;i++)if(s.options[i].value===v){s.value=v;s.dispatchEvent(new Event('change',{bubbles:true}));return}}
-function fromHash(){
-  var h=location.hash.slice(1);
-  if(h.indexOf('a=')!==0)return;
-  var p={};h.split('&').forEach(function(x){var i=x.indexOf('=');if(i>0)p[x.slice(0,i)]=decodeURIComponent(x.slice(i+1))});
-  if(p.a!=null)$id('c-area').value=p.a;
-  if(p.t!=null)$id('c-temp').value=p.t;
-  if(p.n!=null)$id('c-people').value=p.n;
-  if(p.i)setSelect('c-ins',p.i);
-  if(p.w)setSelect('c-tank',p.w);
-  if(p.e)setRadio('emit',p.e);
-  if(p.c)setRadio('cool',p.c);
-  schedule();
-}
-var share=$id('calcShare'),shareLbl=share.querySelector('.cs-t'),shareIdle=shareLbl.textContent,shareTimer=0;
-share.addEventListener('click',function(){
-  var url=shareUrl(),box=$id('calcShareUrl');
-  function done(){shareLbl.textContent=L(T.copied);clearTimeout(shareTimer);shareTimer=setTimeout(function(){shareLbl.textContent=shareIdle},2000)}
-  function fallback(){box.value=url;box.hidden=false;box.focus();box.select()}
-  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(url).then(done,fallback);else fallback();
-});
-
 form.addEventListener('submit',function(e){e.preventDefault()});
 form.addEventListener('input',schedule);
 form.addEventListener('change',schedule);
 /* the logo is fetched when the name and phone are reached, so the PDF is ready at once when it is asked for */
 $id('calcPdfBox').addEventListener('focusin',function(){pdfLogo()},{once:true});
 ['c-year','c-facade','c-win'].forEach(function(id){$id(id).addEventListener('change',assess)});
-addEventListener('hashchange',fromHash);
-fromHash();
 render();
 })();
