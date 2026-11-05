@@ -20,8 +20,8 @@
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,500&display=swap">
-<link rel="stylesheet" href="../assets/css/site.css">
-<script src="../assets/js/kalkulatori.js" defer></script>
+<link rel="stylesheet" href="../assets/css/site.css?v=2">
+<script src="../assets/js/kalkulatori.js?v=2" defer></script>
 <link rel="alternate" hreflang="sq" href="https://comfort-clima.com/kalkulatori.html">
 <link rel="alternate" hreflang="en" href="https://comfort-clima.com/en/kalkulatori.html">
 <link rel="alternate" hreflang="x-default" href="https://comfort-clima.com/kalkulatori.html">
@@ -250,8 +250,33 @@
                 <p class="q-help" id="h-people">About 45 L of tank per person.</p>
               </div>
             </div>
+            <div class="calc-pdf f-wide" id="calcPdfBox">
+              <h3 class="res-lt">Send us your request</h3>
+              <p class="calc-pdf-how">Send it by email. No email? Download the PDF and send it to us on WhatsApp at <a href="https://wa.me/38348772288" target="_blank" rel="noopener">+383 48 77 22 88</a> whenever you like. Either way we see your building's details and the model you chose.</p>
+              <div class="calc-grid">
+                <div class="f">
+                  <label for="c-cname">Full name</label>
+                  <input id="c-cname" name="fullname" autocomplete="name" required placeholder="Your name" aria-describedby="e-cname h-cpdf">
+                  <p class="err" id="e-cname" hidden>Enter your name.</p>
+                </div>
+                <div class="f">
+                  <label for="c-cphone">Phone</label>
+                  <input id="c-cphone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+383 4X XXX XXX" aria-describedby="e-cphone h-cpdf">
+                  <p class="err" id="e-cphone" hidden>Enter your phone number.</p>
+                </div>
+                <div class="f f-wide">
+                  <label for="c-cmail">Email <span class="opt">(required only to send by email)</span></label>
+                  <input id="c-cmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" aria-describedby="e-cmail">
+                  <p class="err" id="e-cmail" hidden>Enter a valid email, or leave it empty.</p>
+                </div>
+              </div>
+              <p class="q-help" id="h-cpdf">Your name and phone number are required: without them you cannot send the request or download the PDF. To send it by email, your email address is needed too. Everything else is optional.</p>
+            </div>
             <div class="calc-actions f-wide">
               <button class="btn btn-ghost btn-sm" id="calcShare" type="button"><span class="cs-t">Share configuration</span></button>
+              <button class="btn btn-primary btn-sm" id="calcPdf" type="button">Download PDF</button>
+              <a class="btn btn-primary btn-sm" id="calcMail" href="mailto:info@comfort-clima.com">Send by email</a>
+              <p class="q-help" id="calcMailNote" role="status" hidden>Your email app should have opened with your request. Press Send there. If nothing opened, download the PDF or call us on <a href="tel:+38348772288">+383 48 77 22 88</a>.</p>
               <a class="btn btn-primary btn-sm calc-see" href="#calcOut">See the result <span aria-hidden="true">↓</span></a>
               <input class="res-url" id="calcShareUrl" type="url" readonly hidden aria-label="Link to share">
             </div>
@@ -397,6 +422,6 @@
   </div>
 </footer>
 
-<script src="../assets/js/site.js"></script>
+<script src="../assets/js/site.js?v=2"></script>
 </body>
 </html>

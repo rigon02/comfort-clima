@@ -676,6 +676,23 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .rp-warn{margin-top:12px;padding-left:12px;border-left:2px solid #37ABE0;font-size:.88rem;line-height:1.5}
 .rp-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-top:16px}
 .res-ask{margin-top:26px}
+.res-pick-help{margin-top:8px;font-size:.92rem;color:var(--mute);max-width:62ch}
+/* one recommended model can be chosen: it is marked here and named in the PDF */
+.rp{cursor:pointer;transition:background-color .5s var(--ease),box-shadow .5s var(--ease)}
+.rp.is-picked{margin-inline:-14px;padding-inline:14px;background:rgba(19,73,141,.06);box-shadow:inset 0 0 0 1.5px #13498D}
+.rp-pick{display:inline-flex;align-items:center;gap:8px;min-height:38px;margin-left:auto;padding:6px 14px;border:1px solid var(--line-2);border-radius:var(--pill);background:#fff;color:var(--ink);font:var(--wt) .86rem/1.2 var(--f);cursor:pointer;transition:background-color .5s var(--ease),color .5s var(--ease),border-color .5s var(--ease)}
+.rp-pick::before{content:"";flex:none;width:14px;height:14px;border:1px solid currentColor;border-radius:50%}
+@media (hover:hover){.rp-pick:hover{border-color:var(--ink)}}
+.rp-pick:focus-visible{outline:1.5px solid var(--ink);outline-offset:3px}
+.rp.is-picked .rp-pick{background:#13498D;border-color:#13498D;color:#fff}
+.rp.is-picked .rp-pick::before{background:#fff;box-shadow:inset 0 0 0 3px #13498D}
+/* the PDF for clients without email: their name and phone are required */
+.calc-pdf-how{margin-top:8px;font-size:.88rem;color:var(--mute);max-width:62ch}
+.calc-pdf-how a{color:var(--ink);white-space:nowrap}
+.calc-pdf .res-lt{margin-top:0}
+.calc-pdf .calc-grid{margin-top:22px}
+.calc-pdf .q-help{margin-top:16px}
+.calc-actions .q-help{flex-basis:100%;margin-top:0}
 .res-disc{margin-top:22px;font-size:.84rem;line-height:1.55;color:var(--mute)}
 
 /* winter: a black band */
@@ -1088,7 +1105,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 /* the calculator prints only the result */
 @media print{
   .calc-page .skip,.calc-page .nav,.calc-page .page-head,.calc-page .calc-form,.calc-page .calc-how,.calc-page .help-band,.calc-page #kontakt,.calc-page .footer,
-  .calc-page .rp-cta,.calc-page .res-ask{display:none!important}
+  .calc-page .rp-cta,.calc-page .res-ask,.calc-page .rp-pick,.calc-page .res-pick-help{display:none!important}
   .calc-page .page-body{padding:0}
   .calc-page .calc-box{display:block;margin:0;border:0}
   .calc-page .calc-out{padding:0}

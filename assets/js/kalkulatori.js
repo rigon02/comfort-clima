@@ -5,7 +5,7 @@
    design temperatures from ASHRAE Climatic Design Conditions 2025. Fujitsu first and the buffer tank sizes are the client's rules. */
 (function(){
 'use strict';
-var form=document.getElementById('calcForm'),out=document.getElementById('calcOut'),live=document.getElementById('calcLive');
+var form=document.getElementById('calcForm'),out=document.getElementById('calcOut'),live=document.getElementById('calcLive'),pdfBtn=document.getElementById('calcPdf');
 if(!form||!out)return;
 var EN=document.documentElement.lang==='en',LI=EN?1:0,ROOT=EN?'../':'';
 function L(p){return p[LI]}
@@ -100,7 +100,24 @@ var T={
   livNeed:function(n,c){return EN?'Required power '+n+' kW. '+c+' models.':'Fuqia e nevojshme '+n+' kW. '+c+' modele.'},
   assess:function(n){return EN?'From your answers: '+n+'.':'Sipas përgjigjeve: '+n+'.'},
   winWarn:["Dritaret janë më të dobëta se muret, prandaj humbjet mund të jenë më të larta. Mund të zgjidhni një nivel izolimi më të ulët.","The windows are weaker than the walls, so the losses may be higher. You can choose one insulation level lower."],
-  copied:["Linku u kopjua!","Link copied!"]
+  copied:["Linku u kopjua!","Link copied!"],
+  pickHelp:["Zgjidhni njërin nga modelet: klikoni mbi të dhe ai shënohet. Kështu në PDF shohim për cilin produkt e doni ofertën.","Choose one of the models: click it and it is marked. That way the PDF shows us which product you want a quote for."],
+  pick:["Zgjidhe këtë model","Choose this model"],
+  picked:["Zgjedhur","Chosen"],
+  pdfTitle:["Kërkesë për ofertë","Quote request"],
+  pdfSend:["Dërgojeni këtë PDF në WhatsApp te +383 48 77 22 88.","Send this PDF on WhatsApp to +383 48 77 22 88."],
+  pdfClient:["Të dhënat e klientit","Client details"],
+  pdfObj:["Të dhënat e objektit","Building details"],
+  pdfChosen:["Produkti i zgjedhur","Chosen product"],
+  pdfNoPick:["Klienti nuk ka zgjedhur model.","The client has not chosen a model."],
+  mailNoPick:["Nuk kam zgjedhur model.","I have not chosen a model."],
+  mailNeed:["Për ta dërguar me email, shkruani emailin tuaj të saktë.","To send by email, enter your correct email address."],
+  mailBad:["Shkruani një email të saktë, ose lëreni bosh.","Enter a valid email, or leave it empty."],
+  pdfNeed:function(n){return EN?'Required power from the calculator: '+n+' kW':'Fuqia e nevojshme sipas kalkulatorit: '+n+' kW'},
+  pdfNote:["Vlerësim paraprak nga kalkulatori në comfort-clima.com. Masën përfundimtare e jep llogaritja dhomë për dhomë.","A first estimate from the calculator at comfort-clima.com. The final size comes from a room-by-room calculation."],
+  pdfDate:["Data","Date"],
+  pdfFile:["comfort-clima-kerkese-per-oferte.pdf","comfort-clima-quote-request.pdf"],
+  pdfAddr:["Rruga Ukë Mavriqi, 23, Shkabaj, Prishtinë 10000, Republika e Kosovës","Rruga Ukë Mavriqi 23, Shkabaj, Prishtina 10000, Republic of Kosovo"]
 };
 
 /* ---------- the sums ---------- */
@@ -192,8 +209,8 @@ function prodHtml(it,i,a,R,P){
   var title=T.askPump(name,h,(t?' + '+t.n:'')+(b?' + '+b.n:''),need),specs='<div><dt>'+L(T.heat)+'</dt><dd>'+cap+' kW</dd></div>';
   if(p.c)specs+='<div><dt>'+L(T.cool)+'</dt><dd>'+num(p.c*it.n)+' kW</dd></div>';
   specs+='<div><dt>SCOP</dt><dd>'+num(p.scop[k])+'</dd></div>';
-  return '<li class="rp"><a class="rp-img" href="'+page+'" tabindex="-1" aria-hidden="true"><img src="'+ROOT+'assets/products/'+p.img+'" width="840" height="560" loading="lazy" alt=""></a><div class="rp-body">'+
-    '<p class="rp-top"><span class="pkick">'+p.kind+'</span>'+(i===0&&!it.low&&it.cap<R.need*1.5?'<span class="rp-best">'+L(T.best)+'</span>':'')+'</p>'+
+  return '<li class="rp" data-key="'+esc(keyOf(it))+'"><a class="rp-img" href="'+page+'" tabindex="-1" aria-hidden="true"><img src="'+ROOT+'assets/products/'+p.img+'" width="840" height="560" loading="lazy" alt=""></a><div class="rp-body">'+
+    '<p class="rp-top"><span class="pkick">'+p.kind+'</span>'+(i===0&&!it.low&&it.cap<R.need*1.5?'<span class="rp-best">'+L(T.best)+'</span>':'')+'<button class="rp-pick" type="button" aria-pressed="false">'+L(T.pick)+'</button></p>'+
     '<h4 class="rp-name"><a href="'+page+'">'+esc(name)+', '+h+' kW</a></h4>'+
     (t?'<p class="rp-tank"><a href="'+t.id+'.html">'+esc(T.plus(t.n,t.l))+'</a></p>':'')+
     (b?'<p class="rp-tank"><a href="'+b.id+'.html">'+esc(T.plusBuf(b.n,num(b.l)))+'</a></p>':'')+
@@ -210,6 +227,25 @@ function syncZones(t){zones.forEach(function(b){b.setAttribute('aria-pressed',St
 zones.forEach(function(b){b.addEventListener('click',function(){
   var i=$id('c-temp');i.value=b.getAttribute('data-t');i.dispatchEvent(new Event('input',{bubbles:true}));
 })});
+/* the model the visitor chooses: one at a time, kept while it stays in the list; it goes into the PDF and into the quote request */
+var chosen='';
+function keyOf(it){return it.p.id+'|'+it.p.h+'|'+it.n}
+function showChosen(valid){
+  var found=null;
+  [].forEach.call(out.querySelectorAll('.rp'),function(li){
+    var on=li.getAttribute('data-key')===chosen,b=li.querySelector('.rp-pick');
+    li.classList.toggle('is-picked',on);
+    b.setAttribute('aria-pressed',String(on));
+    b.textContent=L(on?T.picked:T.pick);
+    if(on)found=li;
+  });
+  if(valid&&chosen&&!found)chosen='';
+  var ask=out.querySelector('.res-ask');
+  if(ask){
+    if(!ask.hasAttribute('data-base'))ask.setAttribute('data-base',ask.getAttribute('data-product'));
+    ask.setAttribute('data-product',found?found.querySelector('[data-product]').getAttribute('data-product'):ask.getAttribute('data-base'));
+  }
+}
 var lastHtml='';
 function render(){
   var a=read();
@@ -217,8 +253,8 @@ function render(){
   /* radiators cannot cool, so with them the cooling question goes away */
   $id('coolQ').hidden=a.emit==='rad';
   syncZones(a.t);
-  var html,msg;
-  if(!validate(a)){html='<p class="res-alert">'+L(T.bad)+'</p>';msg=L(T.bad)}
+  var html,msg,valid=validate(a);
+  if(!valid){html='<p class="res-alert">'+L(T.bad)+'</p>';msg=L(T.bad)}
   else{
     var R=compute(a),P=pick(a,R),how=T.how(num(Math.round(R.w*10)/10),deg(a.t),num(a.area),num(R.base));
     if(a.emit==='rad')how+=L(T.howRad);
@@ -235,13 +271,14 @@ function render(){
     if(a.cool==='yes')notes+='<p class="res-alert">'+T.fan()+'</p>';
     html+=notes+'<h3 class="res-lt">'+T.list(P.list.length)+'</h3>';
     if(P.list.length){
-      html+='<ul class="rp-list">'+P.list.map(function(it,i){return prodHtml(it,i,a,R,P)}).join('')+'</ul>';
+      html+='<p class="res-pick-help">'+esc(L(T.pickHelp))+'</p><ul class="rp-list">'+P.list.map(function(it,i){return prodHtml(it,i,a,R,P)}).join('')+'</ul>';
     }else html+='<p class="res-alert">'+emptyText(a,R,P)+'</p>';
     html+='<a class="btn btn-primary res-ask" href="#kontakt" data-product="'+esc(T.ask(num(a.area),num(R.need)))+'" data-need="pompe">'+L(T.askAll)+' <span class="arr" aria-hidden="true">→</span></a>'+
       '<p class="res-disc">'+esc(L(T.disc))+' '+L(T.src)+'</p>';
     msg=T.livNeed(num(R.need),P.list.length);
   }
   if(html!==lastHtml){out.innerHTML=html;lastHtml=html}
+  showChosen(valid);
   if(live&&live.textContent!==msg)live.textContent=msg;
 }
 var raf=0;
@@ -259,6 +296,225 @@ function assess(){
   if(w!==''&&parseInt(w,10)<LEVELS.indexOf(lv))txt+=' '+L(T.winWarn);
   o.textContent=txt;o.hidden=false;
 }
+
+/* ---------- the calculation as a PDF ---------- */
+/* Made in the visitor's browser with no library, and nothing is sent anywhere: the visitor sends the file on WhatsApp when they like.
+   The standard PDF fonts keep it small and carry the Albanian letters; a letter they lack is written without its accent,
+   and other alphabets come out as "?". The answers come from the form itself, so the wording stays the same as on the page. */
+var PDF_W=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+var PDF_1252=[0x20AC,0,0x201A,0x192,0x201E,0x2026,0x2020,0x2021,0x2C6,0x2030,0x160,0x2039,0x152,0,0x17D,0,0,0x2018,0x2019,0x201C,0x201D,0x2022,0x2013,0x2014,0x2DC,0x2122,0x161,0x203A,0x153,0,0x17E,0x178];
+function pdfBytes(s){
+  return Array.from(String(s).normalize('NFC')).map(function(ch){
+    var c=ch.codePointAt(0),i;
+    if(c<32)return 32;
+    if(c===0x2212)return 45;
+    if(c<=126||(c>=160&&c<=255))return c;
+    i=PDF_1252.indexOf(c);
+    if(i>=0)return 128+i;
+    c=(ch==='đ'?'d':ch==='Đ'?'D':ch.normalize('NFD').charAt(0)).charCodeAt(0);
+    return c>=32&&c<=126?c:63;
+  });
+}
+function pdfWidth(s,size){return pdfBytes(s).reduce(function(w,b){return w+(b>=32&&b<=126?PDF_W[b-32]:556)},0)*size/1000}
+function pdfWrap(s,size,max){
+  var lines=[],cur='';
+  String(s).trim().split(/\s+/).forEach(function(w){
+    var t=cur?cur+' '+w:w;
+    if(pdfWidth(t,size)<=max){cur=t;return}
+    if(cur)lines.push(cur);
+    cur=w;
+  });
+  lines.push(cur);
+  return lines;
+}
+function pdfText(x,y,size,font,s,gray,spacing){
+  var hex=pdfBytes(s).map(function(b){return ('0'+b.toString(16)).slice(-2)}).join('');
+  return 'BT /'+font+' '+size+' Tf '+gray+' g '+(spacing||0)+' Tc '+x.toFixed(2)+' '+y.toFixed(2)+' Td <'+hex+'> Tj ET\n';
+}
+function pdfRule(x1,x2,y,gray){return gray+' G .6 w '+x1.toFixed(2)+' '+y.toFixed(2)+' m '+x2.toFixed(2)+' '+y.toFixed(2)+' l S\n'}
+function fieldLabel(id){return $id(id).closest('.f').querySelector('label').firstChild.textContent.replace(/\s*\(.*?\)/,'').trim()}
+function optionText(id){var s=$id(id),o=s.options[s.selectedIndex];return o?o.text:''}
+function choiceRow(name){
+  var c=form.querySelector('input[name="'+name+'"]:checked');
+  return [c.closest('fieldset').querySelector('legend').textContent.trim(),form.querySelector('label[for="'+c.id+'"]').textContent.trim()];
+}
+/* what the visitor told us about the building, as label and answer */
+function pdfAnswers(a){
+  var zone=zones.filter(function(b){return parseFloat(b.getAttribute('data-t'))===a.t})[0],
+      rows=[[fieldLabel('c-area'),num(a.area)+' m²'],[fieldLabel('c-temp'),deg(a.t)+'°C'+(zone?', '+zone.querySelector('span').textContent:'')],[fieldLabel('c-ins'),optionText('c-ins')],choiceRow('emit')];
+  if(a.emit!=='rad')rows.push(choiceRow('cool'));
+  rows.push([fieldLabel('c-tank'),optionText('c-tank')]);
+  if(a.tank!=='none')rows.push([fieldLabel('c-people'),String(a.n)]);
+  ['c-year','c-facade','c-win'].forEach(function(id){if($id(id).value!=='')rows.push([fieldLabel(id),optionText(id)])});
+  return rows;
+}
+function chosenName(it){return (it.n===2?'2 × ':'')+L(it.p.name)+', '+num(it.p.h)+' kW'}
+function chosenExtras(a,P,it){
+  var b=bufferFor(it.cap,it.n,a.area),more=[];
+  if(P.tank)more.push(T.plus(P.tank.n,P.tank.l));
+  if(b)more.push(T.plusBuf(b.n,num(b.l)));
+  return more;
+}
+function pdfPages(a,R,P,it,logo,photo,name,phone,mail){
+  var PH=841.89,M=56,CW=595.28-M*2,G=24,pages=[],c='',y=PH-M-26;
+  function footer(){
+    return pdfRule(M,M+CW,70,.8)+pdfText(M,56,8.5,'F1','Comfort Clima, '+L(T.pdfAddr),.4)+pdfText(M,44,8.5,'F1','+383 48 77 22 88  |  info@comfort-clima.com  |  comfort-clima.com',.4);
+  }
+  function room(h){if(y-h<90){pages.push(c+footer());c='';y=PH-M}}
+  function section(s){room(70);c+=pdfText(M,y,12.5,'F2',s,0);y-=22}
+  function rows(list,cols){
+    var w=(CW-G*(cols-1))/cols;
+    for(var r=0;r<list.length;r+=cols){
+      var part=list.slice(r,r+cols),wrapped=part.map(function(p){return pdfWrap(p[1],12,w)}),n=Math.max.apply(null,wrapped.map(function(l){return l.length}));
+      room(17+16*n+14);
+      part.forEach(function(p,k){c+=pdfText(M+k*(w+G),y,7.5,'F1',p[0].toUpperCase(),.4,.9)});
+      y-=17;
+      for(var i=0;i<n;i++){
+        wrapped.forEach(function(l,k){if(l[i])c+=pdfText(M+k*(w+G),y,12,'F1',l[i],0)});
+        y-=16;
+      }
+      y+=8;
+      part.forEach(function(p,k){c+=pdfRule(M+k*(w+G),M+k*(w+G)+w,y,.75)});
+      y-=15;
+    }
+  }
+  if(logo)c+='q 150 0 0 '+(150*logo.h/logo.w).toFixed(2)+' '+M+' '+y.toFixed(2)+' cm /Im1 Do Q\n';
+  else c+=pdfText(M,y+6,16,'F2','Comfort Clima',0);
+  var d=new Date(),date=L(T.pdfDate)+': '+('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();
+  c+=pdfText(M+CW-pdfWidth(date,9.5),y+8,9.5,'F1',date,.4);
+  y-=46;
+  c+=pdfText(M,y,26,'F2',L(T.pdfTitle),0);y-=21;
+  pdfWrap(L(T.pdfSend),10.5,CW).forEach(function(l){c+=pdfText(M,y,10.5,'F1',l,.35);y-=15});
+  y-=16;
+  section(L(T.pdfClient));
+  rows([[fieldLabel('c-cname'),name],[fieldLabel('c-cphone'),phone]],2);
+  if(mail)rows([[fieldLabel('c-cmail'),mail]],1);
+  y-=4;
+  section(L(T.pdfObj));
+  rows(pdfAnswers(a),2);
+  y-=4;
+  /* the chosen product: its photo on the left when we have it, the words beside it */
+  var X=M,W=CW,photoEnd=y;
+  if(it&&photo)room(150);
+  section(L(T.pdfChosen));
+  if(it&&photo){
+    var pw=132,ph=pw*photo.h/photo.w;
+    photoEnd=y+9-ph;
+    c+='q '+pw+' 0 0 '+ph.toFixed(2)+' '+M+' '+photoEnd.toFixed(2)+' cm /Im2 Do Q\n';
+    X=M+pw+16;W=CW-pw-16;
+  }
+  if(it){
+    var more=chosenExtras(a,P,it);
+    /* the width table is for the regular font; the bold one runs a little wider */
+    pdfWrap(chosenName(it),12,W*.93).forEach(function(l){c+=pdfText(X,y,12,'F2',l,0);y-=15});
+    if(more.length)pdfWrap(more.join(' '),9.5,W).forEach(function(m){c+=pdfText(X,y,9.5,'F1',m,.35);y-=13});
+  }else{c+=pdfText(M,y,11,'F1',L(T.pdfNoPick),.35);y-=15}
+  pdfWrap(T.pdfNeed(num(R.need)),9.5,W).forEach(function(l){c+=pdfText(X,y,9.5,'F1',l,.35);y-=13});
+  y+=4;
+  if(it&&photo)y=Math.min(y,photoEnd-8);
+  c+=pdfRule(M,M+CW,y,.75);
+  y-=18;
+  pdfWrap(L(T.pdfNote),8.5,CW).forEach(function(l){room(14);c+=pdfText(M,y,8.5,'F1',l,.4);y-=12});
+  pages.push(c+footer());
+  return pages;
+}
+function pdfFile(pages,logo,photo){
+  var objs=[0,0,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'],
+      res='<< /Font << /F1 3 0 R /F2 4 0 R >>',xobj='',kids=[],out='%PDF-1.4\n',off=[];
+  function addImage(im,name){
+    objs.push('<< /Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+im.data.length+' >>\nstream\n'+im.data+'\nendstream');
+    xobj+=' /'+name+' '+objs.length+' 0 R';
+  }
+  if(logo)addImage(logo,'Im1');
+  if(photo)addImage(photo,'Im2');
+  if(xobj)res+=' /XObject <<'+xobj+' >>';
+  res+=' >>';
+  pages.forEach(function(s){
+    objs.push('<< /Length '+s.length+' >>\nstream\n'+s+'endstream');
+    objs.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources '+res+' /Contents '+objs.length+' 0 R >>');
+    kids.push(objs.length+' 0 R');
+  });
+  objs[0]='<< /Type /Catalog /Pages 2 0 R >>';
+  objs[1]='<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+kids.length+' >>';
+  objs.forEach(function(o,i){off.push(out.length);out+=(i+1)+' 0 obj\n'+o+'\nendobj\n'});
+  var xref=out.length;
+  out+='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n'+off.map(function(o){return ('000000000'+o).slice(-10)+' 00000 n \n'}).join('')+'trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n';
+  var bytes=new Uint8Array(out.length);
+  for(var i=0;i<out.length;i++)bytes[i]=out.charCodeAt(i);
+  return bytes;
+}
+/* a picture for the PDF as a white-backed JPEG, loaded once; a picture that fails leaves the PDF without it */
+var pdfImages={};
+function pdfImage(src,maxW){
+  var url=new URL(src,location.href).href;
+  if(!pdfImages[url])pdfImages[url]=new Promise(function(resolve){
+    var img=new Image();
+    img.onload=function(){
+      try{
+        var k=Math.min(1,maxW/img.naturalWidth),cv=document.createElement('canvas'),x=cv.getContext('2d');
+        cv.width=Math.round(img.naturalWidth*k);cv.height=Math.round(img.naturalHeight*k);
+        x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);x.drawImage(img,0,0,cv.width,cv.height);
+        resolve({w:cv.width,h:cv.height,data:atob(cv.toDataURL('image/jpeg',.92).split(',')[1])});
+      }catch(err){resolve(null)}
+    };
+    img.onerror=function(){resolve(null)};
+    img.src=url;
+  });
+  return pdfImages[url];
+}
+function pdfLogo(){var src=document.querySelector('.foot-brand .logo img');return src?pdfImage(src.src,900):Promise.resolve(null)}
+function pdfPhoto(it){return pdfImage(ROOT+'assets/products/'+it.p.img,600)}
+function chosenItem(P){return P.list.filter(function(x){return keyOf(x)===chosen})[0]}
+/* a click on a recommended model chooses it, a second click clears it; its links keep working */
+out.addEventListener('click',function(e){
+  var card=e.target.closest('.rp');
+  if(!card||e.target.closest('a'))return;
+  var key=card.getAttribute('data-key'),a=read();
+  chosen=chosen===key?'':key;
+  showChosen(true);
+  /* its photo is fetched now, so the PDF is ready at once when it is asked for */
+  var it=chosen&&validate(a)?chosenItem(pick(a,compute(a))):null;
+  if(it)pdfPhoto(it);
+});
+['cname','cphone'].forEach(function(id){$id('c-'+id).addEventListener('input',function(){if(this.value.trim())mark(id,true)})});
+/* the client's own email is needed to send by email and optional for the PDF; when written it has to be one we can answer */
+function mailOk(v){return !v||/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}
+$id('c-cmail').addEventListener('input',function(){if(mailOk(this.value.trim()))mark('cmail',true)});
+/* what both ways of sending need. Nothing goes out without a name and phone, or with answers the calculator refuses:
+   the first field to fix gets the focus. */
+function requestData(needMail){
+  var name=$id('c-cname').value.trim(),phone=$id('c-cphone').value.trim(),mail=$id('c-cmail').value.trim(),a=read();
+  mark('cname',!!name);mark('cphone',!!phone);
+  $id('e-cmail').textContent=L(needMail?T.mailNeed:T.mailBad);
+  mark('cmail',mailOk(mail)&&(!needMail||!!mail));
+  validate(a);
+  var bad=form.querySelector('[aria-invalid="true"]');
+  if(bad){bad.focus();return null}
+  var R=compute(a),P=pick(a,R);
+  return {name:name,phone:phone,mail:mail,a:a,R:R,P:P,it:chosenItem(P)};
+}
+pdfBtn.addEventListener('click',function(){
+  var q=requestData();
+  if(!q)return;
+  Promise.all([pdfLogo(),q.it?pdfPhoto(q.it):null]).then(function(pics){
+    var logo=pics[0],photo=pics[1],url=URL.createObjectURL(new Blob([pdfFile(pdfPages(q.a,q.R,q.P,q.it,logo,photo,q.name,q.phone,q.mail),logo,photo)],{type:'application/pdf'})),link=document.createElement('a');
+    link.href=url;link.download=L(T.pdfFile);
+    document.body.appendChild(link);link.click();link.remove();
+    setTimeout(function(){URL.revokeObjectURL(url)},30000);
+  });
+});
+/* the same request as the PDF, written out in the visitor's email app; a mailto link cannot attach a file, so it goes as text.
+   The client's email address is required here and written into the text. */
+function rowText(r){return r[0]+(/\?$/.test(r[0])?' ':': ')+r[1]}
+$id('calcMail').addEventListener('click',function(e){
+  var note=$id('calcMailNote'),q=requestData(true);
+  note.hidden=true;
+  if(!q){e.preventDefault();return}
+  var body=[rowText([fieldLabel('c-cname'),q.name]),rowText([fieldLabel('c-cphone'),q.phone])]
+    .concat(q.mail?[rowText([fieldLabel('c-cmail'),q.mail])]:[],['',L(T.pdfObj)],pdfAnswers(q.a).map(rowText),['',L(T.pdfChosen)],q.it?[chosenName(q.it)].concat(chosenExtras(q.a,q.P,q.it)):[L(T.mailNoPick)],[T.pdfNeed(num(q.R.need))]);
+  this.href='mailto:info@comfort-clima.com?subject='+encodeURIComponent(L(T.pdfTitle)+' · '+q.name)+'&body='+encodeURIComponent(body.join('\r\n'));
+  note.hidden=false;
+});
 
 /* ---------- share: the answers sit after # in the address ---------- */
 function shareUrl(){
@@ -291,6 +547,8 @@ share.addEventListener('click',function(){
 form.addEventListener('submit',function(e){e.preventDefault()});
 form.addEventListener('input',schedule);
 form.addEventListener('change',schedule);
+/* the logo is fetched when the name and phone are reached, so the PDF is ready at once when it is asked for */
+$id('calcPdfBox').addEventListener('focusin',function(){pdfLogo()},{once:true});
 ['c-year','c-facade','c-win'].forEach(function(id){$id(id).addEventListener('change',assess)});
 addEventListener('hashchange',fromHash);
 fromHash();
