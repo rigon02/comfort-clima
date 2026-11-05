@@ -690,6 +690,11 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .calc-pdf .calc-grid{margin-top:22px}
 .calc-pdf .q-help{margin-top:16px}
 .calc-actions .q-help{flex-basis:100%;margin-top:0}
+/* our contact details under the send buttons: the contact card's list, on the form's light background */
+.ci-list.calc-contact{margin:0;border-top-color:var(--line)}
+.ci-list.calc-contact div{padding:14px 0;border-bottom-color:var(--line)}
+.ci-list.calc-contact dt{color:var(--mute)}
+.ci-list.calc-contact dd{font-size:.98rem}
 .res-disc{margin-top:22px;font-size:.84rem;line-height:1.55;color:var(--mute)}
 
 /* winter: a black band */

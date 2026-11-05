@@ -111,7 +111,7 @@ var T={
   pdfNeed:function(n){return EN?'Required power from the calculator: '+n+' kW':'Fuqia e nevojshme sipas kalkulatorit: '+n+' kW'},
   pdfNote:[["Ky kalkulator ofron një vlerësim të përafërt dhe orientues të kapacitetit të nevojshëm, bazuar në të dhënat klimatike të përdorura, informacionin që keni deklaruar dhe supozimet e metodës së llogaritjes. Rezultati dhe modelet e sugjeruara shërbejnë për përzgjedhje paraprake dhe nuk zëvendësojnë llogaritjen e detajuar të humbjeve termike apo projektin e sistemit. Përzgjedhja përfundimtare duhet të verifikohet nga një profesionist, duke marrë parasysh kushtet reale të objektit, sistemin e ngrohjes dhe performancën e pajisjes në kushtet përkatëse të punës.","Për verifikimin e përzgjedhjes, na kontaktoni ose na vizitoni në showroom."],["This calculator gives an approximate, indicative estimate of the required capacity, based on the climate data used, the information you have provided and the assumptions of the calculation method. The result and the suggested models are for preliminary selection and do not replace a detailed heat loss calculation or a system design. The final selection must be verified by a professional, taking into account the real conditions of the building, the heating system and the performance of the equipment under the relevant operating conditions.","To verify your selection, contact us or visit us at our showroom."]],
   pdfDate:["Data","Date"],
-  pdfFile:["comfort-clima-kerkese-per-oferte.pdf","comfort-clima-quote-request.pdf"],
+  pdfFile:["comfort-clima-kerkese-per-oferte","comfort-clima-quote-request"],
   pdfAddr:["Rruga Ukë Mavriqi, 23, Shkabaj, Prishtinë 10000, Republika e Kosovës","Rruga Ukë Mavriqi 23, Shkabaj, Prishtina 10000, Republic of Kosovo"]
 };
 
@@ -490,12 +490,17 @@ function requestData(needMail){
   var R=compute(a),P=pick(a,R);
   return {name:name,phone:phone,mail:mail,a:a,R:R,P:P,it:chosenItem(P)};
 }
+/* the client's name for the file name, without accents or marks: "Arbër Çitaku" gives "arber-citaku" */
+function fileName(name){
+  var slug=name.replace(/[đĐ]/g,'d').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-+|-+$/g,'').slice(0,60).replace(/-+$/,'');
+  return L(T.pdfFile)+(slug?'-'+slug:'')+'.pdf';
+}
 pdfBtn.addEventListener('click',function(){
   var q=requestData();
   if(!q)return;
   Promise.all([pdfLogo(),q.it?pdfPhoto(q.it):null]).then(function(pics){
     var logo=pics[0],photo=pics[1],url=URL.createObjectURL(new Blob([pdfFile(pdfPages(q.a,q.R,q.P,q.it,logo,photo,q.name,q.phone,q.mail),logo,photo)],{type:'application/pdf'})),link=document.createElement('a');
-    link.href=url;link.download=L(T.pdfFile);
+    link.href=url;link.download=fileName(q.name);
     document.body.appendChild(link);link.click();link.remove();
     setTimeout(function(){URL.revokeObjectURL(url)},30000);
   });

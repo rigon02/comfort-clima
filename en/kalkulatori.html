@@ -20,8 +20,8 @@
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,500&display=swap">
-<link rel="stylesheet" href="../assets/css/site.css?v=2">
-<script src="../assets/js/kalkulatori.js?v=4" defer></script>
+<link rel="stylesheet" href="../assets/css/site.css?v=3">
+<script src="../assets/js/kalkulatori.js?v=5" defer></script>
 <link rel="alternate" hreflang="sq" href="https://comfort-clima.com/kalkulatori.html">
 <link rel="alternate" hreflang="en" href="https://comfort-clima.com/en/kalkulatori.html">
 <link rel="alternate" hreflang="x-default" href="https://comfort-clima.com/kalkulatori.html">
@@ -274,9 +274,12 @@
             <div class="calc-actions f-wide">
               <button class="btn btn-primary btn-sm" id="calcPdf" type="button">Download PDF</button>
               <a class="btn btn-primary btn-sm" id="calcMail" href="mailto:info@comfort-clima.com">Send by email</a>
-              <p class="q-help" id="calcMailNote" role="status" hidden>Your email app should have opened with your request. Press Send there. If nothing opened, download the PDF or call us on <a href="tel:+38348772288">+383 48 77 22 88</a>.</p>
+              <p class="q-help" id="calcMailNote" role="status" hidden>Your email app should have opened with your request. Press Send there. If nothing opened, download the PDF and send it to <a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a>.</p>
               <a class="btn btn-primary btn-sm calc-see" href="#calcOut">See the result <span aria-hidden="true">↓</span></a>
             </div>
+            <dl class="ci-list calc-contact f-wide">
+              <div><dt>Or send the PDF to</dt><dd><a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a></dd></div>
+            </dl>
           </div>
         </form>
         <div class="calc-out r" style="--i:1" id="calcOut" tabindex="-1"></div>
