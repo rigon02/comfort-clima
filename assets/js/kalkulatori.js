@@ -177,7 +177,7 @@ function read(){
 function inRange(v,lo,hi){return typeof v==='number'&&!isNaN(v)&&v>=lo&&v<=hi}
 function mark(id,ok){var i=$id('c-'+id),e=$id('e-'+id);if(ok)i.removeAttribute('aria-invalid');else i.setAttribute('aria-invalid','true');e.hidden=ok;return ok}
 function validate(a){
-  var ok=mark('area',inRange(a.area,20,500));
+  var ok=mark('area',inRange(a.area,20,Infinity));
   ok=mark('temp',inRange(a.t,-30,0))&&ok;
   ok=mark('people',a.tank==='none'||inRange(a.n,1,10))&&ok;
   return ok;
