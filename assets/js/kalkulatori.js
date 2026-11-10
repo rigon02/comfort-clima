@@ -22,26 +22,28 @@ var LOSS={none:[120,102,84,66],poor:[95,81,67,53],mid:[55,47,39,31],good:[40,34,
 var INS_NAME={none:["Pa izolim","No insulation"],poor:["Izolim i dobët","Poor insulation"],mid:["Izolim mesatar","Medium insulation"],good:["Izolim i mirë","Good insulation"],passive:["Shtëpi pasive","Passive house"]};
 
 /* Every size from the technical tables on our product pages. Each size: [heating kW with 35°C water and 7°C outside,
-   heating kW at -7°C outside where published, cooling kW with 18°C water where published, SCOP with 35°C water, SCOP with 55°C water].
+   heating kW at -7°C outside where published, cooling kW with 18°C water where published, SCOP with 35°C water, SCOP with 55°C water,
+   heating kW with 55°C water and 7°C outside where published]. With radiators the models are matched on that 55°C output
+   (client's rule); Split Comfort publishes none, so with radiators it is not offered.
    Fujitsu pages give ηs, so SCOP = (ηs + 3) × 2.5 / 100; this reproduces Haier's published pairs (5.10 and 201%).
    The 3-phase versions of Split High Power have the same figures as the 1-phase ones and are the same page, so they are one entry.
    Monobloc Comfort shares its outdoor units across the three pages; the -7°C figures are published on the control box page. */
-function fam(id,name,img,kind,tMin,tank,conf,sizes){return sizes.map(function(s){return {id:id,name:name,img:img,kind:kind,tMin:tMin,tank:tank,conf:conf,h:s[0],h7:s[1],c:s[2],scop:[s[3],s[4]]}})}
-var MONO_WALL=[[5,5.1,5.35,4.8,3.4],[8,8.18,7.69,4.95,3.55],[10,9.53,9.3,4.95,3.6]],
-    SPLIT_HP=[[10.08,7.7,0,4.65,3.35],[12.55,9.2,0,4.65,3.45],[14.47,10.7,0,4.7,3.5]],
+function fam(id,name,img,kind,tMin,tank,conf,sizes){return sizes.map(function(s){return {id:id,name:name,img:img,kind:kind,tMin:tMin,tank:tank,conf:conf,h:s[0],h7:s[1],c:s[2],scop:[s[3],s[4]],h55:s[5]||0}})}
+var MONO_WALL=[[5,5.1,5.35,4.8,3.4,5],[8,8.18,7.69,4.95,3.55,8],[10,9.53,9.3,4.95,3.6,10]],
+    SPLIT_HP=[[10.08,7.7,0,4.65,3.35,8.24],[12.55,9.2,0,4.65,3.45,9.16],[14.47,10.7,0,4.7,3.5,10.09]],
     SPLIT_C=[[4.5,4.4,0,4.45,3.2],[5.5,5,0,4.45,3.2],[7.5,5.7,0,4.5,3.28],[9.5,8.9,0,4.53,3.33]];
 var PUMPS=[].concat(
-  fam('fujitsu-monobloc-comfort-control-box',["Fujitsu Monobloc Comfort, kuti kontrolli","Fujitsu Monobloc Comfort, control box"],'atw/mono-controlbox.jpg','Monobloc',-20,0,1,[[5,5.1,5.45,5.08,3.65],[8,8.18,7.79,5.2,3.68],[10,9.53,9.4,5.23,3.73]]),
+  fam('fujitsu-monobloc-comfort-control-box',["Fujitsu Monobloc Comfort, kuti kontrolli","Fujitsu Monobloc Comfort, control box"],'atw/mono-controlbox.jpg','Monobloc',-20,0,1,[[5,5.1,5.45,5.08,3.65,5],[8,8.18,7.79,5.2,3.68,8],[10,9.53,9.4,5.23,3.73,10]]),
   fam('fujitsu-monobloc-comfort-wall-unit',["Fujitsu Monobloc Comfort, njësi në mur","Fujitsu Monobloc Comfort, wall unit"],'atw/mono-wall.jpg','Monobloc',-20,0,1,MONO_WALL),
   /* the tank volume of this indoor unit (WGEP100KR3-19) is not published on our page or Fujitsu's: 190 L is assumed only to decide
      when to offer it, as with the other "-19" units, and no litre figure is shown for it (conf = 0) */
   fam('fujitsu-monobloc-comfort-with-tank',["Fujitsu Monobloc Comfort me bojler","Fujitsu Monobloc Comfort with tank"],'atw/mono-dhw.jpg','Monobloc',-20,190,0,MONO_WALL),
-  fam('haier-monobloc-r290',["Haier Monobloc R290","Haier Monobloc R290"],'haier/monobloc-r290.jpg','Monobloc',-25,0,1,[[4,0,4,5.1,3.85],[6,0,6,5.1,3.83],[8,0,7.5,5.2,3.85],[10,0,9.5,5.1,3.83],[12,0,11.5,4.82,3.85],[14,0,13.5,4.8,3.83],[16,0,15.5,4.8,3.85]]),
+  fam('haier-monobloc-r290',["Haier Monobloc R290","Haier Monobloc R290"],'haier/monobloc-r290.jpg','Monobloc',-25,0,1,[[4,0,4,5.1,3.85,4],[6,0,6,5.1,3.83,6],[8,0,7.5,5.2,3.85,8],[10,0,9.5,5.1,3.83,10],[12,0,11.5,4.82,3.85,11.5],[14,0,13.5,4.8,3.83,13.5],[16,0,15.5,4.8,3.85,15.5]]),
   fam('fujitsu-split-comfort-r32',["Fujitsu Split Comfort R32","Fujitsu Split Comfort R32"],'atw/split-comfort.jpg','Split',-20,0,1,SPLIT_C),
   fam('fujitsu-split-comfort-r32-with-tank',["Fujitsu Split Comfort R32 me bojler","Fujitsu Split Comfort R32 with tank"],'atw/split-comfort-dhw.jpg','Split',-20,190,1,SPLIT_C),
   fam('fujitsu-split-high-power-r32',["Fujitsu Split High Power R32","Fujitsu Split High Power R32"],'atw/split-hp.jpg','Split',-25,0,1,SPLIT_HP),
   fam('fujitsu-split-high-power-r32-with-tank',["Fujitsu Split High Power R32 me bojler","Fujitsu Split High Power R32 with tank"],'atw/split-hp-dhw.jpg','Split',-25,190,1,SPLIT_HP),
-  fam('haier-commercial-heat-pump-r290',["Haier Pompë termike komerciale R290","Haier Commercial heat pump R290"],'haier/commercial-r290.jpg','Monobloc',-28,0,1,[[26,0,26,4.91,3.83],[30,0,30,4.73,3.68],[35,0,35,4.55,3.57],[40,0,39,4.46,3.56]])
+  fam('haier-commercial-heat-pump-r290',["Haier Pompë termike komerciale R290","Haier Commercial heat pump R290"],'haier/commercial-r290.jpg','Monobloc',-28,0,1,[[26,0,26,4.91,3.83,26],[30,0,30,4.73,3.68,30],[35,0,35,4.55,3.57,35],[40,0,39,4.46,3.56,40]])
 );
 /* the domestic hot water tanks on our pages that take a heat pump's coil */
 var TANKS=[{id:'tiki-space-200-s2',n:'Tiki Space 200-S2.0',l:180},{id:'tiki-space-300-s4',n:'Tiki Space 300-S4.0',l:249}];
@@ -65,13 +67,14 @@ var T={
   need:["Fuqia e nevojshme","Required power"],
   vol:["Vëllimi i bojlerit","Tank volume"],
   how:function(w,t,a,b){return EN?w+' W/m² at '+t+'°C × '+a+' m²'+' = '+b+' kW.':w+' W/m² në '+t+'°C × '+a+' m²'+' = '+b+' kW.'},
-  howRad:[" Radiatorë: +15%."," Radiators: +15%."],
+  howRad:[" Radiatorë: +15%. Modelet krahasohen me fuqinë e tyre me ujë 55°C."," Radiators: +15%. Models are compared at their output with 55°C water."],
   list:function(n){return EN?'Recommended heat pumps ('+n+')':'Pompat termike që ju rekomandojmë ('+n+')'},
   best:["Rekomandimi ynë","Our recommendation"],
-  heat:["Ngrohje","Heating"],cool:["Ftohje","Cooling"],
+  heat:["Ngrohje","Heating"],heat55:["Ngrohje 55°C","Heating 55°C"],cool:["Ftohje","Cooling"],
   why:["Pse e rekomandojmë:","Why we recommend it:"],
-  whyHeat:function(h,n){return EN?'Heating capacity ('+h+' kW) covers the need ('+n+' kW)':'Fuqia e ngrohjes ('+h+' kW) e mbulon nevojën ('+n+' kW)'},
-  whyPair:function(h,c,n){return EN?'Two '+h+' kW heat pumps give '+c+' kW and cover the need ('+n+' kW)':'Dy pompa nga '+h+' kW japin '+c+' kW dhe e mbulojnë nevojën ('+n+' kW)'},
+  whyHeat:function(h,n,k){return k?(EN?'Heating output with 55°C water ('+h+' kW) covers the need ('+n+' kW)':'Fuqia e ngrohjes me ujë 55°C ('+h+' kW) e mbulon nevojën ('+n+' kW)'):(EN?'Heating capacity ('+h+' kW) covers the need ('+n+' kW)':'Fuqia e ngrohjes ('+h+' kW) e mbulon nevojën ('+n+' kW)')},
+  whyPair:function(h,c,n,k){return k?(EN?'Two heat pumps giving '+h+' kW each with 55°C water make '+c+' kW and cover the need ('+n+' kW)':'Dy pompa nga '+h+' kW me ujë 55°C japin '+c+' kW dhe e mbulojnë nevojën ('+n+' kW)'):(EN?'Two '+h+' kW heat pumps give '+c+' kW and cover the need ('+n+' kW)':'Dy pompa nga '+h+' kW japin '+c+' kW dhe e mbulojnë nevojën ('+n+' kW)')},
+  out55:function(c){return EN?'Heating with 55°C water (7°C outside): '+c+' kW':'Ngrohje me ujë 55°C (jashtë 7°C): '+c+' kW'},
   whyIntPair:function(l){return EN?'A built-in '+l+' L tank in each heat pump':'Bojler i integruar '+l+' L te secila pompë'},
   pair:["Për këtë fuqi mund të përdoren edhe dy pompa termike bashkë.","For this power, two heat pumps can also work together."],
   whyScop:[function(s){return EN?'SCOP '+s+' for underfloor heating (35°C water)':'SCOP '+s+' për ngrohje në dysheme (ujë 35°C)'},function(s){return EN?'SCOP '+s+' with radiators (55°C water)':'SCOP '+s+' me radiatorë (ujë 55°C)'}],
@@ -91,7 +94,7 @@ var T={
   tooSmall:function(m){var h='<a class="text-link" href="kondicionere-split.html">'+(EN?'split air conditioners':'kondicionerët split')+'</a>';return EN?'This is less than half of our smallest matching model ('+m+' kW), which would be too large. Write to us, or see '+h+'.':'Kjo fuqi është më pak se gjysma e modelit tonë më të vogël që përputhet ('+m+' kW), i cili do të ishte shumë i madh. Na shkruani, ose shihni '+h+'.'},
   noneFit:["Asnjë model nuk përputhet me këto zgjedhje. Provoni t'i ndryshoni, ose na shkruani.","No model matches these choices. Try changing them, or write to us."],
   bad:["Plotësoni fushat e shënuara me të kuqe për të parë rezultatin.","Fill in the fields marked in red to see the result."],
-  disc:["Është vlerësim për një shtëpi mesatare. Forma e shtëpisë, cilësia e ndërtimit, dritaret dhe orientimi mund ta ndryshojnë shumë rezultatin; masën e saktë e jep llogaritja e humbjeve dhomë për dhomë sipas EN 12831-1. Fuqitë e modeleve janë me ujë 35°C dhe 7°C jashtë, si në tabelat e produkteve: në të ftohtë japin më pak, prandaj i kontrollojmë në ofertë. SCOP-i i modeleve Fujitsu është llogaritur nga ηs në tabelat e produkteve.","This is an estimate for an average house. The shape of the house, the build quality, the windows and the orientation can change the result a lot; the exact size comes from a room-by-room heat loss calculation to EN 12831-1. Model capacities are with 35°C water and 7°C outside, as in the product tables: they give less in the cold, so we check them in the quote. SCOP for the Fujitsu models is worked out from ηs in the product tables."],
+  disc:["Është vlerësim për një shtëpi mesatare. Forma e shtëpisë, cilësia e ndërtimit, dritaret dhe orientimi mund ta ndryshojnë shumë rezultatin; masën e saktë e jep llogaritja e humbjeve dhomë për dhomë sipas EN 12831-1. Fuqitë e modeleve janë me ujë 35°C (me radiatorë 55°C) dhe 7°C jashtë, si në tabelat e produkteve: në të ftohtë japin më pak, prandaj i kontrollojmë në ofertë. SCOP-i i modeleve Fujitsu është llogaritur nga ηs në tabelat e produkteve.","This is an estimate for an average house. The shape of the house, the build quality, the windows and the orientation can change the result a lot; the exact size comes from a room-by-room heat loss calculation to EN 12831-1. Model capacities are with 35°C water (55°C with radiators) and 7°C outside, as in the product tables: they give less in the cold, so we check them in the quote. SCOP for the Fujitsu models is worked out from ηs in the product tables."],
   src:['Vlerat orientuese për m²: <a class="text-link" href="https://www.hvaceduhub.com/resources" target="_blank" rel="noopener">HVAC Education Hub</a>.','Guide values per m²: <a class="text-link" href="https://www.hvaceduhub.com/resources" target="_blank" rel="noopener">HVAC Education Hub</a>.'],
   livNeed:function(n,c){return EN?'Required power '+n+' kW. '+c+' models.':'Fuqia e nevojshme '+n+' kW. '+c+' modele.'},
   assess:function(n){return EN?'From your answers: '+n+'.':'Sipas përgjigjeve: '+n+'.'},
@@ -136,26 +139,29 @@ function compute(a){
 }
 function isFujitsu(it){return it.p.id.indexOf('fujitsu')===0}
 function isCommercial(p){return p.id==='haier-commercial-heat-pump-r290'}
-function maxHeat(list){return Math.max.apply(null,list.map(function(p){return p.h}).concat(0))}
+/* the output a model is matched on: with 35°C water for underfloor heating, with 55°C water for radiators (k = 1) */
+function heatOf(p,k){return k?p.h55:p.h}
+function maxHeat(list,k){return Math.max.apply(null,list.map(function(p){return heatOf(p,k)}).concat(0))}
 /* same match as the reference calculator: enough capacity, less than double, closest first, then the higher SCOP.
    Added: a model whose published -7°C output falls short of the need (when the design temperature is that cold) goes after those that cover it.
    The client's rules: Fujitsu first, except that above 20 kW a Haier commercial model that suits the need (not 1.5 times it) goes before it.
    Places stay for the other Haier models when they fit, so Fujitsu does not hide them.
    Each group (Fujitsu, Haier home, Haier commercial) offers two of the same model together once its own largest model is too small, so
-   15 kW shows both 2 × Fujitsu and Haier 16 kW. A need above our largest tank still gets that tank (the page says so). */
+   15 kW shows both 2 × Fujitsu and Haier 16 kW. A need above our largest tank still gets that tank (the page says so).
+   With radiators every capacity here is the 55°C one; no -7°C output with 55°C water is published, so that check is for underfloor only. */
 function pick(a,R){
   var k=a.emit==='rad'?1:0,need=R.need;
-  var pool=PUMPS.filter(function(p){return a.t>=p.tMin&&(a.tank==='int'?p.tank>0:p.tank===0)&&(a.cool!=='yes'||p.c>0)});
+  var pool=PUMPS.filter(function(p){return a.t>=p.tMin&&(a.tank==='int'?p.tank>0:p.tank===0)&&(a.cool!=='yes'||p.c>0)&&(!k||p.h55>0)});
   function isFj(p){return p.id.indexOf('fujitsu')===0}
   function sameGroup(p){return function(q){return isCommercial(p)?isCommercial(q):isFj(p)?isFj(q):!isFj(q)&&!isCommercial(q)}}
   var list=[];
   function add(p,n){
-    var cap=p.h*n;
-    if(cap>=need&&cap<need*2)list.push({p:p,n:n,cap:cap,low:(a.t<=-7&&p.h7&&p.h7*n<need)?p.h7*n:0});
+    var cap=heatOf(p,k)*n;
+    if(cap>=need&&cap<need*2)list.push({p:p,n:n,cap:cap,low:(!k&&a.t<=-7&&p.h7&&p.h7*n<need)?p.h7*n:0});
   }
   pool.forEach(function(p){
     add(p,1);
-    if(need>maxHeat(pool.filter(sameGroup(p))))add(p,2);
+    if(need>maxHeat(pool.filter(sameGroup(p)),k))add(p,2);
   });
   list.sort(function(x,y){
     if(!!x.low!==!!y.low)return x.low?1:-1;
@@ -175,7 +181,7 @@ function pick(a,R){
 }
 function emptyText(a,R,P){
   if(!P.pool.length)return L(T.noTemp);
-  var max=maxHeat(P.pool),min=Math.min.apply(null,P.pool.map(function(p){return p.h}));
+  var k=a.emit==='rad'?1:0,max=maxHeat(P.pool,k),min=Math.min.apply(null,P.pool.map(function(p){return heatOf(p,k)}));
   if(R.need>max*2)return T.tooBig(num(max*2));
   if(R.need*2<=min)return T.tooSmall(num(min));
   return L(T.noneFit);
@@ -197,16 +203,18 @@ function validate(a){
 
 /* ---------- the result ---------- */
 function prodHtml(it,i,a,R,P){
-  var p=it.p,two=it.n===2,k=a.emit==='rad'?1:0,need=num(R.need),h=num(p.h),cap=num(it.cap),name=(two?'2 × ':'')+L(p.name),page=p.id+'.html',t=P.tank,b=bufferFor(it.cap,it.n,a.area),
-      why=[two?T.whyPair(h,cap,need):T.whyHeat(h,need),T.whyScop[k](num(p.scop[k]))];
+  /* the title keeps the model's own size (as on its page); the output it is matched on shows in the specs and the reasons.
+     The buffer tank follows the pump's size, as the client's rule says. */
+  var p=it.p,two=it.n===2,k=a.emit==='rad'?1:0,need=num(R.need),h=num(heatOf(p,k)),cap=num(it.cap),name=(two?'2 × ':'')+L(p.name),page=p.id+'.html',t=P.tank,b=bufferFor(p.h*it.n,it.n,a.area),
+      why=[two?T.whyPair(h,cap,need,k):T.whyHeat(h,need,k),T.whyScop[k](num(p.scop[k]))];
   if(a.tank==='int')why.push(!p.conf?L(T.whyIntNo):two?T.whyIntPair(p.tank):T.whyInt(p.tank,Math.round(p.tank/45)));
   if(t)why.push(T.whyExt(t.l,Math.round(t.l/45)));
-  var specs='<div><dt>'+L(T.heat)+'</dt><dd>'+cap+' kW</dd></div>';
+  var specs='<div><dt>'+L(k?T.heat55:T.heat)+'</dt><dd>'+cap+' kW</dd></div>';
   if(p.c)specs+='<div><dt>'+L(T.cool)+'</dt><dd>'+num(p.c*it.n)+' kW</dd></div>';
   specs+='<div><dt>SCOP</dt><dd>'+num(p.scop[k])+'</dd></div>';
   return '<li class="rp" data-key="'+esc(keyOf(it))+'"><a class="rp-img" href="'+page+'" tabindex="-1" aria-hidden="true"><img src="'+ROOT+'assets/products/'+p.img+'" width="840" height="560" loading="lazy" alt=""></a><div class="rp-body">'+
     '<p class="rp-top"><span class="pkick">'+p.kind+'</span>'+(i===0&&!it.low&&it.cap<R.need*1.5?'<span class="rp-best">'+L(T.best)+'</span>':'')+'<button class="rp-pick" type="button" aria-pressed="false">'+L(T.pick)+'</button></p>'+
-    '<h4 class="rp-name"><a href="'+page+'">'+esc(name)+', '+h+' kW</a></h4>'+
+    '<h4 class="rp-name"><a href="'+page+'">'+esc(name)+', '+num(p.h)+' kW</a></h4>'+
     (t?'<p class="rp-tank"><a href="'+t.id+'.html">'+esc(T.plus(t.n,t.l))+'</a></p>':'')+
     (b?'<p class="rp-tank"><a href="'+b.id+'.html">'+esc(T.plusBuf(b.n,num(b.l)))+'</a></p>':'')+
     '<dl class="pspecs">'+specs+'</dl>'+
@@ -339,7 +347,7 @@ function pdfAnswers(a){
 }
 function chosenName(it){return (it.n===2?'2 × ':'')+L(it.p.name)+', '+num(it.p.h)+' kW'}
 function chosenExtras(a,P,it){
-  var b=bufferFor(it.cap,it.n,a.area),more=[];
+  var b=bufferFor(it.p.h*it.n,it.n,a.area),more=[];
   if(P.tank)more.push(T.plus(P.tank.n,P.tank.l));
   if(b)more.push(T.plusBuf(b.n,num(b.l)));
   return more;
@@ -398,6 +406,7 @@ function pdfPages(a,R,P,it,logo,photo,name,phone,mail){
     pdfWrap(chosenName(it),12,W*.93).forEach(function(l){c+=pdfText(X,y,12,'F2',l,0);y-=15});
     if(more.length)pdfWrap(more.join(' '),9.5,W).forEach(function(m){c+=pdfText(X,y,9.5,'F1',m,.35);y-=13});
   }else{c+=pdfText(M,y,11,'F1',L(T.pdfNoPick),.35);y-=15}
+  if(it&&a.emit==='rad')pdfWrap(T.out55(num(it.cap)),9.5,W).forEach(function(l){c+=pdfText(X,y,9.5,'F1',l,.35);y-=13});
   pdfWrap(T.pdfNeed(num(R.need)),9.5,W).forEach(function(l){c+=pdfText(X,y,9.5,'F1',l,.35);y-=13});
   y+=4;
   if(it&&photo)y=Math.min(y,photoEnd-8);
@@ -512,7 +521,7 @@ $id('calcMail').addEventListener('click',function(e){
   var q=requestData(true);
   if(!q){e.preventDefault();return}
   var body=[rowText([fieldLabel('c-cname'),q.name]),rowText([fieldLabel('c-cphone'),q.phone])]
-    .concat(q.mail?[rowText([fieldLabel('c-cmail'),q.mail])]:[],['',L(T.pdfObj)],pdfAnswers(q.a).map(rowText),['',L(T.pdfChosen)],q.it?[chosenName(q.it)].concat(chosenExtras(q.a,q.P,q.it)):[L(T.mailNoPick)],[T.pdfNeed(num(q.R.need))]);
+    .concat(q.mail?[rowText([fieldLabel('c-cmail'),q.mail])]:[],['',L(T.pdfObj)],pdfAnswers(q.a).map(rowText),['',L(T.pdfChosen)],q.it?[chosenName(q.it)].concat(chosenExtras(q.a,q.P,q.it),q.a.emit==='rad'?[T.out55(num(q.it.cap))]:[]):[L(T.mailNoPick)],[T.pdfNeed(num(q.R.need))]);
   this.href='mailto:info@comfort-clima.com?subject='+encodeURIComponent(L(T.pdfTitle)+' · '+q.name)+'&body='+encodeURIComponent(body.join('\r\n'));
 });
 
