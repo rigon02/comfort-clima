@@ -326,12 +326,45 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .spin{transform-box:view-box;transform-origin:78px 80px;animation:spin 16s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* homepage: about us, then three values */
-.about-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:clamp(40px,6vw,104px);align-items:center}
-.about .h2{max-width:11ch}
-.about-text{color:var(--mute);margin-top:22px;max-width:52ch}
-.about-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:36px}
-.about-media{margin:0}
+/* a headline line that always starts on its own row (each line is a full phrase) */
+.h-ln{display:block}
+
+/* homepage: about us. A large centred headline (client request), its two buttons under it,
+   then the illustration centred below; then three values */
+.about-grid{display:grid;justify-items:center;text-align:center}
+.about .h2{max-width:15ch;margin-inline:auto;font-size:clamp(2.6rem,.9rem + 5.2vw,6.2rem);line-height:.96;letter-spacing:-.045em}
+.about .lede{margin:28px auto 0;max-width:60ch}
+.about-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:clamp(32px,3.6vw,48px)}
+.value-link{margin-top:18px}
+/* product pages: manufacturer documentation, then the quote request */
+.pd-sub-h{font-weight:var(--wh);font-size:clamp(1.5rem,1.15rem + 1vw,2.1rem);line-height:1.1;letter-spacing:-.03em}
+.pd-docs{margin-top:clamp(40px,5vw,64px);padding-top:24px;border-top:1px solid var(--line)}
+.pd-tech .pd-docs:first-child{margin-top:0}
+.pd-docs p{color:var(--mute);margin-top:12px;max-width:72ch}
+.pd-src{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:12px 28px}
+.pd-select{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px 48px;align-items:end;margin-top:clamp(80px,10vw,136px);padding-top:clamp(24px,3vw,36px);border-top:1px solid var(--ink)}
+.pd-select p{color:var(--mute);margin-top:12px;max-width:62ch}
+/* brand pages: the logo is the visible title; the text H1 is visually hidden (client request, 16 Nov 2026) */
+.help-band .band-links{font-size:.92rem}
+.help-band .band-links a{color:#fff}
+/* category pages: the selection question and the quote request, after the products */
+.cat-guide{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(28px,4vw,64px);margin-top:clamp(72px,9vw,120px);border-top:1px solid var(--ink);padding-top:clamp(28px,3vw,40px)}
+.cg-h{font-weight:var(--wh);font-size:clamp(1.5rem,1.15rem + 1vw,2.1rem);line-height:1.1;letter-spacing:-.03em;max-width:22ch}
+.cat-guide p{color:var(--mute);margin-top:14px;max-width:56ch}
+.cg-quote .btn{margin-top:24px}
+.cat-guide .cg-rel{margin-top:22px;font-size:.92rem}
+.cat-guide .cg-rel .text-link{color:var(--ink)}
+/* About page (rreth-nesh.html): the package's five sections as a numbered list */
+.ap-list{border-top:1px solid var(--ink)}
+.ap-row{display:grid;grid-template-columns:64px minmax(0,.9fr) minmax(0,1.1fr);gap:16px clamp(28px,4vw,64px);padding:clamp(28px,3vw,44px) 0;border-bottom:1px solid var(--line)}
+.ap-n{font:500 .64rem/1 var(--f);letter-spacing:.16em;color:var(--mute);padding-top:.8em}
+.ap-h{font-weight:var(--wh);font-size:clamp(1.6rem,1.2rem + 1.2vw,2.4rem);line-height:1.05;letter-spacing:-.035em;max-width:16ch}
+.ap-p p{color:var(--mute);max-width:60ch}
+.ap-p .ap-meta{color:var(--ink);margin-top:18px;line-height:1.7}
+.ap-meta a{color:inherit}
+.winter-cta{margin-top:40px}
+.ca-body .text-link{margin-top:16px;color:#fff}
+.about-media{margin:clamp(40px,5vw,72px) 0 0;width:min(100%,600px)}
 /* About: the client's illustration (warehouse, truck, building site) floats above its own soft shadow,
    and its lamps breathe a warm glow (two glow maps drawn from the picture's own lights, pulsing out of step) */
 .about-stage{position:relative;padding:2% 0 10%}
@@ -570,7 +603,7 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 @media (hover:hover){.crumbs a:hover{color:#fff}}
 .crumbs [aria-current]{color:#fff}
 .page-head .kicker{color:rgba(255,255,255,.72)}
-.page-head .h1{font-size:clamp(3rem,1.3rem + 5.6vw,7.2rem);max-width:11ch}
+.page-head .h1{font-size:clamp(2.4rem,1.1rem + 3.8vw,5.2rem);max-width:19ch}
 .page-head .lede{max-width:52ch;color:rgba(255,255,255,.76)}
 .js .page-head h1 .w{animation:wordDrift 1.6s var(--ease) both;animation-delay:calc(.15s + var(--i) * 70ms)}
 .js .page-head .fade{animation:fadeUp 1.4s var(--ease) both;animation-delay:var(--d)}
@@ -728,8 +761,9 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .particles i{position:absolute;left:var(--x);top:var(--y);width:2px;height:2px;border-radius:50%;background:rgba(255,255,255,.75);opacity:0;animation:rise var(--t) ease-in-out var(--d) infinite;z-index:-1}
 @keyframes rise{0%{transform:translate3d(0,0,0);opacity:0}25%{opacity:.7}75%{opacity:.45}100%{transform:translate3d(26px,-150px,0);opacity:0}}
 
-/* steps */
-.split-head .h2{max-width:12ch}
+/* steps: the headline on the left, the quote button on the right, both sitting on the same line */
+.steps-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px 48px}
+.steps-head .h2{max-width:none}
 .step-row{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px;margin-top:clamp(72px,8vw,112px)}
 .step-line{position:absolute;left:0;top:16px;width:100%;height:40px;overflow:visible;pointer-events:none}
 .step-line path{fill:none;stroke-linecap:round}
@@ -1030,7 +1064,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   .tablist [aria-selected=true]{background:var(--ink);border-color:var(--ink);color:#fff}
   .contact-card{grid-template-columns:1fr}
   .clean-air{grid-template-columns:auto minmax(0,1fr)}
-  .clean-air p{grid-column:2}
+  .clean-air p,.clean-air .ca-body{grid-column:2}
   .card{grid-template-columns:44px minmax(0,1fr) minmax(0,.9fr)}
 }
 @media (max-width:900px){
@@ -1041,8 +1075,10 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 }
 @media (max-width:760px){
   .fj-about{grid-template-columns:1fr}
-  .about-grid{grid-template-columns:1fr}
   .values{grid-template-columns:1fr}
+  .ap-row{grid-template-columns:1fr}
+  .cat-guide{grid-template-columns:1fr}
+  .pd-select{grid-template-columns:1fr}
   .value + .value{padding-left:0;border-left:0;border-top:1px solid var(--line)}
   .value{padding-bottom:28px}
   .fam-intro{grid-template-columns:1fr}
