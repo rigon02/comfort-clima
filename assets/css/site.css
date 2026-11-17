@@ -113,18 +113,19 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .pm-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}
 .pm-all{display:inline-flex;align-items:baseline;gap:.5em;font-size:.95rem;color:var(--ink);text-decoration:none;padding-bottom:4px;background:linear-gradient(currentColor,currentColor) 0 100%/100% 1px no-repeat;transition:background-size .9s var(--ease)}
 @media (hover:hover){.pm-all:hover{background-position:100% 100%;background-size:0 1px}}
-.pm-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--ink)}
-.pm-col{padding:20px 22px 18px 0}
-.pm-col + .pm-col{padding-left:22px;border-left:1px solid var(--line)}
-.pm-col:nth-child(5n+1){padding-left:0;border-left:0}
-.pm-col:nth-child(n+6){border-top:1px solid var(--line)}
+/* eleven families since kitchen ventilation (17 Nov 2026): two rows of six */
+.pm-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1px solid var(--ink)}
+.pm-col{padding:20px 20px 18px 0}
+.pm-col + .pm-col{padding-left:20px;border-left:1px solid var(--line)}
+.pm-col:nth-child(6n+1){padding-left:0;border-left:0}
+.pm-col:nth-child(n+7){border-top:1px solid var(--line)}
 .pm-col{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .9s var(--ease)}
 .has-drop.is-open .pm-col{opacity:1;transform:none}
-.has-drop.is-open .pm-col:nth-child(2),.has-drop.is-open .pm-col:nth-child(6){transition-delay:.04s}
-.has-drop.is-open .pm-col:nth-child(3),.has-drop.is-open .pm-col:nth-child(7){transition-delay:.08s}
-.has-drop.is-open .pm-col:nth-child(4),.has-drop.is-open .pm-col:nth-child(8){transition-delay:.12s}
-.has-drop.is-open .pm-col:nth-child(5),.has-drop.is-open .pm-col:nth-child(9){transition-delay:.16s}
-.has-drop.is-open .pm-col:nth-child(10){transition-delay:.2s}
+.has-drop.is-open .pm-col:nth-child(2),.has-drop.is-open .pm-col:nth-child(7){transition-delay:.04s}
+.has-drop.is-open .pm-col:nth-child(3),.has-drop.is-open .pm-col:nth-child(8){transition-delay:.08s}
+.has-drop.is-open .pm-col:nth-child(4),.has-drop.is-open .pm-col:nth-child(9){transition-delay:.12s}
+.has-drop.is-open .pm-col:nth-child(5),.has-drop.is-open .pm-col:nth-child(10){transition-delay:.16s}
+.has-drop.is-open .pm-col:nth-child(6),.has-drop.is-open .pm-col:nth-child(11){transition-delay:.2s}
 /* Markat: every brand logo in one row */
 .bm-grid{grid-template-columns:repeat(8,minmax(0,1fr))}
 .bm-grid .pm-col:nth-child(n){padding:22px 18px 8px;border-top:0;border-left:1px solid var(--line)}
@@ -956,6 +957,9 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 .rel-card{display:block;text-decoration:none;color:inherit}
 .rel-card .pimg{display:block}
 .rel-card .pkick{display:block;margin-top:18px}
+/* the six hood types on the Dogu hoods page: like the related cards, but not links */
+.type-card .pimg{display:block}
+.type-card .pkick{display:block;margin-top:18px}
 .rel-name{display:block;font:var(--wh) 1.2rem/1.25 var(--f);letter-spacing:-.02em;margin-top:8px}
 @media (hover:hover){.rel-card:hover .pimg img{transform:scale(1.05)}.rel-card:hover .rel-name{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.18em}}
 @media (max-width:900px){
@@ -1021,7 +1025,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   .pm-head{order:2;margin:14px 0 0}
   .pm-head .kicker,.pm-n,.pm-sub{display:none}
   .pm-grid{grid-template-columns:1fr;gap:0;border-top:0}
-  .pm-col,.pm-col + .pm-col,.pm-col:nth-child(n+6){opacity:1;transform:none;transition:none;padding:0;border-left:0;border-top:0}
+  .pm-col,.pm-col + .pm-col,.pm-col:nth-child(n+7){opacity:1;transform:none;transition:none;padding:0;border-left:0;border-top:0}
   .pm-fam{padding:11px 0 11px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
   .pm-title{margin:0;font:var(--wh) 1.3rem/1.2 var(--f);letter-spacing:-.02em}
   .pm-all{color:#fff;font-size:1.05rem;margin-left:16px}
