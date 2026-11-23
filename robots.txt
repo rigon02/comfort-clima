@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+User-agent: Googlebot-Image
+Disallow: /assets/hero/
+Allow: /
+
 Sitemap: https://comfort-clima.com/sitemap.xml
