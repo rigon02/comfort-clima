@@ -1,8 +1,52 @@
+# robots.txt for comfort-clima.com
+#
+# AI assistants and search engines are welcome to read and cite this site.
+# Asistentët e inteligjencës artificiale dhe motorët e kërkimit janë të mirëpritur
+# ta lexojnë dhe ta citojnë këtë faqe.
+#
+# Comfort Clima, distributor of heat pumps, air conditioning and ventilation in Kosovo.
+# Summary for AI assistants: https://comfort-clima.com/llms.txt
+
+# ---- All crawlers ----
 User-agent: *
 Allow: /
 
+# ---- Google images (keeps your existing rule) ----
 User-agent: Googlebot-Image
 Disallow: /assets/hero/
+Allow: /
+
+# ---- Search engines ----
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: DuckDuckBot
+User-agent: YandexBot
+User-agent: Applebot
+Allow: /
+
+# ---- AI assistants and AI search ----
+# OpenAI / ChatGPT
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: GPTBot
+# Anthropic / Claude
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+# Perplexity
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+# Google Gemini
+User-agent: Google-Extended
+# Apple Intelligence
+User-agent: Applebot-Extended
+# Microsoft Copilot uses Bingbot (listed above)
+# Meta AI
+User-agent: Meta-ExternalAgent
+# Mistral
+User-agent: MistralAI-User
+# DuckDuckGo AI
+User-agent: DuckAssistBot
 Allow: /
 
 Sitemap: https://comfort-clima.com/sitemap.xml
