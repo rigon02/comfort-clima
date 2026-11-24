@@ -712,6 +712,22 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .ci-list.calc-contact dt{color:var(--mute)}
 .ci-list.calc-contact dd{font-size:.98rem}
 .res-disc{margin-top:22px;font-size:.84rem;line-height:1.55;color:var(--mute)}
+/* heat pump or air conditioner (client request, 24 Nov 2026): a two-option switch whose dark pill slides to the chosen side */
+.calc .calc-switch{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;margin-top:clamp(64px,8vw,104px);scroll-margin-top:110px;padding:4px;border:1px solid var(--ink);border-radius:var(--pill);background:var(--plate)}
+.calc-switch::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:var(--pill);background:var(--ink);transition:transform .7s var(--ease)}
+.calc-switch[data-on=ac]::before{transform:translateX(100%)}
+.mode-tab{position:relative;z-index:1;min-height:48px;padding:10px 28px;border:0;border-radius:var(--pill);background:transparent;color:var(--ink);font:var(--wt) 1rem/1.2 var(--f);white-space:nowrap;cursor:pointer;transition:color .7s var(--ease)}
+.mode-tab[aria-selected=true]{color:#fff}
+.mode-tab:focus-visible{outline:1.5px solid var(--ink);outline-offset:4px}
+.no-js .calc-switch{display:none}
+.calc .calc-switch + .calc-box{margin-top:20px}
+/* each calculator's questions sit in the shared grid; whatever a calculator hides stays hidden */
+.calc-mode{display:contents}
+.calc-form [hidden],.calc-how[hidden]{display:none!important}
+.k-sun{justify-self:start;margin-top:6px}
+.f .k-sun label{font:var(--wt) .94rem/1.25 var(--f);letter-spacing:0;text-transform:none;color:var(--ink)}
+.f .k-sun input:checked + label{color:#fff}
+.res-rooms{margin:14px 0 0;padding-left:18px;font-size:.9rem;line-height:1.55;color:var(--mute);font-variant-numeric:tabular-nums}
 
 /* winter: a black band */
 .winter-in{position:relative;isolation:isolate;overflow:hidden;background:#000;color:#fff;padding-block:clamp(112px,13vw,184px)}
@@ -1128,7 +1144,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 @media (max-height:560px){.hero-meta{display:none}}
 /* the calculator prints only the result */
 @media print{
-  .calc-page .skip,.calc-page .nav,.calc-page .page-head,.calc-page .calc-form,.calc-page .calc-how,.calc-page .help-band,.calc-page #kontakt,.calc-page .footer,
+  .calc-page .skip,.calc-page .nav,.calc-page .page-head,.calc-page .calc-switch,.calc-page .calc-form,.calc-page .calc-how,.calc-page .help-band,.calc-page #kontakt,.calc-page .footer,
   .calc-page .rp-cta,.calc-page .rp-pick,.calc-page .res-pick-help{display:none!important}
   .calc-page .page-body{padding:0}
   .calc-page .calc-box{display:block;margin:0;border:0}

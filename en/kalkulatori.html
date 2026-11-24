@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <script>document.documentElement.className='js'</script>
-<title>Heat Pump Sizing Calculator for Kosovo | Comfort Clima</title>
-<meta name="description" content="Free heat pump calculator: estimate the heating capacity you need from floor area, insulation, your region of Kosovo and underfloor heating or radiators.">
+<title>Heat Pump and Air Conditioner Sizing Calculator for Kosovo | Comfort Clima</title>
+<meta name="description" content="Free heat pump and air conditioner calculator: estimate the capacity you need from floor area, insulation and your region of Kosovo, and see the matching models from our range.">
 <meta name="theme-color" content="#030a18">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_GB">
-<meta property="og:title" content="Heat Pump Sizing Calculator for Kosovo | Comfort Clima">
-<meta property="og:description" content="Free heat pump calculator: estimate the heating capacity you need from floor area, insulation, your region of Kosovo and underfloor heating or radiators.">
+<meta property="og:title" content="Heat Pump and Air Conditioner Sizing Calculator for Kosovo | Comfort Clima">
+<meta property="og:description" content="Free heat pump and air conditioner calculator: estimate the capacity you need from floor area, insulation and your region of Kosovo, and see the matching models from our range.">
 <meta property="og:url" content="https://comfort-clima.com/en/kalkulatori.html">
 <meta property="og:image" content="https://comfort-clima.com/assets/og-image-en.jpg?v=4">
 <meta property="og:image:width" content="1200">
@@ -23,11 +23,11 @@
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,500&display=swap">
 <link rel="stylesheet" href="../assets/css/site.css?v=5">
-<script src="../assets/js/kalkulatori.js?v=8" defer></script>
+<script src="../assets/js/kalkulatori.js?v=9" defer></script>
 <link rel="alternate" hreflang="sq" href="https://comfort-clima.com/kalkulatori.html">
 <link rel="alternate" hreflang="en" href="https://comfort-clima.com/en/kalkulatori.html">
 <link rel="alternate" hreflang="x-default" href="https://comfort-clima.com/kalkulatori.html">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://comfort-clima.com/en/kalkulatori.html#webpage","url":"https://comfort-clima.com/en/kalkulatori.html","name":"Heat Pump Sizing Calculator for Kosovo | Comfort Clima","description":"Free heat pump calculator: estimate the heating capacity you need from floor area, insulation, your region of Kosovo and underfloor heating or radiators.","inLanguage":"en","isPartOf":{"@id":"https://comfort-clima.com/#website"},"dateModified":"2026-11-24"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://comfort-clima.com/en/"},{"@type":"ListItem","position":2,"name":"Calculator","item":"https://comfort-clima.com/en/kalkulatori.html"}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://comfort-clima.com/en/kalkulatori.html#webpage","url":"https://comfort-clima.com/en/kalkulatori.html","name":"Heat Pump and Air Conditioner Sizing Calculator for Kosovo | Comfort Clima","description":"Free heat pump and air conditioner calculator: estimate the capacity you need from floor area, insulation and your region of Kosovo, and see the matching models from our range.","inLanguage":"en","isPartOf":{"@id":"https://comfort-clima.com/#website"},"dateModified":"2026-11-24"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://comfort-clima.com/en/"},{"@type":"ListItem","position":2,"name":"Calculator","item":"https://comfort-clima.com/en/kalkulatori.html"}]}]}</script>
 </head>
 <body id="top" class="calc-page">
 <a class="skip" href="#main">Skip to content</a>
@@ -147,24 +147,95 @@
     </div>
     <div class="wrap">
       <nav aria-label="Breadcrumb" class="fade" style="--d:0s"><ol class="crumbs"><li><a href="index.html">Home</a></li><li><span aria-current="page">Calculator</span></li></ol></nav>
-      <p class="kicker fade" style="--d:.05s">Heat pump calculator</p>
-      <h1 class="h1">Estimate the heat pump capacity for your home</h1>
-      <p class="lede fade" style="--d:.6s">Enter your building details for an indicative heating requirement. The result helps you start the selection process and send our team an enquiry with your home’s details.</p>
+      <p class="kicker fade" style="--d:.05s">Heat pump and air conditioner calculator</p>
+      <h1 class="h1">Estimate the capacity of a heat pump or an air conditioner</h1>
+      <p class="lede fade" style="--d:.6s">Choose the heat pump for your home or the air conditioner for your rooms, and enter your details for an indicative estimate. The result helps you start the selection process and send our team an enquiry with your details.</p>
     </div>
   </section>
 
   <section id="kalkulatori" class="page-body calc" data-live>
     <div class="wrap">
       <noscript><p class="calc-nojs">The calculator needs JavaScript, which seems to be off in your browser. Call us on <a href="tel:+38348772288">+383 48 77 22 88</a> or write to <a href="mailto:info@comfort-clima.com">info@comfort-clima.com</a> and we will help you choose.</p></noscript>
-      <div class="calc-box" id="calc" data-reveal>
-        <form class="calc-form r" style="--i:0" id="calcForm" novalidate aria-label="Details of the house">
+      <div class="calc-switch" id="air-conditioner" data-on="hp" role="tablist" aria-label="Choose the calculator">
+        <button class="mode-tab" type="button" role="tab" id="tab-hp" data-mode="hp" aria-selected="true" aria-controls="calc">Heat pump</button>
+        <button class="mode-tab" type="button" role="tab" id="tab-ac" data-mode="ac" aria-selected="false" aria-controls="calc" tabindex="-1">Air conditioner</button>
+      </div>
+      <div class="calc-box" id="calc" role="tabpanel" aria-labelledby="tab-hp" data-reveal>
+        <form class="calc-form r" style="--i:0" id="calcForm" novalidate aria-label="Details for the calculation">
           <div class="calc-grid">
-            <div class="f">
-              <label for="c-area">Heated floor area (m²)</label>
-              <input id="c-area" type="number" min="20" step="1" value="100" inputmode="numeric" aria-describedby="e-area">
-              <p class="err" id="e-area" hidden>At least 20 m².</p>
+            <div class="calc-mode" data-mode="hp">
+              <div class="f">
+                <label for="c-area">Heated floor area (m²)</label>
+                <input id="c-area" type="number" min="20" step="1" value="100" inputmode="numeric" aria-describedby="e-area">
+                <p class="err" id="e-area" hidden>At least 20 m².</p>
+              </div>
             </div>
-            <div class="f">
+            <div class="calc-mode" data-mode="ac" hidden>
+              <fieldset class="cq q-choice">
+                <legend>System type</legend>
+                <div class="chips">
+                  <div class="chip"><input type="radio" name="ksys" id="c-ksys-split" value="split" checked><label for="c-ksys-split">Split, one room</label></div>
+                  <div class="chip"><input type="radio" name="ksys" id="c-ksys-multi" value="multi"><label for="c-ksys-multi">Multi-split, several rooms</label></div>
+                </div>
+                <p class="q-help">A split has one indoor and one outdoor unit. A multi-split connects up to five indoor units to one outdoor unit.</p>
+              </fieldset>
+              <fieldset class="cq q-choice">
+                <legend>Will you also use it for heating?</legend>
+                <div class="chips">
+                  <div class="chip"><input type="radio" name="kheat" id="c-kheat-yes" value="yes" checked><label for="c-kheat-yes">Yes</label></div>
+                  <div class="chip"><input type="radio" name="kheat" id="c-kheat-no" value="no"><label for="c-kheat-no">No, cooling only</label></div>
+                </div>
+                <p class="q-help">For heating, the model also has to cover the room’s heat loss and work down to the outdoor temperature you choose.</p>
+              </fieldset>
+              <div class="f" id="kOne">
+                <label for="c-karea">Room area (m²)</label>
+                <input id="c-karea" type="number" min="5" step="1" value="25" inputmode="numeric" aria-describedby="e-karea">
+                <p class="err" id="e-karea" hidden>At least 5 m².</p>
+              </div>
+              <div class="calc-grid calc-more f-wide" id="kRooms" hidden>
+                <fieldset class="cq q-choice">
+                  <legend>Number of rooms</legend>
+                  <div class="chips">
+                    <div class="chip"><input type="radio" name="knum" id="c-knum-2" value="2" checked><label for="c-knum-2">2</label></div>
+                    <div class="chip"><input type="radio" name="knum" id="c-knum-3" value="3"><label for="c-knum-3">3</label></div>
+                    <div class="chip"><input type="radio" name="knum" id="c-knum-4" value="4"><label for="c-knum-4">4</label></div>
+                    <div class="chip"><input type="radio" name="knum" id="c-knum-5" value="5"><label for="c-knum-5">5</label></div>
+                  </div>
+                </fieldset>
+                <div class="f k-room">
+                  <label for="c-kr1">Room 1 (m²)</label>
+                  <input id="c-kr1" type="number" min="5" step="1" value="20" inputmode="numeric" aria-describedby="e-kr1">
+                  <p class="err" id="e-kr1" hidden>At least 5 m².</p>
+                  <div class="chip k-sun"><input type="checkbox" id="c-ks1"><label for="c-ks1">A lot of sun</label></div>
+                </div>
+                <div class="f k-room">
+                  <label for="c-kr2">Room 2 (m²)</label>
+                  <input id="c-kr2" type="number" min="5" step="1" value="20" inputmode="numeric" aria-describedby="e-kr2">
+                  <p class="err" id="e-kr2" hidden>At least 5 m².</p>
+                  <div class="chip k-sun"><input type="checkbox" id="c-ks2"><label for="c-ks2">A lot of sun</label></div>
+                </div>
+                <div class="f k-room" hidden>
+                  <label for="c-kr3">Room 3 (m²)</label>
+                  <input id="c-kr3" type="number" min="5" step="1" value="20" inputmode="numeric" aria-describedby="e-kr3">
+                  <p class="err" id="e-kr3" hidden>At least 5 m².</p>
+                  <div class="chip k-sun"><input type="checkbox" id="c-ks3"><label for="c-ks3">A lot of sun</label></div>
+                </div>
+                <div class="f k-room" hidden>
+                  <label for="c-kr4">Room 4 (m²)</label>
+                  <input id="c-kr4" type="number" min="5" step="1" value="20" inputmode="numeric" aria-describedby="e-kr4">
+                  <p class="err" id="e-kr4" hidden>At least 5 m².</p>
+                  <div class="chip k-sun"><input type="checkbox" id="c-ks4"><label for="c-ks4">A lot of sun</label></div>
+                </div>
+                <div class="f k-room" hidden>
+                  <label for="c-kr5">Room 5 (m²)</label>
+                  <input id="c-kr5" type="number" min="5" step="1" value="20" inputmode="numeric" aria-describedby="e-kr5">
+                  <p class="err" id="e-kr5" hidden>At least 5 m².</p>
+                  <div class="chip k-sun"><input type="checkbox" id="c-ks5"><label for="c-ks5">A lot of sun</label></div>
+                </div>
+                <p class="q-help f-wide">A lot of sun: large south- or west-facing windows.</p>
+              </div>
+            </div>
+            <div class="f" id="tempF">
               <label for="c-temp">Outdoor temperature for calculation (°C)</label>
               <input id="c-temp" type="number" min="-30" max="0" step="0.1" value="-9.5" aria-describedby="e-temp h-temp">
               <p class="err" id="e-temp" hidden>From −30 to 0°C.</p>
@@ -226,6 +297,7 @@
                 <p class="q-help" id="insOut" aria-live="polite" hidden></p>
               </details>
             </div>
+            <div class="calc-mode" data-mode="hp">
             <fieldset class="cq q-choice">
               <legend>Heat distribution system</legend>
               <div class="chips">
@@ -256,6 +328,33 @@
                 <p class="err" id="e-people" hidden>From 1 to 10 people.</p>
                 <p class="q-help" id="h-people">About 45 L of tank per person.</p>
               </div>
+            </div>
+            </div>
+            <div class="calc-mode" data-mode="ac" hidden>
+              <fieldset class="cq q-choice" id="kSunQ">
+                <legend>How much sun does the room get?</legend>
+                <div class="chips">
+                  <div class="chip"><input type="radio" name="ksun" id="c-ksun-no" value="no" checked><label for="c-ksun-no">Normal</label></div>
+                  <div class="chip"><input type="radio" name="ksun" id="c-ksun-yes" value="yes"><label for="c-ksun-yes">A lot of sun</label></div>
+                </div>
+                <p class="q-help">A lot of sun: large south- or west-facing windows. Daikin’s guide adds 10 to 20% for them; the calculator adds 15%.</p>
+              </fieldset>
+              <div class="f f-wide" id="kPeopleQ">
+                <label for="c-kpeople">People usually in the room</label>
+                <input id="c-kpeople" type="number" min="1" max="20" step="1" value="2" inputmode="numeric" aria-describedby="e-kpeople h-kpeople">
+                <p class="err" id="e-kpeople" hidden>From 1 to 20 people.</p>
+                <p class="q-help" id="h-kpeople">0.18 kW more for each person above two.</p>
+              </div>
+              <fieldset class="cq q-choice" id="kTypeQ">
+                <legend>Indoor unit type</legend>
+                <div class="chips">
+                  <div class="chip"><input type="radio" name="ktype" id="c-ktype-wall" value="wall" checked><label for="c-ktype-wall">Wall-mounted</label></div>
+                  <div class="chip"><input type="radio" name="ktype" id="c-ktype-floor" value="floor"><label for="c-ktype-floor">Floor</label></div>
+                  <div class="chip"><input type="radio" name="ktype" id="c-ktype-cassette" value="cassette"><label for="c-ktype-cassette">Cassette</label></div>
+                  <div class="chip"><input type="radio" name="ktype" id="c-ktype-duct" value="duct"><label for="c-ktype-duct">Ducted</label></div>
+                  <div class="chip"><input type="radio" name="ktype" id="c-ktype-ceiling" value="ceiling"><label for="c-ktype-ceiling">Ceiling</label></div>
+                </div>
+              </fieldset>
             </div>
             <div class="calc-pdf f-wide" id="calcPdfBox">
               <h3 class="res-lt">Send your result for a quotation</h3>
@@ -290,7 +389,12 @@
         <div class="calc-out r" style="--i:1" id="calcOut" tabindex="-1"></div>
         <p class="sr" id="calcLive" aria-live="polite"></p>
       </div>
-      <div class="atw-how calc-how" data-reveal>
+      <div class="atw-how calc-how" data-reveal data-mode="ac" hidden>
+        <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">How cooling demand is estimated</h2><p>The method follows Daikin’s sizing guide: about 0.1 kW per m² with a 2.4 m ceiling, more for strong sun, poor insulation and more than two people.</p></div>
+        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Heating and the indoor unit</h2><p>When you also use it for heating, the model has to cover the heat loss for the insulation and outdoor temperature. The result shows only the type of indoor unit you choose.</p></div>
+        <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">From result to quotation</h2><p>Choose a model for review and send your details. Our team helps with the configuration and quotation.</p></div>
+      </div>
+      <div class="atw-how calc-how" data-reveal data-mode="hp">
         <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">How heating demand is estimated</h2><p>The method uses floor area, insulation level and the selected temperature to calculate an indicative heating requirement.</p></div>
         <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Heating distribution and hot water</h2><p>Your selections affect the estimate and displayed configurations. Results are then reviewed against the building’s actual characteristics.</p></div>
         <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">From result to quotation</h2><p>Choose a model for review and send your details. Our team helps with the configuration and quotation.</p></div>
