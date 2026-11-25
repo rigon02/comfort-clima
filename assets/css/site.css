@@ -338,6 +338,26 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .about .h2{max-width:15ch;margin-inline:auto;font-size:clamp(2.6rem,.9rem + 5.2vw,6.2rem);line-height:.96;letter-spacing:-.045em}
 .about .lede{margin:28px auto 0;max-width:60ch}
 .about-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:clamp(32px,3.6vw,48px)}
+/* the flag of Kosovo as line art behind "Pompa termike, klima dhe ventilim në Kosovë" (client request, 25 Nov 2026;
+   tools/geo/18-kosovo-art.ps1): the map, then the six stars, draw themselves in when the section comes into view */
+.about-copy{position:relative;isolation:isolate}
+.ks-art{position:absolute;inset:-20% 0 4%;z-index:-1;display:flex;justify-content:center;pointer-events:none;color:#13498D}
+.ks-art svg{height:100%;width:auto;max-width:100%;overflow:visible}
+.ks-art path{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round;opacity:.42}
+.js .ks-art path{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2.8s var(--ease-io) .2s}
+.js .in .ks-art path{stroke-dashoffset:0}
+.js .ks-art .ks-star{transition-duration:1.2s}
+.js .ks-art .ks-star:nth-child(2){transition-delay:1.2s}
+.js .ks-art .ks-star:nth-child(3){transition-delay:1.35s}
+.js .ks-art .ks-star:nth-child(4){transition-delay:1.5s}
+.js .ks-art .ks-star:nth-child(5){transition-delay:1.65s}
+.js .ks-art .ks-star:nth-child(6){transition-delay:1.8s}
+.js .ks-art .ks-star:nth-child(7){transition-delay:1.95s}
+/* narrow screens: the drawing is as wide as the text, starting just above the heading, so the stars crown it there too */
+@media (max-width:760px){
+  .ks-art{inset:-64px 0 auto}
+  .ks-art svg{width:100%;height:auto}
+}
 .value-link{margin-top:18px}
 /* product pages: manufacturer documentation, then the quote request */
 .pd-sub-h{font-weight:var(--wh);font-size:clamp(1.5rem,1.15rem + 1vw,2.1rem);line-height:1.1;letter-spacing:-.03em}
