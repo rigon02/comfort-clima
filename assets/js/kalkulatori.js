@@ -168,7 +168,7 @@ var T={
   /* "9000 BTU" on Albanian pages, "9,000 BTU" on English ones */
   btu:function(k){return k+(EN?',000':'000')+' BTU'},
   band:function(lo,hi){return lo?(EN?lo+' to '+hi+' m²':lo+' deri '+hi+' m²'):(EN?'up to '+hi+' m²':'deri '+hi+' m²')},
-  kHow:function(a,band,btu){return EN?'Your room is '+a+' m²: for rooms of '+band+' we recommend '+btu+' models. The recommendation is based on the room area; our team takes the sun, insulation and number of people into account in the quotation.':'Dhoma juaj ka '+a+' m²: për dhoma '+band+' rekomandojmë modele '+btu+'. Rekomandimi bazohet në sipërfaqen e dhomës; diellin, izolimin dhe numrin e personave i shqyrton ekipi ynë në ofertë.'},
+  kHow:function(a,band,btu){return EN?'Your room is '+a+' m²: for rooms of '+band+' we recommend '+btu+' models. The recommendation is based on the room area; our team takes the number of people and the room’s other conditions into account in the quotation.':'Dhoma juaj ka '+a+' m²: për dhoma '+band+' rekomandojmë modele '+btu+'. Rekomandimi bazohet në sipërfaqen e dhomës; numrin e personave dhe kushtet e tjera të dhomës i shqyrton ekipi ynë në ofertë.'},
   kWhyClass:function(btu,band){return EN?'A '+btu+' model, the class we recommend for rooms of '+band:'Model '+btu+', klasa që rekomandojmë për dhoma '+band},
   kWhySeer:function(s){return 'SEER '+s+(EN?' in cooling':' në ftohje')},
   kWhyScop:function(s){return 'SCOP '+s+(EN?' in heating (average climate)':' në ngrohje (klimë mesatare)')},
@@ -351,9 +351,10 @@ function hpResult(a){
 
 /* ---------- the air conditioner ---------- */
 /* one room, split only (client, 25 Nov 2026: no multi-split, no heating question, no outdoor temperature). The class comes from the
-   room area alone (AC_BANDS); insulation, sun and people are still asked, so that our team has them for the quotation. */
+   room area alone (AC_BANDS); the number of people is still asked, so that our team has it for the quotation (insulation and
+   sun were removed at the client's request, 25 Nov 2026). */
 function acRead(){
-  return {area:parseFloat($id('c-karea').value),sun:radio('ksun')==='yes',n:parseInt($id('c-kpeople').value,10),ins:$id('c-ins').value,type:radio('ktype')};
+  return {area:parseFloat($id('c-karea').value),n:parseInt($id('c-kpeople').value,10),type:radio('ktype')};
 }
 function acValidate(a){
   var ok=mark('karea',inRange(a.area,5,Infinity));
@@ -491,7 +492,7 @@ function pdfAnswers(a){
 }
 /* the air conditioner answers, in the order of the form */
 function acAnswers(a){
-  return insHelpRows([[fieldLabel('c-karea'),num(a.area)+' m²'],[fieldLabel('c-ins'),optionText('c-ins')],choiceRow('ksun'),[fieldLabel('c-kpeople'),String(a.n)],choiceRow('ktype')]);
+  return [[fieldLabel('c-karea'),num(a.area)+' m²'],[fieldLabel('c-kpeople'),String(a.n)],choiceRow('ktype')];
 }
 function chosenName(it){return (it.n===2?'2 × ':'')+L(it.p.name)+', '+num(it.p.h)+' kW'}
 function chosenExtras(a,P,it){
@@ -680,7 +681,8 @@ form.addEventListener('input',schedule);
 form.addEventListener('change',schedule);
 /* the logo is fetched when the name and phone are reached, so the PDF is ready at once when it is asked for */
 $id('calcPdfBox').addEventListener('focusin',function(){pdfLogo()},{once:true});
-['c-year','c-facade','c-win'].forEach(function(id){$id(id).addEventListener('change',assess)});
+/* the insulation helper is on the heat pump page only */
+['c-year','c-facade','c-win'].forEach(function(id){if($id(id))$id(id).addEventListener('change',assess)});
 
 /* ---------- which calculator: heat pump or air conditioner ---------- */
 /* each one's sums, answers and chosen product, behind the same names, so the page, the PDF and the email work the same for both */

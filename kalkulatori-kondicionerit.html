@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,500&display=swap">
 <link rel="stylesheet" href="assets/css/site.css?v=6">
-<script src="assets/js/kalkulatori.js?v=10" defer></script>
+<script src="assets/js/kalkulatori.js?v=11" defer></script>
 <link rel="alternate" hreflang="sq" href="https://comfort-clima.com/kalkulatori-kondicionerit.html">
 <link rel="alternate" hreflang="en" href="https://comfort-clima.com/en/kalkulatori-kondicionerit.html">
 <link rel="alternate" hreflang="x-default" href="https://comfort-clima.com/kalkulatori-kondicionerit.html">
@@ -162,59 +162,6 @@
               <p class="err" id="e-karea" hidden>Të paktën 5 m².</p>
             </div>
             <div class="f f-wide">
-              <label for="c-ins">Niveli i izolimit të objektit</label>
-              <select id="c-ins">
-                <option value="none">Pa izolim (mure pa izolim)</option>
-                <option value="poor">Izolim i dobët (ndërtesë e vjetër, rreth 5 cm stiropor)</option>
-                <option value="mid" selected>Izolim mesatar (rreth 10 cm stiropor)</option>
-                <option value="good">Izolim i mirë (15 cm stiropor ose më shumë)</option>
-                <option value="passive">Shtëpi pasive (rreth 25 cm izolim)</option>
-              </select>
-              <details class="q-tip">
-                <summary>Më ndihmoni të përcaktoj izolimin</summary>
-                <div class="calc-grid calc-ins">
-                  <div class="f">
-                    <label for="c-year">Kur është ndërtuar objekti?</label>
-                    <select id="c-year">
-                      <option value="">Zgjidhni</option>
-                      <option value="none">Para 1980</option>
-                      <option value="poor">1980 deri 2005</option>
-                      <option value="mid">2006 deri 2015</option>
-                      <option value="good">Pas 2015</option>
-                    </select>
-                  </div>
-                  <div class="f">
-                    <label for="c-facade">A është shtuar izolim termik në muret e jashtme?</label>
-                    <select id="c-facade">
-                      <option value="">Zgjidhni</option>
-                      <option value="no">Jo</option>
-                      <option value="poor">Po, 5 deri 8 cm</option>
-                      <option value="mid">Po, 10 deri 12 cm</option>
-                      <option value="good">Po, 15 cm ose më shumë</option>
-                    </select>
-                  </div>
-                  <div class="f f-wide">
-                    <label for="c-win">Çfarë lloji dritaresh ka objekti?</label>
-                    <select id="c-win">
-                      <option value="">Zgjidhni</option>
-                      <option value="0">Me një xham</option>
-                      <option value="1">Me dy xhama, të vjetra</option>
-                      <option value="2">PVC me dy xhama</option>
-                      <option value="3">PVC me tre xhama</option>
-                    </select>
-                  </div>
-                </div>
-                <p class="q-help" id="insOut" aria-live="polite" hidden></p>
-              </details>
-            </div>
-            <fieldset class="cq q-choice">
-              <legend>Sa diell merr dhoma?</legend>
-              <div class="chips">
-                <div class="chip"><input type="radio" name="ksun" id="c-ksun-no" value="no" checked><label for="c-ksun-no">Normal</label></div>
-                <div class="chip"><input type="radio" name="ksun" id="c-ksun-yes" value="yes"><label for="c-ksun-yes">Shumë diell</label></div>
-              </div>
-            </fieldset>
-            <div class="f f-wide">
               <label for="c-kpeople">Numri i personave në dhomë</label>
               <input id="c-kpeople" type="number" min="1" max="20" step="1" value="2" inputmode="numeric" aria-describedby="e-kpeople">
               <p class="err" id="e-kpeople" hidden>Nga 1 deri 20 persona.</p>
@@ -264,7 +211,7 @@
       </div>
       <div class="atw-how calc-how" data-reveal>
         <div class="how r" style="--i:0"><span class="how-n">01</span><h2 class="h3">Si zgjidhet klasa e kondicionerit</h2><p>Rekomandimi bazohet në sipërfaqen e dhomës: deri 25 m² modele 9000 BTU, 25 deri 40 m² 12000 BTU, 40 deri 60 m² 14000 BTU, 60 deri 70 m² 18000 BTU dhe 70 deri 80 m² 24000 BTU.</p></div>
-        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Lloji i njësisë</h2><p>Rezultati tregon vetëm llojin e njësisë që zgjidhni: në mur, dysheme, kasetë, kanal ose tavan. Diellin, izolimin dhe numrin e personave i shqyrtojmë në ofertë.</p></div>
+        <div class="how r" style="--i:1"><span class="how-n">02</span><h2 class="h3">Lloji i njësisë</h2><p>Rezultati tregon vetëm llojin e njësisë që zgjidhni: në mur, dysheme, kasetë, kanal ose tavan. Numrin e personave dhe kushtet e tjera të dhomës i shqyrtojmë në ofertë.</p></div>
         <div class="how r" style="--i:2"><span class="how-n">03</span><h2 class="h3">Nga rezultati te oferta</h2><p>Zgjidhni një model për shqyrtim dhe dërgoni të dhënat. Ekipi ynë ju ndihmon me konfigurimin dhe ofertën përkatëse.</p></div>
       </div>
 
