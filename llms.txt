@@ -40,6 +40,7 @@ Terma të njëjtë që përdoren në Kosovë: pompa termike = termo pompa; ngroh
 - Ngrohje në dysheme: gypa dhe komponentë për sisteme me pompë termike.
 - [Rezervuarë dhe boiler](https://comfort-clima.com/rezervuare.html): Tiki.
 - [Kalkulatori i ngrohjes](https://comfort-clima.com/kalkulatori.html): llogaritje e kapacitetit të sistemit.
+- [Kalkulatori i kondicionerit](https://comfort-clima.com/kalkulatori-kondicionerit.html): klasa e kondicionerit në BTU sipas sipërfaqes së dhomës.
 
 ## Kompania
 
@@ -60,4 +61,5 @@ Comfort Clima is a heating, air conditioning and ventilation (HVAC) equipment di
 - [Heat recovery ventilation](https://comfort-clima.com/en/rikuperator.html): Dogu ducted units (up to 94% heat recovery, per the manufacturer) and O.ERRE single-room units.
 - [Air handling units](https://comfort-clima.com/en/ahu.html) and [kitchen ventilation](https://comfort-clima.com/en/ventilim-kuzhine.html)
 - [Heat pump calculator](https://comfort-clima.com/en/kalkulatori.html)
+- [Air conditioner calculator](https://comfort-clima.com/en/kalkulatori-kondicionerit.html): the BTU class from the room area.
 - [All equipment](https://comfort-clima.com/en/produktet.html) · [About us](https://comfort-clima.com/en/rreth-nesh.html)

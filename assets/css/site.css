@@ -135,7 +135,9 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .bm-logo img{height:var(--lh,24px);width:auto;transition:transform .9s var(--ease)}
 @media (hover:hover){.bm-item:hover .bm-logo img{transform:translateX(5px)}}
 .bm-cat{font-size:.8rem;line-height:1.45;color:var(--mute)}
-.pm-fam{display:block;text-decoration:none;color:inherit}
+/* Kalkulatori (client request, 25 Nov 2026): the two calculators, heat pump and air conditioner, side by side */
+.cm-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:760px}
+.cm-desc{display:block;margin-top:10px;font-size:.84rem;line-height:1.45;color:var(--mute)}.pm-fam{display:block;text-decoration:none;color:inherit}
 .pm-n{display:block;min-height:2.6em;font:500 .58rem/1.3 var(--f);letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
 .pm-title{display:block;margin-top:12px;font:var(--wh) 1.4rem/1.1 var(--f);letter-spacing:-.035em;transition:transform .9s var(--ease)}
 @media (hover:hover){.pm-fam:hover .pm-title{transform:translateX(5px)}}
@@ -712,22 +714,6 @@ h1,h2,h3,h4{margin:0;font-family:var(--f);font-weight:var(--wh);color:inherit}
 .ci-list.calc-contact dt{color:var(--mute)}
 .ci-list.calc-contact dd{font-size:.98rem}
 .res-disc{margin-top:22px;font-size:.84rem;line-height:1.55;color:var(--mute)}
-/* heat pump or air conditioner (client request, 24 Nov 2026): a two-option switch whose dark pill slides to the chosen side */
-.calc .calc-switch{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;margin-top:clamp(64px,8vw,104px);scroll-margin-top:110px;padding:4px;border:1px solid var(--ink);border-radius:var(--pill);background:var(--plate)}
-.calc-switch::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:var(--pill);background:var(--ink);transition:transform .7s var(--ease)}
-.calc-switch[data-on=ac]::before{transform:translateX(100%)}
-.mode-tab{position:relative;z-index:1;min-height:48px;padding:10px 28px;border:0;border-radius:var(--pill);background:transparent;color:var(--ink);font:var(--wt) 1rem/1.2 var(--f);white-space:nowrap;cursor:pointer;transition:color .7s var(--ease)}
-.mode-tab[aria-selected=true]{color:#fff}
-.mode-tab:focus-visible{outline:1.5px solid var(--ink);outline-offset:4px}
-.no-js .calc-switch{display:none}
-.calc .calc-switch + .calc-box{margin-top:20px}
-/* each calculator's questions sit in the shared grid; whatever a calculator hides stays hidden */
-.calc-mode{display:contents}
-.calc-form [hidden],.calc-how[hidden]{display:none!important}
-.k-sun{justify-self:start;margin-top:6px}
-.f .k-sun label{font:var(--wt) .94rem/1.25 var(--f);letter-spacing:0;text-transform:none;color:var(--ink)}
-.f .k-sun input:checked + label{color:#fff}
-.res-rooms{margin:14px 0 0;padding-left:18px;font-size:.9rem;line-height:1.55;color:var(--mute);font-variant-numeric:tabular-nums}
 
 /* winter: a black band */
 .winter-in{position:relative;isolation:isolate;overflow:hidden;background:#000;color:#fff;padding-block:clamp(112px,13vw,184px)}
@@ -1039,7 +1025,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   .prod-menu .wrap{width:auto}
   .pm-in{display:flex;flex-direction:column;padding:4px 0 10px;border:0}
   .pm-head{order:2;margin:14px 0 0}
-  .pm-head .kicker,.pm-n,.pm-sub{display:none}
+  .pm-head .kicker,.pm-n,.pm-sub,.cm-desc{display:none}
   .pm-grid{grid-template-columns:1fr;gap:0;border-top:0}
   .pm-col,.pm-col + .pm-col,.pm-col:nth-child(n+7){opacity:1;transform:none;transition:none;padding:0;border-left:0;border-top:0}
   .pm-fam{padding:11px 0 11px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
@@ -1144,7 +1130,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 @media (max-height:560px){.hero-meta{display:none}}
 /* the calculator prints only the result */
 @media print{
-  .calc-page .skip,.calc-page .nav,.calc-page .page-head,.calc-page .calc-switch,.calc-page .calc-form,.calc-page .calc-how,.calc-page .help-band,.calc-page #kontakt,.calc-page .footer,
+  .calc-page .skip,.calc-page .nav,.calc-page .page-head,.calc-page .calc-form,.calc-page .calc-how,.calc-page .help-band,.calc-page #kontakt,.calc-page .footer,
   .calc-page .rp-cta,.calc-page .rp-pick,.calc-page .res-pick-help{display:none!important}
   .calc-page .page-body{padding:0}
   .calc-page .calc-box{display:block;margin:0;border:0}

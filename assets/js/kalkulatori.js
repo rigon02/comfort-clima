@@ -1,8 +1,8 @@
-/* Heat pump and air conditioner calculator. The form is in the page (kalkulatori.html, en/kalkulatori.html); a switch above it
-   chooses the calculator, and #kondicioner or #air-conditioner in the address opens the air conditioner one. This file does the
-   sums, updates the result as you type and lists models from our own product pages. Nothing is sent anywhere.
-   Air conditioner (client request, 24 Nov 2026): cooling from Daikin's sizing guide, heating from the same heat loss table as the
-   heat pump, the models from the tables of our split and multi-split pages (see "the air conditioner" below).
+/* Heat pump and air conditioner calculators, each on its own page: kalkulatori.html and kalkulatori-kondicionerit.html (and
+   their en/ copies); the "Kalkulatori" menu in the top bar leads to both. The form is in the page; this file does the sums,
+   updates the result as you type and lists models from our own product pages. Nothing is sent anywhere.
+   Air conditioner (client request, 24 Nov 2026; rules of 25 Nov): one room, split only; the BTU class from the room area by the
+   client's bands (AC_BANDS), the models from the tables of our split pages (see "the air conditioner" below).
    Heat pump sources: heat loss per m², tank sizes and the insulation questions from HVAC Education Hub's heat pump cheat sheet; interpolation,
    +15% for radiators, 45 L per person and product matching from the calculator at kalkulator-dizalice-topline.com (Marin Bašić);
    design temperatures from ASHRAE Climatic Design Conditions 2025. Fujitsu first and the buffer tank sizes are the client's rules. */
@@ -96,26 +96,13 @@ var AC_SPLIT=[
   {id:"haier-slim-duct",n:["Haier Njësi kanalizore me profil të hollë","Haier Slim duct"],img:"haier/slim-duct.jpg",t:"duct",s:[["AD25S2SS1FA(H)","1U25S2SM1FA-2",2.5,3.1,6.1,4,-20],["AD35S2SS1FA(H)","1U35S2SM1FA-2",3.5,4,6.1,0,-20],["AD50S2SS1FA(H)","1U50S2SJ2FA-2",5,5.8,6.1,0,-20],["AD71S2SS1FA(H)","1U71S2ST1FA",6.8,7.5,6.1,4,-20],["AD71S2SS1FA(H)","1U71S2SR3FA",7.1,7.5,6.1,4,-20]]},
   {id:"hec-tide",n:["HEC Tide","HEC Tide"],img:"hec/tide.jpg",t:"wall",s:[["HEC25RECO-IN","HEC25RECO-OU",2.6,2.8,6.1,4,-20],["HEC35RECO-IN","HEC35RECO-OU",3.2,3.6,6.1,4,-20],["HEC50RECO-IN","HEC50RECO-OU",4.8,4.8,6.3,4,-20]]}
 ];
-var AC_MULTI=[
-  {id:"fujitsu-multi-aoeg14kbca2",n:["Fujitsu multi-split R32 për 2 dhoma","Fujitsu multi-split R32 for 2 rooms"],img:"multi/r32-2.jpg",r:[2,2],s:["","AOEG14KBCA2",4,4.4,0,0,null]},
-  {id:"fujitsu-multi-aoeg18kbca2",n:["Fujitsu multi-split R32 për 2 dhoma","Fujitsu multi-split R32 for 2 rooms"],img:"multi/r32-2b.jpg",r:[2,2],s:["","AOEG18KBCA2",5,5.6,0,0,null]},
-  {id:"fujitsu-multi-aoeg18kbca3",n:["Fujitsu multi-split R32 për 3 dhoma","Fujitsu multi-split R32 for 3 rooms"],img:"multi/r32-3.jpg",r:[3,3],s:["","AOEG18KBCA3",5.4,6.8,0,0,-15]},
-  {id:"fujitsu-multi-aoeg24kbca3",n:["Fujitsu multi-split R32 për 3 dhoma","Fujitsu multi-split R32 for 3 rooms"],img:"multi/r32-3.jpg",r:[3,3],s:["","AOEG24KBCA3",6.8,8,0,0,-15]},
-  {id:"fujitsu-multi-aoeg30kbta4",n:["Fujitsu multi-split R32 për 4 dhoma","Fujitsu multi-split R32 for 4 rooms"],img:"multi/r32-45.jpg",r:[4,4],s:["","AOEG30KBTA4",8,9.6,0,0,-15]},
-  {id:"fujitsu-multi-aoeg36kbta5",n:["Fujitsu multi-split R32 për 5 dhoma","Fujitsu multi-split R32 for 5 rooms"],img:"multi/r32-45.jpg",r:[5,5],s:["","AOEG36KBTA5",9.5,10.6,0,0,-15]},
-  {id:"fujitsu-multi-aoeh14kacb2",n:["Fujitsu multi-split ECO për 2 dhoma","Fujitsu multi-split ECO for 2 rooms"],img:"multi/eco-2.jpg",r:[2,2],s:["","AOEH14KACB2",4,4.2,0,0,-15]},
-  {id:"fujitsu-multi-aoeh18kacb2",n:["Fujitsu multi-split ECO për 2 dhoma","Fujitsu multi-split ECO for 2 rooms"],img:"multi/eco-2.jpg",r:[2,2],s:["","AOEH18KACB2",5,5.3,0,0,-10]},
-  {id:"fujitsu-multi-aoeh18kacb3",n:["Fujitsu multi-split ECO për 3 dhoma","Fujitsu multi-split ECO for 3 rooms"],img:"multi/eco-3.jpg",r:[2,3],s:["","AOEH18KACB3",5.3,6.4,0,0,-15]},
-  {id:"hec-tide#multi",n:["HEC Tide dual për 2 dhoma","HEC Tide dual for 2 rooms"],img:"hec/tide.jpg",r:[2,2],s:["2 × HEC25RECO-IN","2HEC35RECO-OUM",3.6,4,6.5,4,-15]},
-  {id:"hec-tide#multi",n:["HEC Tide dual për 2 dhoma","HEC Tide dual for 2 rooms"],img:"hec/tide.jpg",r:[2,2],s:["HEC25RECO-IN + HEC35RECO-IN","2HEC50RECO-OUM",4.7,4.8,6.1,4,-15]}
-];
 /* /AC-DATA */
-/* Air conditioner cooling, from Daikin's guide "What size air conditioner do I need?" (daikin.co.uk, read 24 Nov 2026): about 0.1 kW
-   per m² for average ceiling heights (2.4 m) and insulation; large south- or west-facing windows 10 to 20% more (we take the middle,
-   15%); 0.18 kW for each person above two. Uninsulated or poorly insulated rooms get 10% more, so that the guide's own example comes
-   out: a well-insulated 20 m² room needs 2 kW, a poorly insulated sun-facing one 2.5 kW (20 × 0.1 × 1.1 × 1.15 = 2.53). */
-var AC_KW=0.1,AC_SUN=0.15,AC_INS=0.1,AC_PERSON=0.18,
-    DAIKIN='https://www.daikin.co.uk/en_gb/residential/inspiration/articles/air-conditioner-size-guide.html';
+/* The air conditioner class by room area, the client's rule (25 Nov 2026): up to 25 m² 9000 BTU, 25-40 m² 12000, 40-60 m² 14000,
+   60-70 m² 18000, 70-80 m² 24000; above 80 m² no recommendation. Each band is [largest area, class in thousands of BTU]. */
+var AC_BANDS=[[25,9],[40,12],[60,14],[70,18],[80,24]];
+/* The class of a model from its name: Fujitsu writes it (ASEH09 = 9000 BTU); Haier and HEC write the cooling power in tenths of
+   a kW (AS25 = 2.5 kW), sold as these classes. Haier's 4.2 kW size (42) is taken as the 14000 BTU class. */
+var KW_CLASS={25:9,35:12,42:14,50:18,68:24,71:24};
 
 /* ---------- texts ---------- */
 var T={
@@ -177,36 +164,24 @@ var T={
   pdfFile:["comfort-clima-kerkese-per-oferte","comfort-clima-quote-request"],
   pdfAddr:["Rruga Ukë Mavriqi 23, Shkabaj, Prishtinë 10000, Kosovë","Rruga Ukë Mavriqi 23, Shkabaj, Prishtina 10000, Kosovo"],
   /* the air conditioner */
-  kCool:["Fuqia ftohëse e nevojshme","Required cooling"],
-  kHeat:["Ngrohja e nevojshme","Required heating"],
-  kHow:function(a,b,parts){return num(AC_KW)+' kW/m² × '+a+' m² = '+b+' kW'+(parts.length?'; '+parts.join('; '):'')+'.'},
-  kMultiHow:function(c,ins){return EN?'Each room: '+num(AC_KW)+' kW/m² × its area, plus the sun allowance where you ticked it'+(ins?'; '+ins:'')+'; all rooms together '+c+' kW.':'Çdo dhomë: '+num(AC_KW)+' kW/m² × sipërfaqja, me shtesën për diell aty ku e keni shënuar'+(ins?'; '+ins:'')+'; dhomat bashkë '+c+' kW.'},
-  kSun:function(){return (EN?'a lot of sun +':'shumë diell +')+Math.round(AC_SUN*100)+'%'},
-  kIns:function(lv){return L(INS_NAME[lv]).toLowerCase()+' +'+Math.round(AC_INS*100)+'%'},
-  kPeople:function(n,kw){return n+(EN?' people +':' persona +')+kw+' kW'},
-  kHeatHow:function(w,t,a,h){return EN?' Heating: '+w+' W/m² at '+t+'°C × '+a+' m² = '+h+' kW.':' Ngrohje: '+w+' W/m² në '+t+'°C × '+a+' m² = '+h+' kW.'},
-  kRoom:function(lab,a,sun,c,h){return lab+': '+a+' m²'+(sun?', '+sun.toLowerCase():'')+(EN?', cooling ':', ftohje ')+c+' kW'+(h?(EN?', heating ':', ngrohje ')+h+' kW':'')},
-  kWhyCool:function(c,n){return EN?'The nominal cooling capacity of '+c+' kW is compared with the estimated requirement of '+n+' kW.':'Fuqia ftohëse nominale '+c+' kW krahasohet me nevojën e vlerësuar '+n+' kW.'},
-  kWhyHeat:function(h,n){return EN?'The nominal heating capacity of '+h+' kW is compared with the heating requirement of '+n+' kW. Output at the outdoor design temperature is checked during selection.':'Fuqia ngrohëse nominale '+h+' kW krahasohet me nevojën për ngrohje '+n+' kW. Kapaciteti në temperaturën e jashtme të llogaritjes verifikohet gjatë përzgjedhjes.'},
+  kClass:["Klasa e rekomanduar","Recommended class"],
+  /* "9000 BTU" on Albanian pages, "9,000 BTU" on English ones */
+  btu:function(k){return k+(EN?',000':'000')+' BTU'},
+  band:function(lo,hi){return lo?(EN?lo+' to '+hi+' m²':lo+' deri '+hi+' m²'):(EN?'up to '+hi+' m²':'deri '+hi+' m²')},
+  kHow:function(a,band,btu){return EN?'Your room is '+a+' m²: for rooms of '+band+' we recommend '+btu+' models. The recommendation is based on the room area; our team takes the sun, insulation and number of people into account in the quotation.':'Dhoma juaj ka '+a+' m²: për dhoma '+band+' rekomandojmë modele '+btu+'. Rekomandimi bazohet në sipërfaqen e dhomës; diellin, izolimin dhe numrin e personave i shqyrton ekipi ynë në ofertë.'},
+  kWhyClass:function(btu,band){return EN?'A '+btu+' model, the class we recommend for rooms of '+band:'Model '+btu+', klasa që rekomandojmë për dhoma '+band},
   kWhySeer:function(s){return 'SEER '+s+(EN?' in cooling':' në ftohje')},
   kWhyScop:function(s){return 'SCOP '+s+(EN?' in heating (average climate)':' në ngrohje (klimë mesatare)')},
   kWhyLow:function(t){return EN?'Heats down to '+t+'°C outside, as in the product table':'Ngroh deri në '+t+'°C jashtë, sipas tabelës së produktit'},
-  kWhyLowNo:["Kufiri i temperaturës së jashtme për ngrohje nuk është i publikuar; e konfirmojmë në ofertë","The lowest outdoor temperature for heating is not published; we confirm it in the quotation"],
-  kWhyRooms:function(r){return EN?'Connects '+r+' indoor units; we choose them with you, room by room':'Lidh '+r+' njësi të brendshme; i zgjedhim bashkë me ju, sipas dhomave'},
-  kWith:function(o,i){return o+(EN?', with indoor units ':', me njësitë e brendshme ')+i},
-  kRooms:["Dhoma","Rooms"],
-  kNoTemp:["Asnjë model i këtij lloji në gamën tonë nuk ngroh deri në këtë temperaturë. Na shkruani dhe e shohim bashkë.","None of our models of this type heats down to this temperature. Write to us and we look at it together."],
-  kTooBig:function(c,h,multi,n){
-    var vrf='<a class="text-link" href="vrf.html">'+(EN?'the VRF systems':'sistemet VRF')+'</a>',up=EN?'up to '+c+' kW cooling'+(h?', '+h+' kW heating':''):'deri '+c+' kW ftohje'+(h?', '+h+' kW ngrohje':'');
-    if(multi)return EN?'This is more than our multi-split units for '+n+' rooms can give ('+up+'). See '+vrf+', or write to us.':'Kjo nevojë kalon njësitë tona multi-split për '+n+' dhoma ('+up+'). Shihni '+vrf+', ose na shkruani.';
-    return EN?'This is more than our models of this type can give ('+up+'). Try another unit type, see '+vrf+', or write to us.':'Kjo nevojë kalon modelet e këtij lloji në gamën tonë ('+up+'). Provoni një lloj tjetër njësie, shihni '+vrf+', ose na shkruani.';
+  kTooBig:function(){
+    var vrf='<a class="text-link" href="vrf.html">'+(EN?'the VRF systems':'sistemet VRF')+'</a>';
+    return EN?'For rooms over 80 m² we have no ready recommendation. Write to us and we help you choose, or see '+vrf+'.':'Për dhoma mbi 80 m² nuk kemi rekomandim të gatshëm. Na shkruani dhe ju ndihmojmë me zgjedhjen, ose shihni '+vrf+'.';
   },
-  kDisc:["Ky vlerësim orientues bazohet në të dhënat e deklaruara dhe në supozimet e metodës së llogaritjes. Përzgjedhja përfundimtare kërkon verifikimin e nevojës për ftohje dhe ngrohje të dhomave dhe të kapacitetit të pajisjes në kushtet e objektit. Për përzgjedhje teknike ose projektimin e sistemit, kontaktoni ekipin tonë. Udhëzuesi supozon tavan 2,4 m: për tavan më të lartë nevoja për ftohje rritet në përpjesëtim. Fuqitë e modeleve janë nominale, si në tabelat e produkteve; kur jashtë është ftohtë, fuqia ngrohëse është më e ulët.","This indicative estimate is based on the information entered and the calculation method’s assumptions. Final selection requires verification of the rooms’ cooling and heating demand and equipment output at the relevant operating conditions. Contact our team for technical selection or system design. The guide assumes a 2.4 m ceiling: a higher ceiling needs proportionally more cooling. Model capacities are nominal, as in the product tables; in cold weather the heating output is lower."],
-  kSrc:['Ftohja: <a class="text-link" href="'+DAIKIN+'" target="_blank" rel="noopener">udhëzuesi i Daikin</a>. Ngrohja: vlerat orientuese për m² nga <a class="text-link" href="https://www.hvaceduhub.com/resources" target="_blank" rel="noopener">HVAC Education Hub</a>.','Cooling: <a class="text-link" href="'+DAIKIN+'" target="_blank" rel="noopener">Daikin’s sizing guide</a>. Heating: guide values per m² from <a class="text-link" href="https://www.hvaceduhub.com/resources" target="_blank" rel="noopener">HVAC Education Hub</a>.'],
-  kLiv:function(c,n){return EN?'Required cooling '+c+' kW. '+n+' models.':'Fuqia ftohëse e nevojshme '+c+' kW. '+n+' modele.'},
-  kPerRoom:function(s){return (EN?'; cooling by room: ':'; ftohja sipas dhomave: ')+s},
-  kPdfNeed:function(c,h){return (EN?'Required power from the calculator: cooling '+c+' kW':'Fuqia e nevojshme sipas kalkulatorit: ftohje '+c+' kW')+(h?(EN?', heating ':', ngrohje ')+h+' kW':'')},
-  kPdfNote:[["Ky vlerësim orientues bazohet në të dhënat e deklaruara dhe në supozimet e metodës së llogaritjes. Përzgjedhja përfundimtare kërkon verifikimin e nevojës për ftohje dhe ngrohje të dhomave dhe të kapacitetit të pajisjes në kushtet e objektit. Për përzgjedhje teknike ose projektimin e sistemit, kontaktoni ekipin tonë."],["This indicative estimate is based on the information entered and the calculation method’s assumptions. Final selection requires verification of the rooms’ cooling and heating demand and equipment output at the relevant operating conditions. Contact our team for technical selection or system design."]]
+  kNoType:function(btu){return EN?'We have no '+btu+' model of the type you chose. Try another unit type, or write to us.':'Nuk kemi model '+btu+' të llojit që keni zgjedhur. Provoni një lloj tjetër njësie, ose na shkruani.'},
+  kDisc:["Ky rekomandim orientues bazohet në sipërfaqen e dhomës. Përzgjedhja përfundimtare kërkon verifikimin e nevojës për ftohje dhe ngrohje të dhomës dhe të kapacitetit të pajisjes në kushtet e objektit. Për përzgjedhje teknike ose projektimin e sistemit, kontaktoni ekipin tonë. Fuqitë e modeleve janë nominale, si në tabelat e produkteve.","This indicative recommendation is based on the room area. Final selection requires verification of the room’s cooling and heating demand and equipment output at the relevant operating conditions. Contact our team for technical selection or system design. Model capacities are nominal, as in the product tables."],
+  kLiv:function(btu,n){return EN?'Recommended class '+btu+'. '+n+' models.':'Klasa e rekomanduar '+btu+'. '+n+' modele.'},
+  kPdfNeed:function(btu,a){return EN?'Recommended class from the calculator: '+btu+' (room of '+a+' m²)':'Klasa e rekomanduar sipas kalkulatorit: '+btu+' (dhomë '+a+' m²)'},
+  kPdfNote:[["Ky rekomandim orientues bazohet në sipërfaqen e dhomës. Përzgjedhja përfundimtare kërkon verifikimin e nevojës për ftohje dhe ngrohje të dhomës dhe të kapacitetit të pajisjes në kushtet e objektit. Për përzgjedhje teknike ose projektimin e sistemit, kontaktoni ekipin tonë."],["This indicative recommendation is based on the room area. Final selection requires verification of the room’s cooling and heating demand and equipment output at the relevant operating conditions. Contact our team for technical selection or system design."]]
 };
 
 /* ---------- the sums ---------- */
@@ -351,7 +326,6 @@ function render(){
 function hpShow(a){
   $id('tankMore').hidden=a.tank==='none';
   $id('coolQ').hidden=a.emit==='rad';
-  $id('tempF').hidden=$id('h-temp').hidden=false;
 }
 function hpResult(a){
   var R=compute(a),P=pick(a,R),how=T.how(num(Math.round(R.w*10)/10),deg(a.t),num(a.area),num(R.base));
@@ -376,123 +350,74 @@ function hpResult(a){
 }
 
 /* ---------- the air conditioner ---------- */
-/* one room (split) or two to five rooms (multi-split); with multi-split each room has its own area and sun, and the unit type and
-   the number of people are not asked (the indoor units are chosen with our team, as the multi-split page says) */
+/* one room, split only (client, 25 Nov 2026: no multi-split, no heating question, no outdoor temperature). The class comes from the
+   room area alone (AC_BANDS); insulation, sun and people are still asked, so that our team has them for the quotation. */
 function acRead(){
-  var multi=radio('ksys')==='multi',nr=parseInt(radio('knum'),10)||2,rooms=[];
-  if(multi)for(var i=1;i<=nr;i++)rooms.push({i:i,area:parseFloat($id('c-kr'+i).value),sun:$id('c-ks'+i).checked,n:0});
-  else rooms.push({i:0,area:parseFloat($id('c-karea').value),sun:radio('ksun')==='yes',n:parseInt($id('c-kpeople').value,10)});
-  return {multi:multi,nr:nr,rooms:rooms,heat:radio('kheat')!=='no',t:parseFloat($id('c-temp').value),ins:$id('c-ins').value,type:radio('ktype')};
+  return {area:parseFloat($id('c-karea').value),sun:radio('ksun')==='yes',n:parseInt($id('c-kpeople').value,10),ins:$id('c-ins').value,type:radio('ktype')};
 }
 function acValidate(a){
-  var ok=true;
-  a.rooms.forEach(function(r){ok=mark(a.multi?'kr'+r.i:'karea',inRange(r.area,5,Infinity))&&ok});
-  if(!a.multi)ok=mark('kpeople',inRange(a.rooms[0].n,1,20))&&ok;
-  /* the outdoor temperature counts only for heating */
-  if(a.heat)ok=mark('temp',inRange(a.t,-30,0))&&ok;
-  return ok;
+  var ok=mark('karea',inRange(a.area,5,Infinity));
+  return mark('kpeople',inRange(a.n,1,20))&&ok;
 }
-function acShow(a){
-  $id('kOne').hidden=a.multi;
-  $id('kRooms').hidden=!a.multi;
-  [].forEach.call(form.querySelectorAll('.k-room'),function(el,i){el.hidden=i>=a.nr});
-  $id('kSunQ').hidden=$id('kPeopleQ').hidden=$id('kTypeQ').hidden=a.multi;
-  $id('tempF').hidden=$id('h-temp').hidden=!a.heat;
-}
-function r2(v){return Math.round(v*100)/100}
-/* cooling per room from Daikin's guide (AC_KW and the rest, above); heating with the heat pump's heat loss table, room by room */
+/* every question on the air conditioner page always shows */
+function acShow(){}
+/* the room's band: its class and the areas it runs between; no class above the last band (80 m²) */
 function acCompute(a){
-  var w=lossAt(LOSS[a.ins],a.t),weak=a.ins==='none'||a.ins==='poor',c=0,h=0,area=0;
-  var rooms=a.rooms.map(function(r){
-    var base=r.area*AC_KW,cool=base*(r.sun?1+AC_SUN:1)*(weak?1+AC_INS:1)+(r.n>2?(r.n-2)*AC_PERSON:0),heat=a.heat?w*r.area/1000:0;
-    c+=cool;h+=heat;area+=r.area;
-    return {i:r.i,area:r.area,sun:r.sun,n:r.n,base:r2(base),cool:r2(cool),heat:r2(heat)};
-  });
-  return {w:w,weak:weak,rooms:rooms,area:area,cool:r2(c),heat:a.heat?r2(h):0};
+  for(var i=0;i<AC_BANDS.length;i++)if(a.area<=AC_BANDS[i][0])return {area:a.area,cls:AC_BANDS[i][1],lo:i?AC_BANDS[i-1][0]:0,hi:AC_BANDS[i][0]};
+  return {area:a.area,cls:0};
 }
-/* the sizes the answers allow: split, every size of the chosen unit type; multi-split, every outdoor unit for that many rooms.
-   For heating, a model whose published heating range stops above the outdoor temperature is left out. */
-function acPool(a,R){
-  var list=[];
-  if(a.multi)AC_MULTI.forEach(function(u){if(a.nr>=u.r[0]&&a.nr<=u.r[1])list.push({p:u,s:u.s})});
-  else AC_SPLIT.forEach(function(f){if(f.t===a.type)f.s.forEach(function(s){list.push({p:f,s:s})})});
-  return list.filter(function(it){return !R.heat||it.s[6]===null||it.s[6]<=a.t});
+/* the class in a model's name (KW_CLASS, above) */
+function acClass(it){
+  var m;
+  if(isFujitsu(it)){m=/^[A-Z]{4}(\d\d)/.exec(it.s[0]);return m?+m[1]:0}
+  m=/^[A-Z]+(\d{2,3})/.exec(it.s[0]);
+  return m?KW_CLASS[+m[1]]||0:0;
 }
-/* the same match as the heat pump: enough cooling (and heating, when asked), less than double, closest first, then the higher SEER.
-   Here the need that the model covers most tightly counts. Our smallest size of the type stays allowed even above double, because
-   nothing smaller exists for a small room (it then carries the "much larger" note). Split shows the smallest fitting size of each
-   family. The client's rule from the heat pumps: Fujitsu first, with one of the five places kept for another brand when one fits. */
+/* every model of the chosen unit type in the room's class, one per family, the higher SEER first.
+   The client's rule from the heat pumps: Fujitsu first, with one of the five places kept for another brand when one fits. */
 function acPick(a,R){
-  var C=R.cool,H=R.heat,pool=acPool(a,R),small=Math.min.apply(null,pool.map(function(it){return it.s[2]})),fits=[];
-  pool.forEach(function(it){
-    var c=it.s[2],h=it.s[3],k;
-    if(c<C||(H&&h<H))return;
-    k=Math.min(c/C,H?h/H:Infinity);
-    if(k>=2&&c>small)return;
-    fits.push({p:it.p,s:it.s,c:c,h:h,k:k});
+  var fits=[],seen={};
+  if(R.cls)AC_SPLIT.forEach(function(f){
+    if(f.t!==a.type)return;
+    f.s.forEach(function(s){
+      var it={p:f,s:s,c:s[2],h:s[3]};
+      if(!seen[f.id]&&acClass(it)===R.cls){seen[f.id]=1;fits.push(it)}
+    });
   });
-  if(!a.multi){
-    var seen={};
-    fits.sort(function(x,y){return x.c-y.c});
-    fits=fits.filter(function(it){if(seen[it.p.id])return false;seen[it.p.id]=1;return true});
-  }
-  fits.sort(function(x,y){return Math.abs(x.k-y.k)>1e-9?x.k-y.k:y.s[4]-x.s[4]});
+  fits.sort(function(x,y){return y.s[4]-x.s[4]});
   var fj=fits.filter(isFujitsu),oth=fits.filter(function(it){return !isFujitsu(it)}),fjTake=fj.slice(0,5-Math.min(1,oth.length));
-  return {list:fjTake.concat(oth.slice(0,5-fjTake.length)),pool:pool};
-}
-function acEmpty(a,R,P){
-  if(!P.pool.length)return L(T.kNoTemp);
-  var mc=Math.max.apply(null,P.pool.map(function(it){return it.s[2]})),mh=Math.max.apply(null,P.pool.map(function(it){return it.s[3]}));
-  if(R.cool>mc||(R.heat&&R.heat>mh))return T.kTooBig(num(mc),R.heat?num(mh):'',a.multi,a.nr);
-  return L(T.noneFit);
+  return {list:fjTake.concat(oth.slice(0,5-fjTake.length))};
 }
 function labelText(id){var l=form.querySelector('label[for="'+id+'"]');return l?l.textContent.trim():''}
 function acKey(it){return it.p.id+'|'+it.s[0]+'|'+it.s[1]}
 function acName(it){return L(it.p.n)+', '+num(it.c)+' kW'}
-/* split: indoor + outdoor model; multi-split: the outdoor model, with its indoor units when the table names them (HEC Tide dual) */
-function acCodes(s,multi){return !multi?s[0]+' + '+s[1]:s[0]?T.kWith(s[1],s[0]):s[1]}
-function acRoomsText(r){return r[0]===r[1]?String(r[0]):r[0]+(EN?' to ':' deri ')+r[1]}
+function acCodes(s){return s[0]+' + '+s[1]}
 function acCard(it,i,a,R){
-  var page=it.p.id.replace(/^([^#]*)/,'$1.html'),H=R.heat,
-      why=[T.kWhyCool(num(it.c),num(R.cool))];
-  if(H)why.push(T.kWhyHeat(num(it.h),num(H)));
+  var page=it.p.id+'.html',why=[T.kWhyClass(T.btu(R.cls),T.band(R.lo,R.hi))];
   if(it.s[4])why.push(T.kWhySeer(num(it.s[4])));
-  if(H&&it.s[5])why.push(T.kWhyScop(num(it.s[5])));
-  if(H)why.push(it.s[6]===null?L(T.kWhyLowNo):T.kWhyLow(deg(it.s[6])));
-  if(a.multi&&!it.s[0])why.push(T.kWhyRooms(acRoomsText(it.p.r)));
+  if(it.s[5])why.push(T.kWhyScop(num(it.s[5])));
+  if(it.s[6]!==null)why.push(T.kWhyLow(deg(it.s[6])));
   var specs='<div><dt>'+L(T.cool)+'</dt><dd>'+num(it.c)+' kW</dd></div><div><dt>'+L(T.heat)+'</dt><dd>'+num(it.h)+' kW</dd></div>'+
-    (it.s[4]?'<div><dt>SEER</dt><dd>'+num(it.s[4])+'</dd></div>':a.multi?'<div><dt>'+L(T.kRooms)+'</dt><dd>'+acRoomsText(it.p.r)+'</dd></div>':'');
+    (it.s[4]?'<div><dt>SEER</dt><dd>'+num(it.s[4])+'</dd></div>':'');
   return '<li class="rp" data-key="'+esc(acKey(it))+'"><a class="rp-img" href="'+page+'" tabindex="-1" aria-hidden="true"><img src="'+ROOT+'assets/products/'+it.p.img+'" width="840" height="560" loading="lazy" alt=""></a><div class="rp-body">'+
-    '<p class="rp-top"><span class="pkick">'+esc(a.multi?'Multi-split':labelText('c-ktype-'+a.type))+'</span>'+(i===0&&it.k<1.5?'<span class="rp-best">'+L(T.best)+'</span>':'')+'<button class="rp-pick" type="button" aria-pressed="false">'+L(T.pick)+'</button></p>'+
+    '<p class="rp-top"><span class="pkick">'+esc(labelText('c-ktype-'+a.type))+'</span>'+(i===0?'<span class="rp-best">'+L(T.best)+'</span>':'')+'<button class="rp-pick" type="button" aria-pressed="false">'+L(T.pick)+'</button></p>'+
     '<h4 class="rp-name"><a href="'+page+'">'+esc(acName(it))+'</a></h4>'+
-    '<p class="rp-tank">'+esc(acCodes(it.s,a.multi))+'</p>'+
+    '<p class="rp-tank">'+esc(acCodes(it.s))+'</p>'+
     '<dl class="pspecs">'+specs+'</dl>'+
     '<p class="rp-whyh">'+L(T.why)+'</p><ul class="rp-why"><li>'+why.map(esc).join('</li><li>')+'</li></ul>'+
-    (it.k>=1.5?'<p class="rp-warn">'+esc(L(T.over))+'</p>':'')+
     '<div class="rp-cta"><a class="text-link" href="'+page+'">'+L(T.view)+'</a></div>'+
     '</div></li>';
 }
 function acResult(a){
-  var R=acCompute(a),P=acPick(a,R),how;
-  if(a.multi)how=T.kMultiHow(num(R.cool),R.weak?T.kIns(a.ins):'');
-  else{
-    var r=R.rooms[0],parts=[];
-    if(r.sun)parts.push(T.kSun());
-    if(R.weak)parts.push(T.kIns(a.ins));
-    if(r.n>2)parts.push(T.kPeople(r.n,num(r2((r.n-2)*AC_PERSON))));
-    how=T.kHow(num(r.area),num(r.base),parts);
-  }
-  if(a.heat)how+=T.kHeatHow(num(Math.round(R.w*10)/10),deg(a.t),num(R.area),num(R.heat));
-  var html='<h2 class="res-title">'+L(T.res)+'</h2><div class="res-nums">'+
-    '<div class="res-num"><p class="res-nl">'+L(T.kCool)+'</p><p class="res-kw">'+num(R.cool)+'<small>kW</small></p></div>'+
-    (a.heat?'<div class="res-num"><p class="res-nl">'+L(T.kHeat)+'</p><p class="res-kw">'+num(R.heat)+'<small>kW</small></p></div>':'')+
-    '</div><p class="res-how">'+esc(how)+'</p>';
-  if(a.multi)html+='<ul class="res-rooms">'+R.rooms.map(function(r){return '<li>'+esc(T.kRoom(fieldLabel('c-kr'+r.i),num(r.area),r.sun?labelText('c-ks'+r.i):'',num(r.cool),a.heat?num(r.heat):''))+'</li>'}).join('')+'</ul>';
-  html+='<h3 class="res-lt">'+T.list(P.list.length)+'</h3>';
+  var R=acCompute(a),html='<h2 class="res-title">'+L(T.res)+'</h2>',disc='<p class="res-disc">'+esc(L(T.kDisc))+'</p>';
+  if(!R.cls)return {html:html+'<p class="res-alert">'+T.kTooBig()+'</p>'+disc,msg:T.kTooBig().replace(/<[^>]+>/g,'')};
+  var P=acPick(a,R),btu=T.btu(R.cls);
+  html+='<div class="res-nums"><div class="res-num"><p class="res-nl">'+L(T.kClass)+'</p><p class="res-kw">'+R.cls+(EN?',000':'000')+'<small>BTU</small></p></div></div>'+
+    '<p class="res-how">'+esc(T.kHow(num(a.area),T.band(R.lo,R.hi),btu))+'</p>'+
+    '<h3 class="res-lt">'+T.list(P.list.length)+'</h3>';
   if(P.list.length)html+='<p class="res-pick-help">'+esc(L(T.pickHelp))+'</p><ul class="rp-list">'+P.list.map(function(it,i){return acCard(it,i,a,R)}).join('')+'</ul>';
-  else html+='<p class="res-alert">'+acEmpty(a,R,P)+'</p>';
-  html+='<p class="res-disc">'+esc(L(T.kDisc))+' '+L(T.kSrc)+'</p>';
-  return {html:html,msg:T.kLiv(num(R.cool),P.list.length)};
+  else html+='<p class="res-alert">'+esc(T.kNoType(btu))+'</p>';
+  return {html:html+disc,msg:T.kLiv(btu,P.list.length)};
 }
 var raf=0;
 function schedule(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;render()})}
@@ -566,15 +491,7 @@ function pdfAnswers(a){
 }
 /* the air conditioner answers, in the order of the form */
 function acAnswers(a){
-  var rows=[choiceRow('ksys'),choiceRow('kheat')];
-  if(a.multi){
-    rows.push(choiceRow('knum'));
-    a.rooms.forEach(function(r){rows.push([fieldLabel('c-kr'+r.i),num(r.area)+' m²'+(r.sun?', '+labelText('c-ks'+r.i).toLowerCase():'')])});
-  }else rows.push([fieldLabel('c-karea'),num(a.rooms[0].area)+' m²']);
-  if(a.heat)rows.push(tempRow(a));
-  rows.push([fieldLabel('c-ins'),optionText('c-ins')]);
-  if(!a.multi)rows.push(choiceRow('ksun'),[fieldLabel('c-kpeople'),String(a.rooms[0].n)],choiceRow('ktype'));
-  return insHelpRows(rows);
+  return insHelpRows([[fieldLabel('c-karea'),num(a.area)+' m²'],[fieldLabel('c-ins'),optionText('c-ins')],choiceRow('ksun'),[fieldLabel('c-kpeople'),String(a.n)],choiceRow('ktype')]);
 }
 function chosenName(it){return (it.n===2?'2 × ':'')+L(it.p.name)+', '+num(it.p.h)+' kW'}
 function chosenExtras(a,P,it){
@@ -773,44 +690,14 @@ var MODES={
       after:function(a,it){return a.emit==='rad'?[T.out55(num(it.cap))]:[]},
       need:function(R){return T.pdfNeed(num(R.need))},note:T.pdfNote},
   ac:{read:acRead,validate:acValidate,show:acShow,result:acResult,key:acKey,answers:acAnswers,name:acName,
-      more:function(a,P,it){return [acCodes(it.s,a.multi)]},
+      more:function(a,P,it){return [acCodes(it.s)]},
       calc:function(a){var R=acCompute(a);return {R:R,P:acPick(a,R)}},
       after:function(){return []},
-      /* with multi-split the team also sees each room's cooling, since the indoor units are chosen room by room */
-      need:function(R){
-        var s=T.kPdfNeed(num(R.cool),R.heat?num(R.heat):'');
-        if(R.rooms.length>1)s+=T.kPerRoom(R.rooms.map(function(r){return fieldLabel('c-kr'+r.i)+' '+num(r.cool)+' kW'}).join(', '));
-        return s;
-      },note:T.kPdfNote}
+      need:function(R){return R.cls?T.kPdfNeed(T.btu(R.cls),num(R.area)):T.kTooBig().replace(/<[^>]+>/g,'')},note:T.kPdfNote}
 };
-/* the switch: tabs that also answer the arrow keys; the address keeps the choice (#kondicioner, #air-conditioner),
-   and so does the language link */
-var tabs=[].slice.call(document.querySelectorAll('.mode-tab')),AC_HASH=/^#(kondicioner|klima|air-conditioner)$/i;
-function setMode(m){
-  if(!MODES[m])return;
-  mode=m;
-  var sw=document.querySelector('.calc-switch'),lang=document.querySelector('.lang-sw');
-  if(sw)sw.setAttribute('data-on',m);
-  tabs.forEach(function(t){var on=t.getAttribute('data-mode')===m;t.setAttribute('aria-selected',String(on));t.tabIndex=on?0:-1});
-  $id('calc').setAttribute('aria-labelledby','tab-'+m);
-  [].forEach.call(document.querySelectorAll('.calc-mode,.calc-how'),function(el){el.hidden=el.getAttribute('data-mode')!==m});
-  if(lang)lang.hash=m==='ac'?(EN?'kondicioner':'air-conditioner'):'';
-  lastHtml='';
-  render();
-}
-tabs.forEach(function(t,i){
-  t.addEventListener('click',function(){
-    var m=t.getAttribute('data-mode');
-    if(m===mode)return;
-    setMode(m);
-    try{history.replaceState(null,'',m==='ac'?'#'+(EN?'air-conditioner':'kondicioner'):location.pathname+location.search)}catch(err){}
-  });
-  t.addEventListener('keydown',function(e){
-    var k=e.key,j=k==='Home'?0:k==='End'?tabs.length-1:k==='ArrowRight'?(i+1)%tabs.length:k==='ArrowLeft'?(i+tabs.length-1)%tabs.length:-1;
-    if(j<0)return;
-    e.preventDefault();tabs[j].click();tabs[j].focus();
-  });
-});
-addEventListener('hashchange',function(){if(AC_HASH.test(location.hash))setMode('ac')});
-setMode(AC_HASH.test(location.hash)?'ac':'hp');
+/* Each calculator has its own page since 25 Nov 2026 (client request): the air conditioner page is the one with a room area.
+   For one day the air conditioner sat on this page behind #kondicioner / #air-conditioner: such a link goes to its page. */
+if(!$id('c-karea')&&/^#(kondicioner|klima|air-conditioner)$/i.test(location.hash)){location.replace('kalkulatori-kondicionerit.html');return}
+mode=$id('c-karea')?'ac':'hp';
+render();
 })();
